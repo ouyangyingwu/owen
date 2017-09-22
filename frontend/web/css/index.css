@@ -1,0 +1,7 @@
+#index{
+    width: 100%;
+    height: 600px;
+    background-image: url("/image/leaf.gif");
+    background-size: cover;
+    opacity: 0.1;
+}
