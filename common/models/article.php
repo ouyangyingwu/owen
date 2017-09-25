@@ -2,10 +2,6 @@
 namespace common\models;
 
 use Yii;
-use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
 
 /**
  * User model
@@ -21,29 +17,25 @@ use yii\web\IdentityInterface;
  * @property integer $updated_at
  * @property string $password write-only password
  */
-class Article extends ActiveRecord implements IdentityInterface
+class Article extends  BaseModel
 {
-    const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
-
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return '{{%article}}';
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::className(),
-        ];
-    }
+    public $id;
+    public $user_id;
+    public $title;
+    public $describe;
+    public $content;
+    public $status;
+    public $create_time;
+    public $edit_time;
+    public $is_delete;
 
     /**
      * @inheritdoc
@@ -51,139 +43,118 @@ class Article extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
+            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
+            [['user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
+            [['id', 'create_time' , 'endit_time'], 'integer'],
+            [['describe'], 'string', 'max' => 50],
+            [['content'], 'string', 'max' => 50000],
+        ];
+    }
+
+
+    public $page = 1;
+    public $per_page = 10;
+    public $select;
+    public $order_by;
+    public $expand = [];
+
+    private $_query;
+
+    const SCENARIO_SEARCH = 'list';
+    const SCENARIO_ADD = 'add';
+    const SCENARIO_STATUS = 'status';
+    const SCENARIO_EDIT = 'edit';
+    const SCENARIO_DELETE = 'delete';
+
+
+
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content'],
+            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
+            self::SCENARIO_STATUS => ['id' , 'status'],
+            self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
+            self::SCENARIO_DELETE => ['id'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * create query
+     * @return \yii\db\$this
+     * 创建查询
      */
-    public static function findIdentity($id)
+    private function createQuery($asArray = true)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
-    }
-
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
-    }
-
-    /**
-     * Finds user by password reset token
-     *
-     * @param string $token password reset token
-     * @return static|null
-     */
-    public static function findByPasswordResetToken($token)
-    {
-        if (!static::isPasswordResetTokenValid($token)) {
-            return null;
+        $this->_query = static::find()->where(['is_delete'=>false]);
+        if ($asArray)
+        {
+            $this->_query->asArray();
+        }
+        if ($this->id)
+        {
+            $this->_query->andFilterWhere(['id', $this->id]);
+        }
+        if ($this->user_id)
+        {
+            $this->_query->andFilterWhere(['id', $this->user_id]);
+        }
+        if ($this->describe)
+        {
+            $this->_query->andFilterWhere(['ILIKE', 'content', $this->describe]);
+        }
+        if ($this->content)
+        {
+            $this->_query->andFilterWhere(['ILIKE', 'content', $this->content]);
+        }
+        if ($this->title)
+        {
+            $this->_query->andFilterWhere(['status'=>$this->title]);
         }
 
-        return static::findOne([
-            'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
-        ]);
-    }
-
-    /**
-     * Finds out if password reset token is valid
-     *
-     * @param string $token password reset token
-     * @return bool
-     */
-    public static function isPasswordResetTokenValid($token)
-    {
-        if (empty($token)) {
-            return false;
+        if(count($this->select)>0)
+        {
+            $this->_query->select($this->select);
         }
+    }
+    /**
+     * add expand query
+     * 关联表查询
+     */
+    private function addQueryExpand()
+    {
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
-        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
-        return $timestamp + $expire >= time();
     }
 
     /**
-     * @inheritdoc
+     * 列表查询
      */
-    public function getId()
-    {
-        return $this->getPrimaryKey();
+    public function getList(){
+        $this->scenario = self::SCENARIO_SEARCH;
+        if($this->validate()){
+            $this->createQuery();
+            $total = $this->_query->count();
+            if ($total == 0)
+            {
+                return [0, null];
+            }
+            $this->addQueryExpand();
+            $this->addOrderBy();
+            $this->addLimit();
+            $result = $this->_query->all();
+            return [$total, $result];
+        }
     }
-
     /**
-     * @inheritdoc
+     * 单条数据查询
      */
-    public function getAuthKey()
-    {
-        return $this->auth_key;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validateAuthKey($authKey)
-    {
-        return $this->getAuthKey() === $authKey;
-    }
-
-    /**
-     * Validates password
-     *
-     * @param string $password password to validate
-     * @return bool if password provided is valid for current user
-     */
-    public function validatePassword($password)
-    {
-        return Yii::$app->security->validatePassword($password, $this->password_hash);
-    }
-
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
-    }
-
-    /**
-     * Generates "remember me" authentication key
-     */
-    public function generateAuthKey()
-    {
-        $this->auth_key = Yii::$app->security->generateRandomString();
-    }
-
-    /**
-     * Generates new password reset token
-     */
-    public function generatePasswordResetToken()
-    {
-        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
-    }
-
-    /**
-     * Removes password reset token
-     */
-    public function removePasswordResetToken()
-    {
-        $this->password_reset_token = null;
+    public function getOne(){
+        $this->scenario = self::SCENARIO_DELETE;
+        if($this->validate()){
+            $this->createQuery();
+            $this->addQueryExpand();
+            return $this->_query->one();
+        }
     }
 }
