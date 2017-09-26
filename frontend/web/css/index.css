@@ -23,15 +23,15 @@
     top:0;
     /*border-left: 2px solid #5e5e5e;*/
 }
-#index .index-head>div{
+.index-head>div{
     float: left;
     width: 50%;
 }
-#index .index-head .index-head-right{
+.index-head .index-head-right{
     height: 200px;
     padding: 10px;
 }
-#index .index-head h3,#index .index-head .index-head-left div{
+.index-head h3,#index .index-head .index-head-left div{
     width: 100px;
     /*height: 50px;*/
     font-size: 24px;
@@ -42,7 +42,27 @@
     background-color: #27dc30;
     margin-top: 10px;
 }
-#index .index-head .index-head-left div{
+.index-head .index-head-left div{
     background-color: #96FF93;
     font-size: 16px;
+}
+
+/*文章详情*/
+.detail-head{
+    width: 100%;
+    padding: 10px;
+}
+.detail-head>h2{
+    font-size: 24px;
+    text-align: center;
+}
+.detail-head>.writer{
+    width: 100%;
+    font-size: 12px;
+    text-align: center;
+}
+.detail-head>.content{
+    width: 100%;
+    margin-top: 20px;
+    font-weight: normal;
 }

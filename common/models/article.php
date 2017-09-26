@@ -4,7 +4,7 @@ namespace common\models;
 use Yii;
 
 /**
- * User model
+ * Article model
  *
  * @property integer $id
  * @property string $username
@@ -60,7 +60,7 @@ class Article extends  BaseModel
         return [
             [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
             [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
-            [['user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
+            [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
             [['id', 'create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
@@ -90,13 +90,15 @@ class Article extends  BaseModel
         {
             $this->_query->asArray();
         }
-        if ($this->id)
+        if (is_array($this->id))
         {
-            $this->_query->andFilterWhere(['id', $this->id]);
+            $this->_query->andFilterWhere(['in', 'id', $this->id]);
+        }elseif(is_numeric($this->id)){
+            $this->_query->andFilterWhere(['id' => $this->id]);
         }
-        if ($this->user_id)
+        if (is_numeric($this->user_id))
         {
-            $this->_query->andFilterWhere(['user_id', $this->user_id]);
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
         }
         if ($this->describe)
         {
@@ -104,7 +106,7 @@ class Article extends  BaseModel
         }
         if ($this->title)
         {
-            $this->_query->andFilterWhere(['title'=>$this->title]);
+            $this->_query->andFilterWhere(['ILIKE' ,'title' , $this->title]);
         }
         if ($this->status)
         {
@@ -121,10 +123,17 @@ class Article extends  BaseModel
     }
     /**
      * 关联关系
+     *
+     * 一对一用hasOne来执行连接
+     * 一对多用hasMany
      */
     public function getUser()
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
+    }
+    public function getComment()
+    {
+        return $this->hasMany(Comment::className(),['article_id'=>'id']);
     }
     /**
      * add expand query
@@ -138,6 +147,14 @@ class Article extends  BaseModel
                 $this->_query->with([
                     'user' => function($query) {
                         $query->select(['id', 'username']);
+                    }
+                ]);
+            }
+            if(in_array('comment' , $this->expand)){
+                $this->_query->with([
+                    'comment'=>function($query){
+                        $query->andFilterWhere(['status'=>1]);
+                        //$query->select([ 'create_time','content']);
                     }
                 ]);
             }

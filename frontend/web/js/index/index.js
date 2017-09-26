@@ -6,7 +6,7 @@ $(function(){
      *index-head
      */
     var ladder = $(".index-head-left div");
-    var content = $(".index-head-right");
+    var content = $(".content");
     ladder.mouseenter(function(){
         var text = $(this).children().text();
         var rightText = content.text();

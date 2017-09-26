@@ -1,5 +1,6 @@
 <?php
 
+use \yii\helpers\Url;
 /* @var $this yii\web\View */
 
 $this->title = 'Owen Home';
@@ -17,6 +18,6 @@ $this->title = 'Owen Home';
             <?php endforeach; ?>
             <?php endif;?>
         </div>
-        <div class="font index-head-right"></div>
+        <div class="font index-head-right"><a class="content" href="<?= Url::toRoute(['site/detail' , 'id' => 1]) ?>"></a></div>
     </div>
 </div>

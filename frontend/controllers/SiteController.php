@@ -1,8 +1,6 @@
 <?php
 namespace frontend\controllers;
 
-use common\forms\ArticleForm;
-use common\forms\search\ArticleSearch;
 use common\models\Article;
 use Yii;
 use yii\base\InvalidParamException;
@@ -76,16 +74,26 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $article = new Article();
-        $article->scenario = $article::SCENARIO_SEARCH;
-        $article->setAttributes(Yii::$app->request->post());
         $article->order_by = ['id' => 1];
-        $article->expand = ['user'];
+        $article->expand = ['user' ,'comment'];
         $article->type = 1;
         $article->status = 1;
         list($total , $list) = $article->getList();
         $this->layout = "home";
         return $this->render('index' , [
-            'ArticleList' => $list]);
+            'ArticleList' => $list
+        ]);
+    }
+    public function actionDetail()
+    {
+        $article = new Article();
+        $article->expand = ['user' ,'comment'];
+        $article->status = 1;
+        $article->id = $_GET['id'];
+        $list = $article->getOne();
+        $list['create_time'] = date('Y-m-d H:i:s' , $list['create_time']);
+        $this->layout = "home";
+        return $this->render('article-detail' , ['Article' => $list]);
     }
 
     /**
