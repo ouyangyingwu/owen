@@ -33,25 +33,10 @@ class Article extends  BaseModel
     public $describe;
     public $content;
     public $status;
+    public $type;
     public $create_time;
     public $edit_time;
     public $is_delete;
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
-        return [
-            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
-            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
-            [['user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['id', 'create_time' , 'endit_time'], 'integer'],
-            [['describe'], 'string', 'max' => 50],
-            [['content'], 'string', 'max' => 50000],
-        ];
-    }
-
 
     public $page = 1;
     public $per_page = 10;
@@ -67,15 +52,28 @@ class Article extends  BaseModel
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_DELETE = 'delete';
 
-
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
+            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
+            [['user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
+            [['id', 'create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
+            [['describe'], 'string', 'max' => 50],
+            [['content'], 'string', 'max' => 50000],
+        ];
+    }
 
     public function scenarios()
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
-            self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
+            self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
         ];
     }
@@ -98,25 +96,35 @@ class Article extends  BaseModel
         }
         if ($this->user_id)
         {
-            $this->_query->andFilterWhere(['id', $this->user_id]);
+            $this->_query->andFilterWhere(['user_id', $this->user_id]);
         }
         if ($this->describe)
         {
-            $this->_query->andFilterWhere(['ILIKE', 'content', $this->describe]);
-        }
-        if ($this->content)
-        {
-            $this->_query->andFilterWhere(['ILIKE', 'content', $this->content]);
+            $this->_query->andFilterWhere(['ILIKE', 'describe', $this->describe]);
         }
         if ($this->title)
         {
-            $this->_query->andFilterWhere(['status'=>$this->title]);
+            $this->_query->andFilterWhere(['title'=>$this->title]);
         }
-
+        if ($this->status)
+        {
+            $this->_query->andFilterWhere(['status'=>$this->status]);
+        }
+        if ($this->type)
+        {
+            $this->_query->andFilterWhere(['type'=>$this->type]);
+        }
         if(count($this->select)>0)
         {
             $this->_query->select($this->select);
         }
+    }
+    /**
+     * 关联关系
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(),['id'=>'user_id']);
     }
     /**
      * add expand query
@@ -124,9 +132,42 @@ class Article extends  BaseModel
      */
     private function addQueryExpand()
     {
-
+        if (count($this->expand)>0){
+            if(in_array('user' , $this->expand)){
+                //$this->_query->with('user');              //查询User的所有字段
+                $this->_query->with([
+                    'user' => function($query) {
+                        $query->select(['id', 'username']);
+                    }
+                ]);
+            }
+        }
     }
-
+    /**
+     * deal order by
+     * 排序
+     */
+    private function addOrderBy()
+    {
+        if (count($this->order_by))
+        {
+            foreach ($this->order_by as $field => $orderType)
+            {
+                $orderBy = $orderType == 1 ? SORT_ASC : SORT_DESC;
+                $this->_query->addOrderBy([$field => $orderBy]);
+            }
+        }
+    }
+    /**
+     * deal limit condition
+     * 分页
+     */
+    private function addLimit()
+    {
+        $offset = ($this->page - 1) * $this->per_page;
+        $this->_query->offset($offset);
+        $this->_query->limit($this->per_page);
+    }
     /**
      * 列表查询
      */

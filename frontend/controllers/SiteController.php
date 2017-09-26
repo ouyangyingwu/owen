@@ -78,10 +78,14 @@ class SiteController extends Controller
         $article = new Article();
         $article->scenario = $article::SCENARIO_SEARCH;
         $article->setAttributes(Yii::$app->request->post());
-        $article->order_by = ['id' => 2];
-        $list = $article->getList();
+        $article->order_by = ['id' => 1];
+        $article->expand = ['user'];
+        $article->type = 1;
+        $article->status = 1;
+        list($total , $list) = $article->getList();
         $this->layout = "home";
-        return $this->render('index' , [$list]);
+        return $this->render('index' , [
+            'ArticleList' => $list]);
     }
 
     /**

@@ -99,29 +99,4 @@ class BaseModel extends \yii\db\ActiveRecord
         }
         return preg_replace('/(\d{3})(\d{3})(\d{4})/','($1)$2-$3',$str);
     }
-    /**
-     * deal order by
-     * 排序
-     */
-    private function addOrderBy()
-    {
-        if (count($this->order_by))
-        {
-            foreach ($this->order_by as $field => $orderType)
-            {
-                $orderBy = $orderType == 1 ? SORT_ASC : SORT_DESC;
-                $this->_query->addOrderBy([$field => $orderBy]);
-            }
-        }
-    }
-    /**
-     * deal limit condition
-     * 分页
-     */
-    private function addLimit()
-    {
-        $offset = ($this->page - 1) * $this->per_page;
-        $this->_query->offset($offset);
-        $this->_query->limit($this->per_page);
-    }
 }
