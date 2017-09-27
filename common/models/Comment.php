@@ -43,6 +43,7 @@ class Comment extends  BaseModel
 
     private $_query;
 
+    const SCENARIO_LIST = 'list';
     const SCENARIO_ADD = 'add';
     const SCENARIO_STATUS = 'status';
     const SCENARIO_DELETE = 'delete';
@@ -66,6 +67,7 @@ class Comment extends  BaseModel
             self::SCENARIO_ADD => ['user_d' ,'comment_id' ,'article_id' , 'content'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
+            self::SCENARIO_LIST => ['article_id']
         ];
     }
 
@@ -76,18 +78,22 @@ class Comment extends  BaseModel
      */
     private function createQuery($asArray = true)
     {
-        $this->_query = static::find()->where(['is_delete'=>false]);
+        $this->_query = static::find();
         if ($asArray)
         {
             $this->_query->asArray();
         }
         if ($this->id)
         {
-            $this->_query->andFilterWhere(['id', $this->id]);
+            $this->_query->andFilterWhere(['id' => $this->id]);
         }
         if ($this->user_id)
         {
-            $this->_query->andFilterWhere(['user_id', $this->user_id]);
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
+        }
+        if ($this->article_id)
+        {
+            $this->_query->andFilterWhere(['user_id' => $this->article_id]);
         }
         if ($this->status)
         {
@@ -107,7 +113,7 @@ class Comment extends  BaseModel
     }
     public function getComment()
     {
-        return $this->hasOne(User::className(),['id'=>'user_id']);
+        return $this->hasMany(static::className(),['comment_id'=>'id']);
     }
     /**
      * add expand query
@@ -115,6 +121,18 @@ class Comment extends  BaseModel
      */
     private function addQueryExpand()
     {
+        if (count($this->expand)>0){
+            if(in_array('user' , $this->expand)){
+                $this->_query->with([
+                    'user' => function($query) {
+                        $query->select(['id', 'username']);
+                    }
+                ]);
+            }
+            if(in_array('comment' , $this->expand)){
+                $this->_query->with('comment');
+            }
+        }
     }
     /**
      * deal order by
@@ -141,4 +159,31 @@ class Comment extends  BaseModel
         $this->_query->offset($offset);
         $this->_query->limit($this->per_page);
     }
+    /**
+     * 列表查询
+     */
+    public function getList(){
+        $this->scenario = self::SCENARIO_LIST;
+        if($this->validate()){
+            $this->createQuery();
+            $this->addQueryExpand();
+            $this->addOrderBy();
+            $this->addLimit();
+            $result = $this->_query->all();
+
+            $reply = [];
+            foreach($result as &$list){
+                foreach($result as $value){
+                    //var_dump($list['id'] , $value['comment_id']);die;
+                    if($list['id'] == $value['comment_id']){
+                        $reply[] = $value;
+                    }
+                }
+                $list['comment'] = $reply;
+            }
+            //var_dump($data);die;
+            return [count($data), $data];
+        }
+    }
+
 }

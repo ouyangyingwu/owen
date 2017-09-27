@@ -21,6 +21,7 @@ class AppAsset extends AssetBundle
         'js/plugin/jQuery.cookie.js',
         'js/plugin/l-by-l.min.js',
         'js/index/index.js',
+        'js/article/comment.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

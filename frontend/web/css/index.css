@@ -4,6 +4,24 @@
     font-family: 楷体;
     font-weight: 600;
 }
+.hide{
+    display: none;
+}
+.show{
+    display: block;
+}
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+h2{
+    font-size: 24px;
+    font-family: 楷体;
+    font-weight: 600;
+    padding: 5px 0 5px 10px;
+}
 
 #index{
     position: relative;
@@ -25,13 +43,13 @@
 }
 .index-head>div{
     float: left;
+    /*width: 50%;*/
+}
+.index-head .index-head-left,.index-head .index-head-right{
     width: 50%;
-}
-.index-head .index-head-right{
     height: 200px;
-    padding: 10px;
 }
-.index-head h3,#index .index-head .index-head-left div{
+.index-head h3{
     width: 100px;
     /*height: 50px;*/
     font-size: 24px;
@@ -44,7 +62,11 @@
 }
 .index-head .index-head-left div{
     background-color: #96FF93;
-    font-size: 16px;
+    width: 100px;
+    /*height: 50px;*/
+    text-align: center;
+    line-height: 40px;
+    margin-top: 10px;
 }
 
 /*文章详情*/
@@ -61,8 +83,46 @@
     font-size: 12px;
     text-align: center;
 }
-.detail-head>.content{
+.detail-head>.prompt{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 36px;
+    text-align: center;
+    cursor: pointer;
+}
+.detail-head .content{
     width: 100%;
     margin-top: 20px;
     font-weight: normal;
+}
+.detail-head .comment {
+    width: 100%;
+}
+.detail-head .comment .comment-detail{
+    border-top: 1px solid #cccccc;
+    padding: 10px 0 5px 10px;
+}
+.detail-head .comment-content{
+    padding-top: 10px;
+}
+.comment-detail-reply{
+    border-top:1px solid #cccccc;
+    margin-left: 20px;
+}
+#input-text{
+    width: 235px;
+    padding: 5px 10px;
+    color: #cccccc;
+    border: 1px solid #cccccc;
+    /*输入框背景颜色透明*/
+    background-color: transparent;
+}
+#input-button{
+    width: 45px;
+    padding: 5px 0;
+    border: 1px solid #cccccc;
+    border-left: none;
+    /*输入框背景颜色透明*/
+    background-color: transparent;
 }

@@ -153,8 +153,7 @@ class Article extends  BaseModel
             if(in_array('comment' , $this->expand)){
                 $this->_query->with([
                     'comment'=>function($query){
-                        $query->andFilterWhere(['status'=>1]);
-                        //$query->select([ 'create_time','content']);
+                        $query->select(['article_id', 'create_time','content'])->andFilterWhere(['status'=>1]);
                     }
                 ]);
             }

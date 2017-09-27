@@ -13,7 +13,7 @@ $this->title = 'Owen Home';
             <?php if($ArticleList):?>
             <?php foreach($ArticleList as $key=>$Article):?>
                 <?php if($key<10):?>
-                    <div class="ladder-<?=$Article['id']?>"><?=$Article['title']?><span style="display: none"><?=$Article['content']; ?></span></div>
+                    <div data-id="<?=$Article['id']?>" class="font"><?=$Article['title']?><span style="display: none"><?=$Article['content']; ?></span></div>
                 <?php endif;?>
             <?php endforeach; ?>
             <?php endif;?>
