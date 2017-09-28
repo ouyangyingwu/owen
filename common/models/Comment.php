@@ -179,10 +179,11 @@ class Comment extends  BaseModel
                         $reply[] = $value;
                     }
                 }
+
                 $list['comment'] = $reply;
             }
-            //var_dump($data);die;
-            return [count($data), $data];
+            //var_dump($result);die;
+            return [count($result), $result];
         }
     }
 

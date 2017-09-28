@@ -1,9 +1,11 @@
 <?php
 
 use \yii\helpers\Url;
+use frontend\assets\AppAsset;
 /* @var $this yii\web\View */
 
 $this->title = 'Owen Home';
+AppAsset::addScript($this , '@web/js/index/index.js');
 ?>
 <div class="site-index" id="index">
     <div class="index-bg"></div>
@@ -13,7 +15,7 @@ $this->title = 'Owen Home';
             <?php if($ArticleList):?>
             <?php foreach($ArticleList as $key=>$Article):?>
                 <?php if($key<10):?>
-                    <div data-id="<?=$Article['id']?>" class="font"><?=$Article['title']?><span style="display: none"><?=$Article['content']; ?></span></div>
+                    <div data-id="<?=$Article['id']?>" class="font"><?=$Article['title']?></div>
                 <?php endif;?>
             <?php endforeach; ?>
             <?php endif;?>

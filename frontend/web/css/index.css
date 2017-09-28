@@ -99,6 +99,10 @@ h2{
 .detail-head .comment {
     width: 100%;
 }
+.detail-head .comment-list{
+    border-bottom: 1px solid #cccccc;
+}
+
 .detail-head .comment .comment-detail{
     border-top: 1px solid #cccccc;
     padding: 10px 0 5px 10px;
@@ -110,8 +114,13 @@ h2{
     border-top:1px solid #cccccc;
     margin-left: 20px;
 }
+
+.detail-head .comment-value{
+    width: 100%;
+    padding: 20px 0;
+}
 #input-text{
-    width: 235px;
+    width: 400px;
     padding: 5px 10px;
     color: #cccccc;
     border: 1px solid #cccccc;

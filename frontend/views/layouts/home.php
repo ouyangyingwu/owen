@@ -10,6 +10,7 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
 
+//导入css，js文件
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>

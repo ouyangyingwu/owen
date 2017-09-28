@@ -5,8 +5,10 @@
  * Date: 2017/9/26
  * Time: 15:01
  */
+use frontend\assets\AppAsset;
 
 $this->title = '文章详情';
+AppAsset::addScript($this , '@web/js/article/comment.js');
 ?>
 <div class="site-index" id="index">
     <div class="index-bg"></div>
@@ -33,16 +35,17 @@ $this->title = '文章详情';
                             <div class="comment-content font"><?=$list['content']?></div>
                         </div>
                         <?php if($list['comment']):?>
-<!--                            --><?php //foreach($list['comment'] as $reply):?>
+                        <?php foreach($list['comment'] as $reply):?>
                             <div class="comment-detail-reply">
-                                <div class="comment-user"><a><?=$list['comment']['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$list['comment']['create_time'])?></div>
-                                <div class="comment-content font"><?=$list['comment']['content']?></div>
+                                <div class="comment-user"><a><?=$reply['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$reply['create_time'])?></div>
+                                <div class="comment-content font"><?=$reply['content']?></div>
                             </div>
-<!--                            --><?php //endforeach;?>
+                        <?php endforeach;?>
+                            <div class="icon-reply"><a>回复</a></div>
                         <?php endif;?>
                     <?php endforeach;?>
                 </div>
-                <div class="comment-value">
+                <div class="comment-value clearfix">
                     <input id="input-text" class="font float-left" type="text" value="评论:" />
                     <input id="input-button" class="font float-left" type="button" value="发表" />
                 </div>

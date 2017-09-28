@@ -76,16 +76,16 @@ class SiteController extends Controller
     {
         $article = new Article();
         $article->order_by = ['id' => 1];
-        $article->expand = ['user'];
         $article->type = 1;
         $article->status = 1;
+        $article->select = ['id' , 'title'];
         list($total , $list) = $article->getList();
         $this->layout = "home";
         return $this->render('index' , [
             'ArticleList' => $list
         ]);
     }
-    public function actionDetail()
+    public function actionDetail($id = 8)
     {
         $article = new Article();
         $article->expand = ['user'];
