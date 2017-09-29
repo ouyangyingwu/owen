@@ -130,7 +130,7 @@ class Comment extends  BaseModel
                 ]);
             }
             if(in_array('comment' , $this->expand)){
-                $this->_query->with('comment');
+               // $this->_query->with('comment');
             }
         }
     }
@@ -171,20 +171,56 @@ class Comment extends  BaseModel
             $this->addLimit();
             $result = $this->_query->all();
 
-            $reply = [];
-            foreach($result as &$list){
-                foreach($result as $value){
-                    //var_dump($list['id'] , $value['comment_id']);die;
-                    if($list['id'] == $value['comment_id']){
-                        $reply[] = $value;
-                    }
+            $comment = [];
+            foreach($result as $value){
+                if($value['comment_id'] = 0){
+                    $comment[] = $value;
                 }
-
-                $list['comment'] = $reply;
             }
+            $result = $this->reply($result);
             //var_dump($result);die;
             return [count($result), $result];
         }
     }
 
+    /**
+     * 递归函数
+    */
+    public function reply($a, $pid = 0,$level = 0) {
+        $tree = array();                                    //每次都声明一个新数组用来放子元素
+        foreach($a as $v){
+            if($v['comment_id'] == $pid){                   //匹配子记录
+              //  var_dump($pid);
+                $v['level'] = $level;
+                $v['comment'] = self::reply($a,$v['id'],$level+1);   //递归获取子记录
+                if($v['comment'] == null){
+                    unset($v['comment']);                   //如果子元素为空则unset()进行删除，说明已经到该分支的最后一个元素了（可选）
+                }
+                $tree[] = $v;                               //将记录存入新数组
+            }
+        }
+        return $tree;                                       //返回新数组
+    }
+
+    private function Recursively($result)
+    {
+        foreach($result as &$list){
+            $reply = [];
+            foreach($result as $value){
+                if($list['id'] == $value['comment_id'] && $list['id'] != $value['id']){
+                    $reply[] = $value;
+                }
+            }
+            $list['comment'] = $reply;
+        }
+        return $result;
+    }
+
+    /**
+     *
+    */
+    public function getAdd()
+    {
+
+    }
 }

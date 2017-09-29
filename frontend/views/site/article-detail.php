@@ -10,7 +10,7 @@ use frontend\assets\AppAsset;
 $this->title = '文章详情';
 AppAsset::addScript($this , '@web/js/article/comment.js');
 ?>
-<div class="site-index" id="index">
+<div class="site-index" id="index" data-id="<?=$Article['id']?>">
     <div class="index-bg"></div>
     <div class="index-head detail-head">
         <?php if($Article):?>
@@ -28,25 +28,42 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
             <?php endif;?>
             <div class="comment clearfix">
                 <div class="comment-list">
+                    <?php
+
+                        function all($data){
+                            $res = '<div class="comment-detail-reply" data-level="'.$data['level'].'">
+                                    <div class="comment-user"><a>'.$data['user']['username'].'</a> 评论于</div>
+                                    <div class="comment-content font">'.$data['content'].'</div>
+                                </div>';
+
+                            if(isset($data['comment']) && is_array($data['comment'])){
+                                foreach($data['comment'] as $v){
+                                    all($v);
+                                }
+                            }
+                            echo $res;
+                        };
+                    ?>
                     <h2>共 <?=$total?> 条评论</h2>
                     <?php foreach($Comment as $list):?>
                         <div class="comment-detail">
                             <div class="comment-user"><a><?=$list['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$list['create_time'])?></div>
                             <div class="comment-content font"><?=$list['content']?></div>
                         </div>
-                        <?php if($list['comment']):?>
+                        <?php if(isset($list['comment'])):?>
                         <?php foreach($list['comment'] as $reply):?>
-                            <div class="comment-detail-reply">
-                                <div class="comment-user"><a><?=$reply['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$reply['create_time'])?></div>
-                                <div class="comment-content font"><?=$reply['content']?></div>
-                            </div>
+                              <?php  all($reply);?>
+                           <!-- <div class="comment-detail-reply">
+                                <div class="comment-user"><a><?/*=$reply['user']['username']*/?></a> 评论于 <?/*=date('Y-m-d H:i',$reply['create_time'])*/?></div>
+                                <div class="comment-content font"><?/*=$reply['content']*/?></div>
+                            </div>-->
                         <?php endforeach;?>
                             <div class="icon-reply"><a>回复</a></div>
                         <?php endif;?>
                     <?php endforeach;?>
                 </div>
                 <div class="comment-value clearfix">
-                    <input id="input-text" class="font float-left" type="text" value="评论:" />
+                    <input id="input-text" class="font float-left" type="text" placeholder="评论:" value="" />
                     <input id="input-button" class="font float-left" type="button" value="发表" />
                 </div>
             </div>

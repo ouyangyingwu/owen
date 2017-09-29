@@ -61,7 +61,7 @@ class Article extends  BaseModel
             [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
             [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
             [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['id', 'create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
+            [['create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
         ];
