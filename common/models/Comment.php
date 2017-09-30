@@ -2,6 +2,7 @@
 namespace common\models;
 
 use Yii;
+use common\exception\ModelException;
 
 /**
  * Comment model
@@ -55,8 +56,8 @@ class Comment extends  BaseModel
     {
         return [
             [['id' , 'user_id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
-            [['user_d' ,'comment_id' ,'article_id' , 'content'],'required','on'=>self::SCENARIO_ADD],
-            [['id' , 'user_d' ,'comment_id' ,'article_id' ], 'integer'],                     //这条及以下的规则是当数据存在时验证
+            [['user_id' ,'comment_id' ,'article_id' , 'content'],'required','on'=>self::SCENARIO_ADD],
+            [['id' , 'user_id' ,'comment_id' ,'article_id' ], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['content'], 'string', 'max' => 255],
         ];
     }
@@ -64,7 +65,7 @@ class Comment extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_ADD => ['user_d' ,'comment_id' ,'article_id' , 'content'],
+            self::SCENARIO_ADD => ['user_id' ,'comment_id' ,'article_id' , 'content'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
             self::SCENARIO_LIST => ['article_id']
@@ -202,25 +203,29 @@ class Comment extends  BaseModel
         return $tree;                                       //返回新数组
     }
 
-    private function Recursively($result)
-    {
-        foreach($result as &$list){
-            $reply = [];
-            foreach($result as $value){
-                if($list['id'] == $value['comment_id'] && $list['id'] != $value['id']){
-                    $reply[] = $value;
-                }
-            }
-            $list['comment'] = $reply;
-        }
-        return $result;
-    }
-
     /**
      *
     */
     public function getAdd()
     {
+        //$this->scenario = self::SCENARIO_ADD;
+        //var_dump($this);die;
+        //if ($this->validate()) {
+            $comment = new Comment();
+            //$comment->user_id = $this->
+            $comment->create_time = time();
+            $comment->status = 1;
+            //var_dump($comment);die;
 
+            if($comment->save())
+            {
+                return $comment;
+            }
+            return null;
+        /*} else {
+            return 'mmp';
+            $errorMsg = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
+        }*/
     }
 }

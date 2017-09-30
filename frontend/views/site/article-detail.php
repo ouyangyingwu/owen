@@ -30,8 +30,8 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
                 <div class="comment-list">
                     <?php
 
-                        function all($data){
-                            $res = '<div class="comment-detail-reply" data-level="'.$data['level'].'">
+                        function all($data , $res=''){
+                            $res .= '<div class="comment-detail-reply hide" data-level="'.$data['level'].'">
                                     <div class="comment-user"><a>'.$data['user']['username'].'</a> 评论于</div>
                                     <div class="comment-content font">'.$data['content'].'</div>
                                 </div>';
@@ -58,8 +58,8 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
                                 <div class="comment-content font"><?/*=$reply['content']*/?></div>
                             </div>-->
                         <?php endforeach;?>
-                            <div class="icon-reply"><a>回复</a></div>
                         <?php endif;?>
+                        <div class="icon-reply"><a>回复</a></div>
                     <?php endforeach;?>
                 </div>
                 <div class="comment-value clearfix">

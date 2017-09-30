@@ -58,7 +58,7 @@ $(function(){
                 },
                 error:function(da,mess){                             //请求失败时将调用此方法
                     console.log(da , mess);
-                    alert("数据连接失败！");
+                    //alert("数据连接失败！");
                 }
             });
         }else {

@@ -20,8 +20,8 @@ class CommentController extends Controller
     public function actionAdd()
     {
         $comment = new Comment();
-        $comment->id = Yii::$app->request->post('id');
-        var_dump(Yii::$app->request->post());die;
+        $comment->scenario = Comment::SCENARIO_ADD;
+        $comment->setAttributes(Yii::$app->request->post());
         return $comment->getAdd();
     }
 
