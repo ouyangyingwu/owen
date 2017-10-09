@@ -28,13 +28,13 @@ class Comment extends  BaseModel
         return '{{%article_comment}}';
     }
 
-    public $id;
+    /*public $id;
     public $comment_id;
     public $user_id;
     public $article_id;
     public $content;
     public $create_time;
-    public $status;
+    public $status;*/
 
     public $page = 1;
     public $per_page = 10;
@@ -208,24 +208,23 @@ class Comment extends  BaseModel
     */
     public function getAdd()
     {
-        //$this->scenario = self::SCENARIO_ADD;
+        $this->scenario = self::SCENARIO_ADD;
         //var_dump($this);die;
-        //if ($this->validate()) {
+        if ($this->validate()) {
             $comment = new Comment();
-            //$comment->user_id = $this->
-            $comment->create_time = time();
-            $comment->status = 1;
-            //var_dump($comment);die;
-
+            $comment->setAttributes($this->safeAttributesData());
+            /*$comment->create_time = time();
+            $comment->status = 1;*/
+            var_dump($comment->save());die;
             if($comment->save())
             {
                 return $comment;
             }
             return null;
-        /*} else {
+        } else {
             return 'mmp';
             $errorMsg = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
-        }*/
+        }
     }
 }

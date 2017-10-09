@@ -9,7 +9,6 @@ $(function(){
     $(".index-head-left>div").each(function(){
         arr.push($(this).attr("data-id"));                      //获取首页展示的所有文章的id用于查询文章
     });
-    console.log(arr);
     var token = $('meta[name=csrf-token]').attr('content');     /*所有ajax的post请求都需要传递这个参数*/
     var list = [];
     if(list.length == 0){
