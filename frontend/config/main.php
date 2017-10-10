@@ -11,6 +11,8 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    //'timeZone'=>'PRC',      //设置为中国时区，如果不写则自动调用公共配置文件(common\config\main.php)里的设置
+    //'timeZone'=>'UTC',      //设置为美国时区
     'components' => [
         'request' => [
             'csrfParam' => '_csrf',

@@ -4,18 +4,18 @@ namespace common\models;
 use Yii;
 
 /**
- * Article model
+ * This is the model class for table "Article".
  *
  * @property integer $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $email
- * @property string $auth_key
+ * @property integer $user_id
+ * @property string $title
+ * @property string $describe
+ * @property string $content
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
+ * @property integer $type
+ * @property string $create_time
+ * @property string $edit_time
+ * @property integer $is_delete
  */
 class Article extends  BaseModel
 {

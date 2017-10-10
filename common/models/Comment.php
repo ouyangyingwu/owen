@@ -5,18 +5,15 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * Comment model
+ * This is the model class for table "article_comment".
  *
  * @property integer $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $email
- * @property string $auth_key
+ * @property integer $comment_id
+ * @property integer $user_id
+ * @property integer $article_id
+ * @property string $content
+ * @property string $create_time
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
  */
 class Comment extends  BaseModel
 {
@@ -28,6 +25,7 @@ class Comment extends  BaseModel
         return '{{%article_comment}}';
     }
 
+    //定义这些属性会使的赋值时付错地方
     /*public $id;
     public $comment_id;
     public $user_id;
@@ -169,7 +167,7 @@ class Comment extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             $this->addOrderBy();
-            $this->addLimit();
+            //$this->addLimit();
             $result = $this->_query->all();
 
             $comment = [];
@@ -208,21 +206,19 @@ class Comment extends  BaseModel
     */
     public function getAdd()
     {
-        $this->scenario = self::SCENARIO_ADD;
-        //var_dump($this);die;
         if ($this->validate()) {
             $comment = new Comment();
+            $comment->scenario = self::SCENARIO_ADD;
             $comment->setAttributes($this->safeAttributesData());
-            /*$comment->create_time = time();
-            $comment->status = 1;*/
-            var_dump($comment->save());die;
+            $comment->create_time = time();
+            $comment->status = 1;
+            //var_dump($this , $comment);die;
             if($comment->save())
             {
                 return $comment;
             }
             return null;
         } else {
-            return 'mmp';
             $errorMsg = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
         }

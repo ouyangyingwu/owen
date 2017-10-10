@@ -22,6 +22,7 @@ class CommentController extends Controller
         $comment = new Comment();
         $comment->scenario = Comment::SCENARIO_ADD;
         $comment->setAttributes(Yii::$app->request->post());
+        //var_dump($comment->save());die;
         return $comment->getAdd();
 
     }

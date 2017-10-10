@@ -59,7 +59,11 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
                             </div>-->
                         <?php endforeach;?>
                         <?php endif;?>
-                        <div class="icon-reply"><a>回复</a></div>
+                        <div class="icon-reply"><a>查看回复</a></div>
+                        <div class="comment-value hide clearfix">
+                            <input id="input-text" class="font float-left" type="text" placeholder="评论:" value="" />
+                            <input id="input-button" class="font float-left" type="button" value="发表" />
+                        </div>
                     <?php endforeach;?>
                 </div>
                 <div class="comment-value clearfix">
