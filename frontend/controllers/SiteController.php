@@ -3,6 +3,7 @@ namespace frontend\controllers;
 
 use common\models\Article;
 use common\models\Comment;
+use common\models\User;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -119,6 +120,9 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $user = new User();
+            $user->setAttributes(Yii::$app->request->post());
+            $_SESSION['user'] = $user->getOne();
             return $this->goBack();
         } else {
             return $this->render('login', [

@@ -46,9 +46,15 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
                     ?>
                     <h2>共 <?=$total?> 条评论</h2>
                     <?php foreach($Comment as $list):?>
-                        <div class="comment-detail">
-                            <div class="comment-user"><a><?=$list['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$list['create_time'])?></div>
+                        <div class="comment-detail clearfix">
+                            <div class="comment-user" data-id="<?=$list['id']?>"><a><?=$list['user']['username']?></a> 评论于 <?=date('Y-m-d H:i',$list['create_time'])?></div>
                             <div class="comment-content font"><?=$list['content']?></div>
+                            <div class="icon-reply float-left"><a>回复</a></div>
+                            <div class="comment-value hide clearfix">
+                                <input id="input-text" class="font float-left input-text" type="text" placeholder="回复:" value="" />
+                                <input id="input-button" class="font float-left input-button" type="button" value="发表" />
+                                <input id="input-button" class="font float-left shut-down" type="button" value="取消" />
+                            </div>
                         </div>
                         <?php if(isset($list['comment'])):?>
                         <?php foreach($list['comment'] as $reply):?>
@@ -59,16 +65,11 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
                             </div>-->
                         <?php endforeach;?>
                         <?php endif;?>
-                        <div class="icon-reply"><a>查看回复</a></div>
-                        <div class="comment-value hide clearfix">
-                            <input id="input-text" class="font float-left" type="text" placeholder="评论:" value="" />
-                            <input id="input-button" class="font float-left" type="button" value="发表" />
-                        </div>
                     <?php endforeach;?>
                 </div>
                 <div class="comment-value clearfix">
-                    <input id="input-text" class="font float-left" type="text" placeholder="评论:" value="" />
-                    <input id="input-button" class="font float-left" type="button" value="发表" />
+                    <input id="input-text" class="font float-left input-text" type="text" placeholder="评论:" value="" />
+                    <input id="input-button" class="font float-left input-button" type="button" value="发表" />
                 </div>
             </div>
         <?php endif;?>

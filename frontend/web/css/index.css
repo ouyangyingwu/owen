@@ -108,7 +108,7 @@ h2{
     padding: 10px 0 5px 10px;
 }
 .detail-head .comment-content{
-    padding-top: 10px;
+    padding: 10px 0 10px 0;
 }
 .comment-detail-reply{
     border-top:1px solid #cccccc;
@@ -122,7 +122,6 @@ h2{
 #input-text{
     width: 400px;
     padding: 5px 10px;
-    color: #cccccc;
     border: 1px solid #cccccc;
     /*输入框背景颜色透明*/
     background-color: transparent;

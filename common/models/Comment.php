@@ -212,7 +212,6 @@ class Comment extends  BaseModel
             $comment->setAttributes($this->safeAttributesData());
             $comment->create_time = time();
             $comment->status = 1;
-            //var_dump($this , $comment);die;
             if($comment->save())
             {
                 return $comment;

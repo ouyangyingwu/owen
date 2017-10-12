@@ -27,7 +27,7 @@ class Article extends  BaseModel
         return '{{%article}}';
     }
 
-    public $id;
+    /*public $id;
     public $user_id;
     public $title;
     public $describe;
@@ -36,7 +36,7 @@ class Article extends  BaseModel
     public $type;
     public $create_time;
     public $edit_time;
-    public $is_delete;
+    public $is_delete;*/
 
     public $page = 1;
     public $per_page = 10;

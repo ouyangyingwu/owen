@@ -12,6 +12,9 @@ use common\widgets\Alert;
 
 //导入css，js文件
 AppAsset::register($this);
+if($_SESSION['user']){
+    <>
+}
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
