@@ -92,7 +92,7 @@ class Comment extends  BaseModel
         }
         if ($this->article_id)
         {
-            $this->_query->andFilterWhere(['user_id' => $this->article_id]);
+            $this->_query->andFilterWhere(['article_id' => $this->article_id]);
         }
         if ($this->status)
         {

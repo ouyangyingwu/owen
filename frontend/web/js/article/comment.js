@@ -63,12 +63,16 @@ $(function(){
 
     });
     $(".comment-content").click(function(){
-        var arr = $(this).parent().siblings('.comment-detail-reply').attr("class").split(' ');
-        if($.inArray('hide' , arr) > 0){
-            $(this).parent().siblings('.comment-detail-reply').removeClass("hide");
-        }else {
-            $(this).parent().siblings('.comment-detail-reply').addClass("hide");
+        var commentreply = $(this).siblings('.comment-detail-reply');
+        if(commentreply){
+            var arr = commentreply.attr("class").split(' ');
+            if($.inArray('hide' , arr) > 0){
+                $(this).siblings('.comment-detail-reply').removeClass("hide");
+            }else {
+                $(this).siblings('.comment-detail-reply').addClass("hide");
+            }
         }
+        return false;
     });
 
 });

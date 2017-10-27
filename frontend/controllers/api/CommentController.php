@@ -22,7 +22,7 @@ class CommentController extends Controller
         $comment = new Comment();
         $comment->scenario = Comment::SCENARIO_ADD;
         $comment->setAttributes(Yii::$app->request->post());
-        $comment->user_id = $_SESSION['user']['id'];
+        $comment->user_id = Yii::$app->user->identity->id;
         return $comment->getAdd();
 
     }
