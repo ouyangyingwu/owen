@@ -1,0 +1,109 @@
+#max{
+	width: 1080px;
+	margin: auto;
+}
+/*动画样式*/
+#range{
+	width: 1080px;
+	height: 600px;
+	background: #000000;
+	margin-top: 20px;
+	cursor: pointer;
+}
+#model{
+	width:30px;
+	height:20px;
+	background:#ffffff;
+	text-align: center;
+	cursor: help;
+	position: relative;
+	left: 0;
+	top: 0;
+	display: inline-block;
+}
+#parameter{
+	margin-top: 20px;
+	padding: 10px 15px;
+	background: #F2F1EE;
+}
+#parameter>div{
+	width: 50%;
+	float: left;
+}
+#m_color li,#b_color li{
+	width: 10px;
+	height: 10px;
+	border: 2px solid #000000;
+	float: left;
+	margin: 0 5px;
+	cursor: pointer;
+}
+#m_color .color_1,#b_color .color_1{
+	border-color: #cccccc;
+}
+#m_color .color_2,#b_color .color_2{
+	border-color: #000000;
+}
+#m_color .color_3,#b_color .color_3{
+	border-color: #FFFFFF;
+}
+#m_color .color_4,#b_color .color_4{
+	border-color: #ff0000;
+}
+#m_color .color_5,#b_color .color_5{
+	border-color: #00ff00;
+}
+#m_color .color_6,#b_color .color_6{
+	border-color: #0000ff;
+}
+
+/*展示图片的样式*/
+.style{
+	color: red;
+}
+#show{
+	width: 1078px;
+	border: 1px solid #00aa00;
+	margin: 20px 0 20px 0;
+	padding-bottom: 10px;
+}
+#show_head{
+	width: 1038px;
+	background: #B4F4EF;
+	padding: 10px 20px;
+}
+#show_head h2{
+	float: left;
+	font-size: 20px;
+	font-weight: bold;
+}
+#show_head div{
+	float: left;
+	width: 80px;
+	text-align: center;
+}
+#show_head em{
+	float: right;
+}
+#img{
+	width:100%;
+	overflow:hidden;
+}
+#show_content{
+	padding: 10px 9px;
+	height: 150px;
+	position: relative;
+	overflow: hidden;
+}
+#show_content ul{
+	height: 150px;
+	position: absolute;
+}
+#show_content li{
+	float: left;
+	width: 265px;
+	text-align: center;
+}
+#show_content img{
+	width:250px;
+}

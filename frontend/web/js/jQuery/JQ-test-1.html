@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>移动</title>
+	<link href="css/base.css" rel="stylesheet" type="text/css" />
+	<link href="css/JQ-test-1.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/plugin/jquery.min.js"></script>
+	<script type="text/javascript" src="js/JQ-test-1/JQ-test-1.js"></script>
+</head>
+
+<body>
+<div id="max">
+	<div id="nav">
+		<div class="mover stlye">
+			<span>哈哈</span>
+			<li >哈哈哈
+				<ul class="ul">
+					<li class="2">哈哈哈1</li>
+					<li class="2">哈哈哈1</li>
+					<li class="2">哈哈哈1
+						<ul class="ul">
+							<li class="2">哈哈哈3</li>
+							<li class="2">哈哈哈3</li>
+							<li class="2">哈哈哈3</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li class="1">哈哈哈</li>
+			<li class="1">哈哈哈
+				<ul class="ul">
+					<li class="2">哈哈哈3</li>
+					<li class="2">哈哈哈3</li>
+					<li class="2">哈哈哈3
+						<ul>
+							<li class="2">哈哈哈4</li>
+							<li class="2">哈哈哈4</li>
+							<li class="2">哈哈哈4</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</div>
+		<div class="mover">
+			<span>呵呵</span>
+			<li class="1">呵呵
+				<ul class="ul">
+					<li class="2">哈哈哈1</li>
+					<li class="2">哈哈哈1</li>
+					<li class="2">哈哈哈1</li>
+				</ul>
+			</li>
+			<li class="1">呵呵
+				<ul class="ul">
+					<li class="2">哈哈哈2</li>
+					<li class="2">哈哈哈2</li>
+					<li class="2">哈哈哈2</li>
+				</ul>
+			</li>
+			<li class="1">呵呵</li>
+		</div>
+		<div class="mover">
+			<span>嘻嘻</span>
+			<li class="1">嘻嘻</li>
+			<li class="1">嘻嘻</li>
+			<li class="1">嘻嘻</li>
+		</div>
+		<div class="mover">
+			<span>嘿嘿</span>
+			<li class="1">嘿嘿</li>
+			<li class="1">嘿嘿</li>
+			<li class="1">嘿嘿</li>
+		</div>
+		<div id="body">
+			<div class="yi" style="display: block;">哈哈的内容</div>
+			<div class="er">呵呵的内容</div>
+			<div class="san">嘻嘻的内容</div>
+			<div class="si">嘿嘿的内容</div>
+		</div>
+	</div>
+	<div id="from">
+		<a href="image/imag_1.jpg" title="这是晋级图片"><img src="image/imag_1.jpg" width="406px" height="180px" alt="加载中..."/></a>
+		<form action="JQ-test-2.html" method="GET"><!--不允许静态文件响应POST请求-->
+			<input type="checkbox" id="cr"/><label for="cr">同意协议</label>
+			<input type="button" id="submit" value="提交"/>
+		</form>
+	</div>
+	<div id="pingpai">
+		<ul class="clearfix">
+			<li>伊利</li>
+			<li>蒙牛</li>
+			<li>哇哈哈</li>
+			<li>旺仔</li>
+			<li>伊利</li>
+			<li>蒙牛</li>
+			<li>哇哈哈</li>
+			<li>旺仔</li>
+			<li>伊利</li>
+			<li>蒙牛</li>
+			<li>哇哈哈</li>
+			<li>旺仔</li>
+			<li>伊利</li>
+			<li>蒙牛</li>
+			<li>哇哈哈</li>
+			<li>旺仔</li>
+			<li>添加品牌</li>
+			<li class="first_step">删除品牌</li>
+		</ul>
+		<div class="btn">
+			<a href=""><span>显示全部品牌</span></a>
+		</div>
+	</div>
+	<div id="bubble">
+		<div class="click">
+			<p></p>
+		</div>
+		<div class="text"></div>
+	</div>
+
+	<!--文件上传-->
+	<div id="upload">
+		<form action="upload_deal.php" method="post" name="myform" enctype="multipart/form-data">
+			请选择您要上传的文件：
+			<input type="hidden" name="MAX_FILE_SIZE" value="<?=10*1024*1024?>" />
+			<input type="file" name="filepath" /><br/>
+			<input type="submit" value="立即上传" />
+		</form>
+	</div>
+
+	<!--文件下载-->
+	<div id="download">
+		请选择下载文件：
+
+		<a href="download.php">广告图片:下载地址一</a><br />
+		<a href="">……</a><br />
+		<a href="">……</a><br />
+	</div>
+</div>
+
+<!--alert-->
+<div id="cover"></div>
+<div  id="alert">
+	<div class="alert_list" id="dialog_alert">
+		<div class="header">
+			<h4 class="modal-title">Alert</h4>
+			<div class="X">X</div>
+		</div>
+		<div class="content">
+		</div>
+		<div class="footer">
+			<button type="button" class="close" id="close">Close</button>
+		</div>
+	</div>
+
+	<div class="alert_list" id="whether_alert">
+		<div class="header">
+			<h4 class="modal-title">Alert</h4>
+			<div class="X">X</div>
+		</div>
+		<div class="content">
+		</div>
+		<div class="footer">
+			<button type="button" class="yse">确认</button>
+			<button type="button" class="close">取消</button>
+		</div>
+	</div>
+
+	<div class="alert_list" id="brand_alert">
+		<div class="header">
+			<h2>添加品牌</h2>
+			<div class="X">X</div>
+		</div>
+		<div id="brand" class="content">
+			<input type="text"/>
+		</div>
+		<div class="footer">
+			<button>确定</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>

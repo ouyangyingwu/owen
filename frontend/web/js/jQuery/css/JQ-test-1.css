@@ -1,0 +1,171 @@
+#max{
+	width: 408px;
+	margin: auto;
+}
+/*第一块*/
+.mover {
+	width:100px;
+	height:30px;
+	background:burlywood;
+	border: 1px solid cornflowerblue;
+	float: left;
+	text-align: center;
+	line-height: 30px;
+	font-size: 14px;
+}
+.mover:hover{
+	background-color: red;
+}
+#nav li{
+	display: none;
+	list-style-type: none;
+	width:100px;
+	height:30px;
+	background:burlywood;
+	border: 1px solid cornflowerblue;
+	position: relative;
+}
+.ul{
+	position: absolute;
+	left: 100px;
+	top:-2px;
+}
+.stlye{
+	background-color: red !important;
+}
+#body div{
+	width: 406px;
+	height: 300px;
+	font-size: 40px;
+	text-align: center;
+	line-height: 200px;
+	border: 1px solid #000000;
+	display: none;
+}
+
+/*第二块*/
+#from{
+	text-align: center;
+	width: 406px;
+	border: 1px solid #000000;
+	height: 200px;
+	margin: 20px 0 20px 0;
+}
+#image{
+	border:1px solid red;
+	overflow:hidden;
+	width: 800px;
+	position: absolute;
+	height: 470px;
+	background-color: #000000;
+}
+#image p{
+	color: #FFFFFF;
+	font-size: 16px;
+}
+
+/*第三块*/
+#pingpai{
+	text-align: center;
+	width: 406px;
+	padding: 0 0 10px 0;
+	border: 1px solid #000000;
+}
+#pingpai ul li{
+	list-style-type: none;
+	text-align: center;
+	height:20px;
+	width: 100px;
+	margin: 10px;
+	float: left;
+	border: 1px solid #000000;
+	line-height: 20px;
+}
+#pingpai .btn{
+	border: 1px solid #000000;
+	text-align: center;
+	width: 100px;
+	margin: auto;
+
+}
+
+/*第四块*/
+#bubble{
+	text-align: center;
+	width: 406px;
+	border: 1px solid #000000;
+	height: 100px;
+	margin: 20px 0 20px 0;
+}
+#bubble .click{
+	width: 106px;
+	border: 1px solid #000000;
+	height: 40px;
+}
+#bubble .click p{
+	width: 106px;
+	background-color: #00A0D1;
+	height: 20px;
+}
+#bubble .text{
+	width: 300px;
+	border: 1px solid #000000;
+	background-color: #00aa00;
+	color: red;
+	height: 60px;
+}
+
+/* 半透明的遮罩层 */
+#cover {
+	background: #000;
+	filter: alpha(opacity=50); /* IE的透明度 */
+	opacity: 0.5;  /* 透明度 */
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100; /* 此处的图层要大于页面 */
+}
+/*弹出窗口公共样式*/
+#alert .alert_list{
+	z-index:101;
+	width: 488px;
+	background-color: #fff;
+	padding: 20px 10px 20px 10px;
+	text-align: center;
+	display: none;
+	position: fixed;
+}
+.header{
+	width: 100%;
+	height: 30px;
+	border-bottom: 1px solid #cccbc8;
+	font-size: 24px;
+	text-align: left;
+	position: relative;
+}
+.header .X{
+	font-size: 12px;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.footer{
+	width: 100%;
+	height: 30px;
+	border-top: 1px solid #cccbc8;
+	font-size: 24px;
+	padding-top: 20px;
+	text-align: right;
+}
+.content{
+	width: 100%;
+	font-size: 14px;
+	padding: 10px 0 10px 0;
+	text-align: center;
+}
+/*提示框窗口*/
+#alert #dialog_alert{
+	z-index:102;
+}
