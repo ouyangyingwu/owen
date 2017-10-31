@@ -50,7 +50,7 @@ $(function(){
                 type:'POST',                                    //请求方式 ("POST" 或 "GET")
                 //async:async,                                  //(默认: true) 默认设置下，所有请求均为异步请求
                 success:function(data){   //请求成功后回调函数
-                    window.location.href = "/site/detail/"+article_id;
+                    window.location.href = "/article/detail/"+article_id;
                 },
                 error:function(da,mess){                             //请求失败时将调用此方法
                     console.log(da , mess);
@@ -75,4 +75,26 @@ $(function(){
         return false;
     });
 
+    $("#upload").click(function(){
+        if($('#file').val()){
+            var formData = new FormData();
+            formData.append('file', $('#file')[0].files[0]);
+            $.ajax({
+                url:'/api/file/url',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function(res) {
+                $("head").append("<link>");
+                var css = $("head").children(":last");
+                css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});
+                var html = "<img src='/image/"+res+"'>";
+                $("#uploadForm").append(html);
+            }).fail(function(res) {
+                alert(res);
+            });
+        }
+    });
 });

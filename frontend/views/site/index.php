@@ -20,6 +20,6 @@ AppAsset::addScript($this , '@web/js/index/index.js');
             <?php endforeach; ?>
             <?php endif;?>
         </div>
-        <div class="font index-head-right"><a class="content" href="<?= Url::toRoute(['site/detail' , 'id' => 1]) ?>"></a></div>
+        <div class="font index-head-right"><a class="content" href="<?= Url::toRoute(['/article/detail' , 'id' => 1]) ?>"></a></div>
     </div>
 </div>

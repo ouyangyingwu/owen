@@ -81,7 +81,7 @@ class SiteController extends Controller
         $article->status = 1;
         $article->select = ['id' , 'title'];
         list($total , $list) = $article->getList();
-        $this->layout = "home";
+
         return $this->render('index' , [
             'ArticleList' => $list
         ]);
@@ -99,7 +99,6 @@ class SiteController extends Controller
         $comment->article_id = $_GET['id'];
         list($total , $list) = $comment->getList();
 
-        $this->layout = "home";
         return $this->render('article-detail' , [
             'Article' => $article,
             'Comment' => $list,
@@ -166,15 +165,6 @@ class SiteController extends Controller
         }
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return mixed
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
 
     /**
      * Signs user up.

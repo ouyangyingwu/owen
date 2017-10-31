@@ -35,7 +35,7 @@ $(function(){
         for(var i=0;i<list.length;i++){
             if(list[i].id == id){
                 var time = list[i].describe.length;
-                content.attr('href','/site/detail/'+list[i].id);
+                content.attr('href','/article/detail/'+list[i].id);
                 if(list[i].describe != rightText){
                     content.lbyl({
                         content: list[i].describe,
