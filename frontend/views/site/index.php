@@ -5,7 +5,8 @@ use frontend\assets\AppAsset;
 /* @var $this yii\web\View */
 
 $this->title = 'Owen Home';
-AppAsset::addScript($this , '@web/js/index/index.js');
+AppAsset::addScript($this , '@web/js/public/l-by-l.min.js');
+AppAsset::addScript($this , '@web/js/site/index.js');
 ?>
 <div class="site-index" id="index">
     <div class="index-bg"></div>

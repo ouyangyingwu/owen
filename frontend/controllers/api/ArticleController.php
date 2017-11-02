@@ -26,9 +26,21 @@ class ArticleController extends Controller
     public function actionList()
     {
         $article = new Article();
+        $article->scenario = Article::SCENARIO_SEARCH;
+        $article->setAttributes(Yii::$app->request->post());    //只有上一句代码存在时才能使用这句接批量收数据
+        $article->expand = ['user'];
         $article->status = 1;
-        $article->id = Yii::$app->request->post('id');
         list($total, $result) = $article->getList();
-        return $result;
+        //return $result;
+        return ['data'=>$result , 'total' => $total];
+    }
+    public function actionAdd()
+    {
+        $article = new Article();
+        $article->scenario = Article::SCENARIO_ADD;
+        $article->setAttributes(Yii::$app->request->post());
+        $article->user_id = Yii::$app->user->identity->id;
+        return $article->getAdd();
+
     }
 }

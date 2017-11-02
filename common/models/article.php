@@ -2,6 +2,8 @@
 namespace common\models;
 
 use Yii;
+use common\exception\ModelException;
+use yii\data\Pagination;
 
 /**
  * This is the model class for table "Article".
@@ -39,7 +41,7 @@ class Article extends  BaseModel
     public $is_delete;*/
 
     public $page = 1;
-    public $per_page = 10;
+    public $per_page = 2;
     public $select;
     public $order_by;
     public $expand = [];
@@ -61,7 +63,7 @@ class Article extends  BaseModel
             [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
             [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
             [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
+            [['create_time' , 'type' , 'endit_time', 'page'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
         ];
@@ -70,7 +72,7 @@ class Article extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content'],
+            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
             self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
             self::SCENARIO_STATUS => ['id' , 'status'],
@@ -112,7 +114,7 @@ class Article extends  BaseModel
         {
             $this->_query->andFilterWhere(['status'=>$this->status]);
         }
-        if ($this->type)
+        if (isset($this->type))
         {
             $this->_query->andFilterWhere(['type'=>$this->type]);
         }
@@ -198,9 +200,14 @@ class Article extends  BaseModel
             }
             $this->addQueryExpand();
             $this->addOrderBy();
+            /*$pages = new Pagination(['totalCount' => $total]);    //用于php分页代码
+            $pages->pageSize = 1;
+            $result = $this->_query->offset($pages->offset)
+                ->limit($pages->limit)
+                ->all();*/
             $this->addLimit();
             $result = $this->_query->all();
-            return [$total, $result];
+            return [$total , $result];
         }
     }
     /**
@@ -212,6 +219,28 @@ class Article extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             return $this->_query->one();
+        }
+    }
+    /**
+     * 添加数据
+    */
+    public function getAdd()
+    {
+        if ($this->validate()) {
+            $article = new Article();
+            $article->scenario = self::SCENARIO_ADD;
+            $article->setAttributes($this->safeAttributesData());
+            $article->create_time = time();
+            $article->status = 1;
+            $article->is_delete = 0;
+            if($article->save())
+            {
+                return $article;
+            }
+            return null;
+        } else {
+            $errorMsg = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
         }
     }
 }

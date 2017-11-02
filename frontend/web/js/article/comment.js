@@ -52,9 +52,9 @@ $(function(){
                 success:function(data){   //请求成功后回调函数
                     window.location.href = "/article/detail/"+article_id;
                 },
-                error:function(da,mess){                             //请求失败时将调用此方法
-                    console.log(da , mess);
-                    //alert("数据连接失败！");
+                error:function(XMLHttpRequest){                             //请求失败时将调用此方法
+                    //console.log(da , mess);
+                    alert(XMLHttpRequest.responseJSON.message+"");
                 }
             });
         }else {

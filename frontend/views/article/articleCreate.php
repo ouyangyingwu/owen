@@ -2,11 +2,11 @@
 
 /* @var $this yii\web\View */
 
-use yii\helpers\Html;
-use \yii\helpers\Url;
+use frontend\assets\AppAsset;
 
 $this->title = 'Create article';
 $this->params['breadcrumbs'][] = $this->title;
+AppAsset::addScript($this , '@web/js/article/add.js');
 ?>
 <div class="site-about">
     <div class="create-top">
@@ -33,10 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         </label>
                         <div class="col-md-5">
                             <select class="form-control" id="type" data-field="type">
-                                <option value="0">日常小结</option>
                                 <option value="1">成长日记</option>
-                                <option value="2">读书笔记</option>
-                                <option value="3">人生感悟</option>
+                                <option value="2">日常小结</option>
+                                <option value="3">读书笔记</option>
+                                <option value="4">人生感悟</option>
                             </select>
                         </div>
                     </div>
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-8">
-                            <textarea data-field="summary" class="form-control ng-pristine ng-untouched ng-valid" rows="5" placeholder="Enter Summary ..." category="for-check" register-validate-focus="1" register-validate-blur="1"></textarea>
+                            <textarea data-field="summary" id="summary" class="form-control ng-pristine ng-untouched ng-valid" rows="5" placeholder="Enter Summary ..."></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-8">
-                            <textarea data-field="summary" class="form-control ng-pristine ng-untouched ng-valid" rows="10" ng-model="news.summary" placeholder="Content ..." category="for-check" register-validate-focus="1" register-validate-blur="1"></textarea>
+                            <textarea id="content" class="form-control ng-pristine ng-untouched ng-valid" rows="10" placeholder="Content ..." ></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-5">
-                            <select class="form-control" id="news_type" data-field="type">
+                            <select class="form-control" id="is_released" data-field="type">
                                 <option value="0">NO</option>
                                 <option value="1">YES</option>
                             </select>
@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <div class="form-actions right">
                     <div class="col-md-7">
-                        <button type="submit" class="btn blue" ng-click="addArticle()">Save</button>
+                        <button type="submit" class="btn blue" id="addArticle"">Save</button>
                         <button type="button" class="btn default" ng-click="resetNews()">Reset</button>
                     </div>
                 </div>

@@ -7,6 +7,8 @@ use common\models\User;
 use Yii;
 use yii\web\Controller;
 
+
+
 /**
  * Site controller
  */
@@ -14,13 +16,16 @@ class ArticleController extends Controller
 {
     public function actionIndex()
     {
-        $article = new Article();
+        //注释部分用于前端数据处理
+        /*$article = new Article();
         $article->order_by = ['id' => 1];
         $article->status = 1;
         $article->expand = ['user'];
-        list($total , $list) = $article->getList();
+        list($total , $list) = $article->getList();*/
+
         return $this->render('articleList' , [
-            'ArticleList' => $list
+            /*'ArticleList' => $list,
+            'pages'=>$total*/
         ]);
     }
 

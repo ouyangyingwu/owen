@@ -13,15 +13,16 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/base.css',
+        //'css/base.css',
+        'css/font-awesome.css',         //图标生成文件
         'css/site.css',
         'css/index.css',
     ];
     //导入公共文件
     public $js = [
-        'js/plugin/jquery.min.js',
-        'js/plugin/jQuery.cookie.js',
-        'js/plugin/l-by-l.min.js',
+        'js/public/jquery.min.js',
+        'js/public/jQuery.cookie.js',   //cookie插件
+        'js/public/main.js',            //常用的公共处理函数
     ];
     //把导入的js文件移动到头部
     public $jsOptions = ['position' => View::POS_HEAD];

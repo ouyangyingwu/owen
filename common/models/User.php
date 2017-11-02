@@ -67,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content'],
+            self::SCENARIO_SEARCH => ['id', 'email'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
             self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
             self::SCENARIO_STATUS => ['id' , 'status'],
@@ -82,7 +82,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     private function createQuery($asArray = true)
     {
-        $this->_query = static::find()->where(['is_delete'=>false]);
+        $this->_query = static::find();
         if ($asArray)
         {
             $this->_query->asArray();
@@ -93,25 +93,9 @@ class User extends ActiveRecord implements IdentityInterface
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
         }
-        if (is_numeric($this->user_id))
+        if ($this->email)
         {
-            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
-        }
-        if ($this->describe)
-        {
-            $this->_query->andFilterWhere(['ILIKE', 'describe', $this->describe]);
-        }
-        if ($this->title)
-        {
-            $this->_query->andFilterWhere(['ILIKE' ,'title' , $this->title]);
-        }
-        if ($this->status)
-        {
-            $this->_query->andFilterWhere(['status'=>$this->status]);
-        }
-        if ($this->type)
-        {
-            $this->_query->andFilterWhere(['type'=>$this->type]);
+            $this->_query->andFilterWhere(['ILIKE', 'email', $this->email]);
         }
         if(count($this->select)>0)
         {

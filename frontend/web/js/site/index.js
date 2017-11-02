@@ -19,7 +19,7 @@ $(function(){
             type:'POST',                                    //请求方式 ("POST" 或 "GET")
             //async:async,                                  //(默认: true) 默认设置下，所有请求均为异步请求
             success:function(data , textStatus , jqXHR ){   //请求成功后回调函数
-                list = data;
+                list = data.data;
             },
             error:function(da,mess){                             //请求失败时将调用此方法
                 console.log(da , mess);
