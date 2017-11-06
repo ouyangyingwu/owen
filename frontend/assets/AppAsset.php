@@ -15,14 +15,18 @@ class AppAsset extends AssetBundle
     public $css = [
         //'css/base.css',
         'css/font-awesome.css',         //图标生成文件
+        'css/components.min.css',
         'css/site.css',
         'css/index.css',
+        'assets/bootstrap-editable/css/bootstrap-editable.css', //数据编辑器css
     ];
     //导入公共文件
     public $js = [
         'js/public/jquery.min.js',
         'js/public/jQuery.cookie.js',   //cookie插件
         'js/public/main.js',            //常用的公共处理函数
+        'assets/bootstrap-editable/js/bootstrap.js',
+        'assets/bootstrap-editable/js/bootstrap-editable.js',   //数据编辑器js
     ];
     //把导入的js文件移动到头部
     public $jsOptions = ['position' => View::POS_HEAD];

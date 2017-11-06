@@ -41,6 +41,12 @@ class ArticleController extends Controller
         $article->setAttributes(Yii::$app->request->post());
         $article->user_id = Yii::$app->user->identity->id;
         return $article->getAdd();
-
+    }
+    public function actionEdit()
+    {
+        $article = new Article();
+        $article->scenario = Article::SCENARIO_EDIT;
+        $article->setAttributes(Yii::$app->request->post());
+        return $article->getedit();
     }
 }

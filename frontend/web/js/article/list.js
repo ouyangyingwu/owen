@@ -5,10 +5,11 @@ $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var token = $('meta[name=csrf-token]').attr('content');
     var article_id = $("#index").attr("data-id");
-    var params = {"id": "","type":"","user_id":"",page:1};
+    var params = {_csrf:token};
+
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
-        params['page'] = 1;
+        params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
@@ -25,9 +26,11 @@ $(function(){
         $('.select-id').val('');
         $('.select-type').val('');
         $('.select-user_id').val('');
-        articleList();
+        params = {page:1 , _csrf:token};
+        articleList(params);
     });
-    //用户筛选
+    //用户列表下拉框
+    var user = false;
     (function(){
         $.ajax({
             url:"/api/user/list",
@@ -36,6 +39,7 @@ $(function(){
             type:'POST',
             success:function(data){
                 if(data){
+                    user = data;
                     var html = '';
                     if(data){
                         for (var i=0;i<data.length;i++){
@@ -55,42 +59,110 @@ $(function(){
         });
     })();
 
+    //init edit form
+    var getEditSource = function(name){
+        switch(name){
+            case  'user_id':
+                var userList = [];
+                for(var i = 0 ; i < user.length; i++){
+                    userList.push({"value": user[0].id, "text": user[0].username});
+                }
+                return userList;
+            case 'type':
+                return [
+                    {value: 1, text: '成长日记'},
+                    {value: 2, text: '日常小结'},
+                    {value: 3, text: '读书笔记'},
+                    {value: 4, text: '人生感悟'}
+                ];
+            case 'is_released':
+                return [
+                    {value: 1, text: 'True'},
+                    {value: 0, text: 'False'}
+                ];
+            default:
+                return null;
+        }
+    };
+    //详情
+    function initEditForm(data){
+        console.log(data);
+        $.fn.editable.defaults.mode = 'inline';
+        $('#article-detail').find("[name='form-edit']").each(function(){
+            var name = $(this).attr("data-name");
+            var dataType = $(this).attr("data-type");
+            var copythis = this;
+            var editSource = getEditSource(name);
+            var displayValue = data[name];
+            var options = {
+                type: dataType,
+                name: name,
+                value: displayValue,
+                display : function(value){
+                    $(this).text(displayValue);
+                },
+                inputclass: "form-control",
+                url: function(params){
+                    var oldValue = $(copythis).text();
+                    var postData = {};
+                    postData["_csrf"] = token;
+                    postData["edit_name"] = name;
+                    postData["edit_value"] = params["value"];
+                    postData["id"] = data.id;
+                    $.ajax({
+                        url:"/api/article/edit",
+                        data:postData,
+                        dataType:'json',
+                        type:'POST',
+                        success:function(data){
+                            $(copythis).text(data[name]);
+                        },
+                        error:function(XMLHttpRequest){
+                            alert(XMLHttpRequest.responseJSON.message+"");
+                            $(copythis).text(oldValue);
+                        }
+                    });
+                },
+                validate: function(value){
+                    var needValidate = $(copythis).attr("data-need-validate");
+                    if(needValidate){
+                        var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                        if(msg){
+                            return msg;
+                        }
+                    }
+                }
+            };
+            if(editSource){
+                options["source"] = editSource;
+            }
+            //$(this).text("").editable("destroy");
+            $(this).editable(options);
+        });
+    }
+
     function typetostr(type){
-        //console.log(type);
         switch (type){
             case 1: type = '成长日记';return type;break;
             case 2: type = '日常小结';return type;break;
             case 3: type = '读书笔记';return type;break;
             case 4: type = '人生感悟';return type;break;
         }
-       // console.log(type);
         return type;
     }
     var createButtonList = function(row){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" model-type=\"activeEmployee\" class='test' ><i class=\"icon-edit\"></i> Edit</a>");
-        buttonList.push("<a name=\"table-button-list\" model-type=\"deleteCoupon\" ><i class=\"icon-trash\"></i> Remove</a>");
-
+        buttonList.push("<a name=\"table-button-list\" class='article-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        buttonList.push("<a name=\"table-button-list\" class='article-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
         return buttonList;
-    }
-
-
+    };
     //articleList
+    var first_page = 0;
     function articleList(params){
-        if(params){
-            var id = params['id'];
-            var type = params['type'];
-            var user_id = params['user_id'];
-            var page = params['page'];
-        }
+        $('.content').removeClass('hide');
         $.ajax({
             url:"/api/article/list",
-            data:{_csrf:token,
-                id:id,
-                type: type,
-                user_id: user_id,
-                page: page,
-            },
+            data:params,
             dataType:'json',
             type:'POST',
             success:function(data){
@@ -104,9 +176,8 @@ $(function(){
                         data[i]['type'] = typetostr(data[i]['type']);
                         var button = createButtonList(data[i]['id'])
                         button = CommonTool.renderActionButtons(button);
-                        //console.log(data[i]['type']);
 
-                        html += '<tr class="article odd" role="row">';
+                        html += '<tr class="odd" role="row">';
                         html +='<td><a href="/article/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</td>';
                         html +='<td>'+ data[i]['user']['username'] +'</td>';
                         html +='<td>'+ data[i]['title']+'</td>';
@@ -118,12 +189,14 @@ $(function(){
                     }
                     //分页代码
                     var per_page = 5;
-                    if(total < 5){ per_page = total;}
-                    //$('#visible-pages').empty().removeClass();
+                    var number_pages = null;
+                    if(total < 5){ per_page = total;}                           //当页码总数少于要显示的页码数时，显示页码总数
+                    if(total != first_page){number_pages=first_page = total;}   //用于确认页数是否发生了变化
+
                     $('#visible-pages').twbsPagination({
                         totalPages: total,
                         visiblePages: per_page,
-                        page: params['page'],
+                        page: number_pages,                                     //当页数发生变化时重新生成页码，并且初始页为第一页
                         version: '1.1'
                     });
                 } else {
@@ -132,9 +205,24 @@ $(function(){
                 }
                 $('#table-article-list tbody').empty();
                 $('#table-article-list tbody').append(html);
-                $('.test').click(function(){
-                    alert(444);
-                })
+                $('.content').addClass('hide');
+                $('.article-edit').click(function(){
+                    if($(this).attr('type') == 'edit'){
+                        $.ajax({
+                            url:"/api/article/one",
+                            data:{_csrf:token , id:$(this).attr('data-id')},
+                            dataType:'json',
+                            type:'POST',
+                            success:function(data){
+                                $("#article-detail").modal("show");
+                                initEditForm(data);
+                            },
+                            error:function(XMLHttpRequest){
+                                alert(XMLHttpRequest.responseJSON.message+"");
+                            }
+                        });
+                    }else{$("#dialog-confirm").modal("show");}
+                });
             },
             error:function(XMLHttpRequest){
                 alert(XMLHttpRequest.responseJSON.message+"");
@@ -144,21 +232,10 @@ $(function(){
     articleList(params);
 
     var page = 1;
-    /*$('#visible-pages').on('click' ,'li', function(){
-        var dataPage = $(this).attr('data-page');
-        console.log(dataPage);
-        if(dataPage != page){
-            page = dataPage;
-            params['page']=dataPage;
-            articleList(params);
-        }
-    });*/
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
-        //console.log(dataPage);
         if(dataPage != page){
-            page = dataPage;
-            params['page']=dataPage;
+            params['page'] = page = dataPage;
             articleList(params);
         }
     });

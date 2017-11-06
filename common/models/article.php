@@ -45,6 +45,8 @@ class Article extends  BaseModel
     public $select;
     public $order_by;
     public $expand = [];
+    public $edit_name;
+    public $edit_value;
 
     private $_query;
 
@@ -60,10 +62,9 @@ class Article extends  BaseModel
     public function rules()
     {
         return [
-            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
-            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
+            [['id',],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS,self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
             [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['create_time' , 'type' , 'endit_time', 'page'], 'integer'],                     //这条及以下的规则是当数据存在时验证
+            [['create_time' , 'type' , 'endit_time', 'page' , 'user_id' ,'id'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
         ];
@@ -74,7 +75,7 @@ class Article extends  BaseModel
         return [
             self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
-            self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
+            self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
         ];
@@ -114,7 +115,7 @@ class Article extends  BaseModel
         {
             $this->_query->andFilterWhere(['status'=>$this->status]);
         }
-        if (isset($this->type))
+        if (is_numeric($this->type))
         {
             $this->_query->andFilterWhere(['type'=>$this->type]);
         }
@@ -241,6 +242,29 @@ class Article extends  BaseModel
         } else {
             $errorMsg = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
+        }
+    }
+    /**
+     * 修改数据
+     */
+    public function getedit()
+    {
+        if($this->validate())
+        {
+            $article = Article::find()->andFilterWhere(['id' => $this->id])->one();
+            if($article)
+            {
+                $article->scenario = self::SCENARIO_EDIT;
+                $article->setAttribute($this->edit_name, $this->edit_value);
+                if($article->save())
+                {
+                    return [$this->edit_name => $this->edit_value];
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
         }
     }
 }

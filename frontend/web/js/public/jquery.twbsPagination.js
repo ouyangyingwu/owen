@@ -268,9 +268,8 @@
             var $this = $(this);
             var data = $this.data('twbs-pagination');
             var options = typeof option === 'object' && option;
-            //options['startPage'] = option['page'];
-            if (!data ) $this.data('twbs-pagination', (data = new TwbsPagination(this, options) ));
-            //$this.data('twbs-pagination', (data = new TwbsPagination(this, options) ))
+
+            if (!data || option['page']) $this.data('twbs-pagination', (data = new TwbsPagination(this, options) ));
             if (typeof option === 'string') methodReturn = data[ option ].apply(data, args);
         });
 
