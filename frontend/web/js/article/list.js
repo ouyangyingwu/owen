@@ -9,6 +9,7 @@ $(function(){
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
+        params = {_csrf:token};
         params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
@@ -86,7 +87,8 @@ $(function(){
     };
     //详情
     function initEditForm(data){
-        console.log(data);
+        //console.log(data);
+        //data.type = typetostr(data.type);
         $.fn.editable.defaults.mode = 'inline';
         $('#article-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
@@ -94,13 +96,11 @@ $(function(){
             var copythis = this;
             var editSource = getEditSource(name);
             var displayValue = data[name];
+            //$(this).html(displayValue);
             var options = {
                 type: dataType,
                 name: name,
                 value: displayValue,
-                display : function(value){
-                    $(this).text(displayValue);
-                },
                 inputclass: "form-control",
                 url: function(params){
                     var oldValue = $(copythis).text();
@@ -115,7 +115,11 @@ $(function(){
                         dataType:'json',
                         type:'POST',
                         success:function(data){
-                            $(copythis).text(data[name]);
+                            if(name == 'type'){
+                                $(copythis).text(typetostr(data.type));
+                            }else {
+                                $(copythis).text(data[name]);
+                            }
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -136,19 +140,25 @@ $(function(){
             if(editSource){
                 options["source"] = editSource;
             }
-            //$(this).text("").editable("destroy");
+            if(name == 'type'){displayValue = typetostr(data.type);}
+            if(name == 'user_id'){}
+            if(name == 'create_time'){displayValue = CommonTool.formatTime(data.create_time, "Y-m-d a")}
+            $(this).text(displayValue).editable('destroy');
+            //$(this).text(displayValue);
             $(this).editable(options);
         });
     }
 
     function typetostr(type){
-        switch (type){
-            case 1: type = '成长日记';return type;break;
-            case 2: type = '日常小结';return type;break;
-            case 3: type = '读书笔记';return type;break;
-            case 4: type = '人生感悟';return type;break;
+        if(type == 1){
+            return '成长日记';
+        }else if(type == 2){
+            return '日常小结';
+        }else if(type == 3){
+            return '读书笔记';
+        }else if(type == 4){
+            return '人生感悟';
         }
-        return type;
     }
     var createButtonList = function(row){
         var buttonList = [];

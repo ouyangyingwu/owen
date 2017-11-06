@@ -16,6 +16,7 @@ class AppAsset extends AssetBundle
         //'css/base.css',
         'css/font-awesome.css',         //图标生成文件
         'css/components.min.css',
+        //'assets/bootstrap-modal/css/bootstrap-modal.css',
         'css/site.css',
         'css/index.css',
         'assets/bootstrap-editable/css/bootstrap-editable.css', //数据编辑器css
