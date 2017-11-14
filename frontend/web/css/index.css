@@ -16,6 +16,9 @@
 .float-right{
     float: right;
 }
+.fieldset div {
+    line-height: 2;
+}
 h2{
     font-size: 24px;
     font-family: 楷体;

@@ -14,13 +14,13 @@ $(function(){
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
-        if ($('.select-type').val()) {
-            params["type"] = $('.select-type').val();
+        if ($('.select-username').val()) {
+            params["username"] = $('.select-username').val();
         }
-        if ($('.select-user_id').val()) {
-            params["user_id"] = $('.select-user_id').val();
+        if ($('.select-email').val()) {
+            params["email"] = $('.select-email').val();
         }
-        articleList(params);
+        userList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
@@ -28,37 +28,8 @@ $(function(){
         $('.select-type').val('');
         $('.select-user_id').val('');
         params = {page:1 , _csrf:token};
-        articleList(params);
+        userList(params);
     });
-    //用户列表下拉框
-    var user = false;
-    (function(){
-        $.ajax({
-            url:"/api/user/list",
-            data:{_csrf:token , select:['id' , 'username']},
-            dataType:'json',
-            type:'POST',
-            success:function(data){
-                if(data){
-                    user = data;
-                    var html = '';
-                    if(data){
-                        for (var i=0;i<data.length;i++){
-                            html += '<option value="'+data[i]['id']+'">';
-                            html += data[i]['username'];
-                            html += '</option>';
-                        }
-                    } else {
-                        html = '';
-                    }
-                    $('.select-user_id').append(html);
-                }
-            },
-            error:function(XMLHttpRequest){
-                alert(XMLHttpRequest.responseJSON.message+"");
-            }
-        });
-    })();
     //删除
     $("#doConfirm").click(function(){
         var postData = {};
@@ -67,13 +38,13 @@ $(function(){
         postData["edit_value"] = 1;
         postData["id"] = htmlData.id;
         $.ajax({
-            url:"/api/article/edit",
+            url:"/api/user/edit",
             data:postData,
             dataType:'json',
             type:'POST',
             success:function(data){
                 $("#dialog-confirm").modal("hide");
-                articleList(params);
+                userList(params);
             },
             error:function(XMLHttpRequest){
                 alert(XMLHttpRequest.responseJSON.message+"");
@@ -84,23 +55,10 @@ $(function(){
     //init edit form
     var getEditSource = function(name){
         switch(name){
-            case  'user_id':
-                var userList = [];
-                for(var i = 0 ; i < user.length; i++){
-                    userList.push({"value": user[i].id, "text": user[i].username});
-                }
-                return userList;
-            case 'type':
+            case 'activ':
                 return [
-                    {value: 1, text: '成长日记'},
-                    {value: 2, text: '日常小结'},
-                    {value: 3, text: '读书笔记'},
-                    {value: 4, text: '人生感悟'}
-                ];
-            case 'is_released':
-                return [
-                    {value: 1, text: 'True'},
-                    {value: 0, text: 'False'}
+                    {value: 1, text: 'Activ'},
+                    {value: 0, text: 'Freeze'}
                 ];
             default:
                 return null;
@@ -109,7 +67,7 @@ $(function(){
     //修改、详情
     function initEditForm(data){
         $.fn.editable.defaults.mode = 'inline';
-        $('#article-detail').find("[name='form-edit']").each(function(){
+        $('#user-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -117,7 +75,6 @@ $(function(){
             var displayValue = data[name];
             var notEdit = false;                                //默认为可编辑
             if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
-            if(name == 'create_time'){displayValue = CommonTool.formatTime(data.create_time, "Y-m-d a")}
             var options = {
                 type: dataType,
                 name: name,
@@ -132,21 +89,13 @@ $(function(){
                     postData["edit_value"] = param["value"];
                     postData["id"] = data.id;
                     $.ajax({
-                        url:"/api/article/edit",
+                        url:"/api/user/edit",
                         data:postData,
                         dataType:'json',
                         type:'POST',
                         success:function(data){
-                            if(name == 'type'){
-                                $(copythis).text(intTostr(data.type , 'type'));
-                            }else if(name == 'is_released'){
-                                $(copythis).text(intTostr(data.is_released , 'is_released'));
-                            }else if(name == 'user_id'){
-                                $(copythis).text(intTostr(data.user_id , 'user_id'));
-                            }else {
-                                $(copythis).text(data[name]);
-                            }
-                            articleList(params);
+                            $(copythis).text(data[name]);
+                            userList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -168,23 +117,7 @@ $(function(){
             if(editSource){options["source"] = editSource;}
             //为data-name为describe的项做数据验证
             switch (name){
-                case 'describe':
-                    options["validate"] = function(value){
-                        var regexp;
-                        /*regexp = /^[\u4e00-\u9fa5A-Za-z0-9]+$/;
-                        if(!value.match(regexp)){
-                            return "只能有汉字、字母和数字！";
-                        }*/
-                        regexp = /^.{0,150}$/;
-                        if(!value.match(regexp)){
-                            return "最大长度50个汉字或150个字符！";
-                        }
-                    };
             }
-            if(name == 'type'){displayValue = intTostr(data.type , 'type');}
-            if(name == 'user_id'){displayValue = intTostr(data.user_id , 'user_id')}
-            if(name == 'is_released'){displayValue = intTostr(data.is_released , 'is_released');}
-
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
@@ -216,16 +149,16 @@ $(function(){
     }
     var createButtonList = function(row){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='article-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        buttonList.push("<a name=\"table-button-list\" class='article-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
+        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
         return buttonList;
     };
-    //articleList
+    //userList
     var  oldCondition = params;
-    function articleList(params){
+    function userList(params){
         $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
-            url:"/api/article/list",
+            url:"/api/user/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -242,17 +175,13 @@ $(function(){
 
                     //数据列表
                     for (var i=0;i<data.length;i++){
-                        var describe = data[i]['describe'].length < 30 ? data[i]['describe'] : data[i]['describe'].substring(0,30)+'...';
                         var button = createButtonList(data[i]['id'])
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td><a href="/article/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</td>';
-                        html +='<td>'+ data[i]['user']['username'] +'</td>';
-                        html +='<td>'+ data[i]['title']+'</td>';
-                        html +='<td>'+ describe +'</td>';
-                        html +='<td>'+ intTostr(data[i]['type'] , 'type') +'</td>';
-                        html +='<td>'+ CommonTool.formatTime(data[i]['create_time'], "Y-m-d a") +'</td>';
+                        html +='<td><a href="/user/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</td>';
+                        html +='<td>'+ data[i]['username'] +'</td>';
+                        html +='<td>'+ data[i]['email']+'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -281,10 +210,10 @@ $(function(){
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-article-list tbody').empty();
-                $('#table-article-list tbody').append(html);
+                $('#table-user-list tbody').empty();
+                $('#table-user-list tbody').append(html);
                 $('.content').addClass('hide');             //圈圈影藏
-                $('.article-edit').click(function(){
+                $('.user-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -292,10 +221,10 @@ $(function(){
                         }
                     }
                     if($(this).attr('type') == 'edit'){
-                        $("#article-detail").modal("show");
+                        $("#user-detail").modal("show");
                         initEditForm(htmlData);
                     }else{
-                        $("#dialog-confirm").modal("show").find('p').text("你是否要删除这篇文章？");
+                        $("#dialog-confirm").modal("show").find('p').text("你是否要删除这个用户？");
                     }
                 });
             },
@@ -304,14 +233,14 @@ $(function(){
             }
         });
     }
-    articleList(params);
+    userList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            articleList(params);
+            userList(params);
         }
     });
 });

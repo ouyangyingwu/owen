@@ -31,7 +31,7 @@ class ArticleController extends Controller
 
     public function actionCreate()
     {
-        return $this->render('articlecreate');
+        return $this->render('articleCreate');
     }
 
     public function actionDetail($id = 1)
@@ -47,7 +47,7 @@ class ArticleController extends Controller
         $comment->article_id = $_GET['id'];
         list($total , $list) = $comment->getList();
 
-        return $this->render('article-detail' , [
+        return $this->render('articleDetail' , [
             'Article' => $article,
             'Comment' => $list,
             'total' => $total

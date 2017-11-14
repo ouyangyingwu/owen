@@ -29,9 +29,10 @@ class UserController extends Controller
     {
         $user = new User();
         $user->scenario = User::SCENARIO_SEARCH;
-        $user->select = Yii::$app->request->post('select');
+        $user->setAttributes(Yii::$app->request->post());
+        //var_dump(Yii::$app->request->post() , $user);die;
         list($total, $result) = $user->getList();
-        return $result;
+        return ['data'=>$result , 'total' => $total];
     }
     public function actionAdd()
     {

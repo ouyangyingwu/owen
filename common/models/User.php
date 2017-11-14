@@ -55,19 +55,15 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
-            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
-            [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
-            [['describe'], 'string', 'max' => 50],
-            [['content'], 'string', 'max' => 50000],
+            [['id' , 'page'] , 'integer',],
+            [['email' , 'username'], 'string', 'max' => 15],
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'email'],
+            self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'page'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
             self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
             self::SCENARIO_STATUS => ['id' , 'status'],
@@ -96,6 +92,10 @@ class User extends ActiveRecord implements IdentityInterface
         if ($this->email)
         {
             $this->_query->andFilterWhere(['ILIKE', 'email', $this->email]);
+        }
+        if ($this->username)
+        {
+            $this->_query->andFilterWhere(['ILIKE', 'username', $this->username]);
         }
         if(count($this->select)>0)
         {

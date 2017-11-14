@@ -3,7 +3,6 @@ namespace common\models;
 
 use Yii;
 use common\exception\ModelException;
-use yii\data\Pagination;
 
 /**
  * This is the model class for table "Article".
@@ -256,6 +255,7 @@ class Article extends  BaseModel
             {
                 $article->scenario = self::SCENARIO_EDIT;
                 $article->setAttribute($this->edit_name, $this->edit_value);
+                $article->edit_time = time();
                 if($article->save())
                 {
                     return [$this->edit_name => $this->edit_value];

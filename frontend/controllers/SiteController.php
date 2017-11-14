@@ -69,44 +69,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $article = new Article();
-        $article->order_by = ['id' => 1];
-        $article->type = 1;
-        $article->status = 1;
-        $article->select = ['id' , 'title'];
-        list($total , $list) = $article->getList();
-
-        return $this->render('index' , [
-            'ArticleList' => $list
-        ]);
-    }
-    public function actionDetail($id = 8)
-    {
-        $article = new Article();
-        $article->expand = ['user'];
-        $article->status = 1;
-        $article->id = $_GET['id'];
-        $article = $article->getOne();
-
-        $comment = new Comment();
-        $comment->expand = ['user'];
-        $comment->article_id = $_GET['id'];
-        list($total , $list) = $comment->getList();
-
-        return $this->render('article-detail' , [
-            'Article' => $article,
-            'Comment' => $list,
-            'total' => $total
-        ]);
-    }
-
-    /**
      * Logs in a user.
      *
      * @return mixed
