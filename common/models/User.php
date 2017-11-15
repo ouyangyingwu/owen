@@ -36,10 +36,12 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public $page = 1;
-    public $per_page = 10;
+    public $per_page = 2;
     public $select;
     public $order_by;
     public $expand = [];
+    public $edit_name;
+    public $edit_value;
 
     private $_query;
 
@@ -65,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'page'],
             self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
-            self::SCENARIO_EDIT => ['id'  , 'describe' , 'title' , 'content'],
+            self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
         ];
@@ -91,11 +93,11 @@ class User extends ActiveRecord implements IdentityInterface
         }
         if ($this->email)
         {
-            $this->_query->andFilterWhere(['ILIKE', 'email', $this->email]);
+            $this->_query->andFilterWhere(['like', 'email', $this->email]);
         }
         if ($this->username)
         {
-            $this->_query->andFilterWhere(['ILIKE', 'username', $this->username]);
+            $this->_query->andFilterWhere(['like', 'username', $this->username]);
         }
         if(count($this->select)>0)
         {
@@ -193,6 +195,29 @@ class User extends ActiveRecord implements IdentityInterface
             $this->createQuery();
             $this->addQueryExpand();
             return $this->_query->one();
+        }
+    }
+    /**
+    * 修改数据
+    */
+    public function getedit()
+    {
+        if($this->validate())
+        {
+            $user = User::find()->andFilterWhere(['id' => $this->id])->one();
+            if($user)
+            {
+                $user->scenario = self::SCENARIO_EDIT;
+                $user->setAttribute($this->edit_name, $this->edit_value);
+                if($user->save())
+                {
+                    return [$this->edit_name => $this->edit_value];
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
         }
     }
 

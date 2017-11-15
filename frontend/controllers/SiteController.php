@@ -67,6 +67,24 @@ class SiteController extends Controller
             ],
         ];
     }
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $article = new Article();
+        $article->order_by = ['id' => 1];
+        $article->type = 1;
+        $article->status = 1;
+        $article->select = ['id' , 'title'];
+        list($total , $list) = $article->getList();
+
+        return $this->render('index' , [
+            'ArticleList' => $list
+        ]);
+    }
 
     /**
      * Logs in a user.

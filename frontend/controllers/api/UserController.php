@@ -34,6 +34,13 @@ class UserController extends Controller
         list($total, $result) = $user->getList();
         return ['data'=>$result , 'total' => $total];
     }
+    public function actionEdit()
+    {
+        $article = new User();
+        $article->scenario = User::SCENARIO_EDIT;
+        $article->setAttributes(Yii::$app->request->post());
+        return $article->getedit();
+    }
     public function actionAdd()
     {
         $user = new User();

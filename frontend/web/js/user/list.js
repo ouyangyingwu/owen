@@ -55,9 +55,9 @@ $(function(){
     //init edit form
     var getEditSource = function(name){
         switch(name){
-            case 'activ':
+            case 'active':
                 return [
-                    {value: 1, text: 'Activ'},
+                    {value: 1, text: 'Active'},
                     {value: 0, text: 'Freeze'}
                 ];
             default:
@@ -94,7 +94,7 @@ $(function(){
                         dataType:'json',
                         type:'POST',
                         success:function(data){
-                            $(copythis).text(data[name]);
+                            $(copythis).text(intTostr(data[name] , name));
                             userList(params);
                         },
                         error:function(XMLHttpRequest){
@@ -116,34 +116,18 @@ $(function(){
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
             //为data-name为describe的项做数据验证
-            switch (name){
-            }
+            switch (name){}
+            if(name=='active'){displayValue = intTostr(data.active , 'active')}
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
     }
     function intTostr(value , type){
-        if(type == 'type'){
-            if(value == 1){
-                return '成长日记';
-            }else if(value == 2){
-                return '日常小结';
-            }else if(value == 3){
-                return '读书笔记';
-            }else if(value == 4){
-                return '人生感悟';
-            }
-        }else if(type == 'is_released') {
+        if(type == 'active') {
             if (value == 1) {
-                return 'True';
+                return 'Active';
             } else if (value == 0) {
-                return 'False';
-            }
-        }else if (type == 'user_id') {
-            for(var i=0 ; i<user.length ; i++){
-                if(value == user[i]['id']){
-                    return value = user[i]['username'];
-                }
+                return 'Freeze';
             }
         }
     }
@@ -179,7 +163,7 @@ $(function(){
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td><a href="/user/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</td>';
+                        html +='<td>'+data[i]["id"]+'</td>';
                         html +='<td>'+ data[i]['username'] +'</td>';
                         html +='<td>'+ data[i]['email']+'</td>';
                         html +='<td>'+ button +'</td>';
@@ -192,7 +176,7 @@ $(function(){
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    if(condition['id'] !== oldCondition['id'] || condition['user_id'] !== oldCondition['user_id'] || condition['type'] !== oldCondition['type'] ){
+                    if(condition['id'] !== oldCondition['id'] || condition['username'] !== oldCondition['username'] || condition['email'] !== oldCondition['email'] ){
                         number_pages = true;
                         oldCondition = condition;
                     }

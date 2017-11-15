@@ -3,8 +3,6 @@
 /* @var $this yii\web\View */
 
 use frontend\assets\AppAsset;
-use \yii\helpers\Url;
-use yii\widgets\LinkPager;
 
 $this->title = 'User List';
 $this->params['breadcrumbs'][] = $this->title;
@@ -136,7 +134,7 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                                     <span>Activ:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a href="#" name="form-edit" data-name="activ" data-type="select"></a>
+                                    <a href="#" name="form-edit" data-name="active" data-type="select"></a>
                                 </div>
                             </div>
                         </fieldset>
