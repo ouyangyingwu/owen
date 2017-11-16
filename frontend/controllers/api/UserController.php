@@ -46,7 +46,6 @@ class UserController extends Controller
         $user = new User();
         $user->scenario = User::SCENARIO_ADD;
         $user->setAttributes(Yii::$app->request->post());
-        $user->user_id = Yii::$app->user->identity->id;
         return $user->getAdd();
 
     }

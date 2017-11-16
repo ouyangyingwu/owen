@@ -30,28 +30,7 @@ $(function(){
         params = {page:1 , _csrf:token};
         userList(params);
     });
-    //删除
-    $("#doConfirm").click(function(){
-        var postData = {};
-        postData["_csrf"] = token;
-        postData["edit_name"] = 'is_delete';
-        postData["edit_value"] = 1;
-        postData["id"] = htmlData.id;
-        $.ajax({
-            url:"/api/user/edit",
-            data:postData,
-            dataType:'json',
-            type:'POST',
-            success:function(data){
-                $("#dialog-confirm").modal("hide");
-                userList(params);
-            },
-            error:function(XMLHttpRequest){
-                alert(XMLHttpRequest.responseJSON.message+"");
-                $(copythis).text(oldValue);
-            }
-        });
-    });
+
     //init edit form
     var getEditSource = function(name){
         switch(name){
@@ -60,12 +39,23 @@ $(function(){
                     {value: 1, text: 'Active'},
                     {value: 0, text: 'Freeze'}
                 ];
+            case 'sex':
+                return [
+                    {value: 1, text: 'Male'},
+                    {value: 2, text: 'Female'},
+                    {value: 0, text: 'Unknown'}
+                ];
             default:
                 return null;
         }
     };
     //修改、详情
     function initEditForm(data){
+        $("#iframe-image-show").empty();
+        if(data.img_url){
+            var html = "<img src='/image/"+data.img_url+"'>";
+            $("#iframe-image-show").empty().append(html);
+        }
         $.fn.editable.defaults.mode = 'inline';
         $('#user-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
@@ -117,7 +107,9 @@ $(function(){
             if(editSource){options["source"] = editSource;}
             //为data-name为describe的项做数据验证
             switch (name){}
-            if(name=='active'){displayValue = intTostr(data.active , 'active')}
+            if(dataType == 'select'){
+                displayValue = intTostr(data[name] , name);
+            }
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
@@ -130,7 +122,119 @@ $(function(){
                 return 'Freeze';
             }
         }
+        if(type == 'sex') {
+            if (value == 1) {
+                return 'Male';
+            } else if (value == 2) {
+                return 'Female';
+            }else {
+                return 'Unknown';
+            }
+        }
     }
+    //图片处理
+    $("#upload").click(function(){
+        $('#file').trigger('click');
+    });
+    $('#file').change(function(){
+        if($(this).val()){
+            var formData = new FormData();
+            formData.append('file', $('#file')[0].files[0]);
+            $.ajax({
+                url:'/api/file/url',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function(res) {
+                var html = "<img src='/image/"+res+"'>";
+                $("#iframe-image-show").show().empty().append(html);
+                var postData = {};
+                postData["_csrf"] = token;
+                postData["edit_name"] = 'img_url';
+                postData["edit_value"] = res;
+                postData["id"] = htmlData.id;
+                $.ajax({
+                    url:"/api/user/edit",
+                    data:postData,
+                    dataType:'json',
+                    type:'POST',
+                    success:function(data){
+                        htmlData.img_url = data.img_url;
+                        userList(params);
+                    }
+                });
+            }).fail(function(res) {
+                alert(res);
+            });
+        }
+    });
+
+    $("#deleteImg").click(function(){
+        //判断图片是否存在
+        if($("#iframe-image-show").children().length){
+            var postData = {};
+            postData["_csrf"] = token;
+            postData["edit_name"] = 'img_url';
+            postData["edit_value"] = null;
+            postData["id"] = htmlData.id;
+            $.ajax({
+                url:"/api/user/edit",
+                data:postData,
+                dataType:'json',
+                type:'POST',
+                success:function(data){
+                    $("#iframe-image-show").show().empty();
+                    $("#dialog-confirm").modal("show").find('p').text("是否同时删除源文件？");
+                    $("#dialog-confirm").attr({'data-type': 'img_url' , 'data-value': htmlData.img_url });
+                    htmlData.img_url = null;
+                    //userList(params);
+                }
+            });
+        }
+    });
+    //删除
+    $("#doConfirm").click(function(){
+        var dataType = $(this).parent().parent().attr('data-type');
+        var postData = {};
+        postData["_csrf"] = token;
+        switch (dataType){
+            case 'img_url':
+                postData["name"] = $(this).parent().parent().attr('data-value');
+                $.ajax({
+                    url:"/api/file/delete",
+                    data:postData,
+                    dataType:'json',
+                    type:'POST',
+                    success:function(data){
+                        $("#dialog-confirm").modal("hide");
+                    },
+                    error:function(XMLHttpRequest){
+                        alert(XMLHttpRequest.responseJSON.message+"");
+                        $(copythis).text(oldValue);
+                    }
+                });break;
+            case 'is_delete':
+                postData["edit_name"] = 'is_delete';
+                postData["edit_value"] = 1;
+                postData["id"] = htmlData.id;
+                $.ajax({
+                    url:"/api/user/edit",
+                    data:postData,
+                    dataType:'json',
+                    type:'POST',
+                    success:function(data){
+                        $("#dialog-confirm").modal("hide");
+                        userList(params);
+                    },
+                    error:function(XMLHttpRequest){
+                        alert(XMLHttpRequest.responseJSON.message+"");
+                        $(copythis).text(oldValue);
+                    }
+                });break;
+        }
+    });
     var createButtonList = function(row){
         var buttonList = [];
         buttonList.push("<a name=\"table-button-list\" class='user-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
@@ -166,6 +270,8 @@ $(function(){
                         html +='<td>'+data[i]["id"]+'</td>';
                         html +='<td>'+ data[i]['username'] +'</td>';
                         html +='<td>'+ data[i]['email']+'</td>';
+                        html +='<td>'+ data[i]['phone']+'</td>';
+                        html +='<td>'+ intTostr(data[i]['sex'] , 'sex') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -209,6 +315,7 @@ $(function(){
                         initEditForm(htmlData);
                     }else{
                         $("#dialog-confirm").modal("show").find('p').text("你是否要删除这个用户？");
+                        $("#dialog-confirm").attr('data-type' , 'is_delete');
                     }
                 });
             },

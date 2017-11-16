@@ -2,9 +2,7 @@
  * Created by admin on 2017/11/15.
  */
 $(function(){
-    //var postData = [];
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token};
 
     var img_url;
     $("#upload").click(function(){
@@ -20,12 +18,13 @@ $(function(){
                 processData: false,
                 contentType: false
             }).done(function(res) {
-                console.log(res);return;
-                $("head").append("<link>");
+                //在头部插入样式
+               /* $("head").append("<link>");
                 var css = $("head").children(":last");
-                css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});
+                css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});*/
                 var html = "<img src='/image/"+res+"'>";
-                $("#iframe-image-show-2").append(html);
+                $("#iframe-image-show").show().append(html);
+                img_url = res;
             }).fail(function(res) {
                 alert(res);
             });
@@ -61,7 +60,7 @@ $(function(){
         }
 
     };
-    $("#dialog-add-gift").validate({
+    $("#form-add-user").validate({
         //用于取值的属性
         validatetype: "data-field",
         //需要验证的规则
@@ -83,9 +82,9 @@ $(function(){
         errorElement: "span"
     });
 
-    $("#addArticle").on('click' , function(){
+    $("#addUser").click(function(){
         //判断是否通过验证
-        if($("#form-add-article").validate("check")){
+        if($("#form-add-user").validate("check")){
             var postData = {};
             postData['_csrf'] = token;
             postData['username'] = $('#username').val();
@@ -106,6 +105,7 @@ $(function(){
                 }
             });
         }
+        console.log('mmp');
     });
 
 });

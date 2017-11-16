@@ -32,5 +32,17 @@ class FileController extends Controller
         //var_dump($upload_file);die;
         return $upload_file ->FileUrl();
     }
+    public function actionDelete()
+    {
+        $delete_file = new File();
+        $delete_file->name = Yii::$app->request->post('name');
+        return $delete_file ->FileDelete();
+    }
 
+    public function actionAdd()
+    {
+        $create_file = new File();
+        $create_file->content = Yii::$app->request->post('content');
+        return $create_file ->FileCreate();
+    }
 }

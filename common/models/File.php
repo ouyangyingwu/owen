@@ -5,7 +5,7 @@ use Yii;
 
 class File extends  BaseModel
 {
-    public $module;
+    public $content;
     public $category;
     public $pk;
     public $name;
@@ -26,12 +26,6 @@ class File extends  BaseModel
     public function rules()
     {
         return [
-            [['id','user_d' ,'title' ,'content'],'required','on'=>self::SCENARIO_EDIT],     //分情景模式验证，修改的时候需要这条规则
-            [['id'],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS]],
-            [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
-            [['create_time' , 'type' , 'endit_time'], 'integer'],                     //这条及以下的规则是当数据存在时验证
-            [['describe'], 'string', 'max' => 50],
-            [['content'], 'string', 'max' => 50000],
         ];
     }
 
@@ -87,6 +81,24 @@ class File extends  BaseModel
             } else {
                 echo $fileExt . "类型文件不允许上传！";
             }
+        }
+    }
+
+    public function FileDelete(){
+        if (@unlink ('../web/image/'.$this->name)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function FileCreate(){
+        $name = 'CS'.date('Ymd', time()).rand(1000 , 9999).'USER'.Yii::$app->user->identity->id.'.txt';
+        $url = '../web/file/'.$name;
+        $url = fopen($url , "w");
+        fwrite($url , $this->content);
+        if(fclose($url)){
+            return $name;
         }
     }
 }

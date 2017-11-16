@@ -64,21 +64,32 @@ $(function(){
         if($("#form-add-article").validate("check")){
             var postData = {};
             postData['_csrf'] = token;
-            postData['title'] = $('#title').val();
-            postData['type'] = $('#type').val();
-            postData['summary'] = $('#summary').val();
             postData['content'] = $('#content').val();
-            postData['is_released'] = $('#is_released').val();
             $.ajax({
-                url:"/api/article/add",
-                data:postData,
-                dataType:'json',
-                type:'POST',
+                url: "/api/file/add",
+                data: postData,
+                type: 'POST',
+                /*dataType: "json",*/ //当返回值为数组时才能使用json
+                dataType: "text",
                 success:function(data){
-                    window.location.href = "/article/index";
-                },
-                error:function(XMLHttpRequest){
-                    alert(XMLHttpRequest.responseJSON.message+"");
+                    postData['content_url'] = data;
+                    postData['title'] = $('#title').val();
+                    postData['type'] = $('#type').val();
+                    postData['describe'] = $('#summary').val();
+                    postData['is_released'] = $('#is_released').val();
+                    //console.log(postData);return;
+                    $.ajax({
+                        url:"/api/article/add",
+                        data:postData,
+                        dataType:'json',
+                        type:'POST',
+                        success:function(data){
+                            window.location.href = "/article/index";
+                        },
+                        error:function(XMLHttpRequest){
+                            alert(XMLHttpRequest.responseJSON.message+"");
+                        }
+                    });
                 }
             });
         }

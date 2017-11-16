@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use common\exception\ModelException;
+use common\models\File;
 
 /**
  * This is the model class for table "Article".
@@ -51,9 +52,7 @@ class Article extends  BaseModel
 
     const SCENARIO_SEARCH = 'list';
     const SCENARIO_ADD = 'add';
-    const SCENARIO_STATUS = 'status';
     const SCENARIO_EDIT = 'edit';
-    const SCENARIO_DELETE = 'delete';
 
     /**
      * @inheritdoc
@@ -61,8 +60,8 @@ class Article extends  BaseModel
     public function rules()
     {
         return [
-            [['id',],'required','on'=>[self::SCENARIO_DELETE,self::SCENARIO_STATUS,self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id' ,'title' ,'content'],'required','on'=>self::SCENARIO_ADD],
+            [['id',],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id' ,'title' ,'content_url'],'required','on'=>self::SCENARIO_ADD],
             [['create_time' , 'type' , 'endit_time', 'page' , 'user_id' ,'id'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
@@ -73,10 +72,8 @@ class Article extends  BaseModel
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
-            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
+            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content_url' , 'type'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_STATUS => ['id' , 'status'],
-            self::SCENARIO_DELETE => ['id'],
         ];
     }
 
@@ -207,6 +204,9 @@ class Article extends  BaseModel
                 ->all();*/
             $this->addLimit();
             $result = $this->_query->all();
+            foreach($result as &$list){
+                $list['content'] = file_get_contents("../web/file/".$list['content_url']);
+            }
             return [$total , $result];
         }
     }
@@ -235,6 +235,11 @@ class Article extends  BaseModel
             $article->is_delete = 0;
             if($article->save())
             {
+                //var_dump($article);die;
+                //return $article;
+                $file = new File();
+                $file->name = date('Ymd' , time()).$article['id'].$article['user_id'];
+                $file->FileCreate();
                 return $article;
             }
             return null;

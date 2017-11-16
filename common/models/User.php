@@ -6,6 +6,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use common\exception\ModelException;
 
 /**
  * User model
@@ -66,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'page'],
-            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content'],
+            self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
@@ -80,7 +81,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     private function createQuery($asArray = true)
     {
-        $this->_query = static::find();
+        $this->_query = static::find()->where(['is_delete'=>0]);
         if ($asArray)
         {
             $this->_query->asArray();
@@ -218,6 +219,29 @@ class User extends ActiveRecord implements IdentityInterface
         } else {
             $errorStr = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+
+    /**
+     * 添加数据
+     */
+    public function getAdd()
+    {
+        if ($this->validate()) {
+            $user = new User();
+            $user->scenario = self::SCENARIO_ADD;
+            $user->setAttributes($this->safeAttributesData());
+            $user->create_time = time();
+            $user->status = 1;
+            $user->is_delete = 0;
+            if($user->save())
+            {
+                return $user;
+            }
+            return null;
+        } else {
+            $errorMsg = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
         }
     }
 

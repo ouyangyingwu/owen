@@ -77,6 +77,8 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                         <th>ID #</th>
                         <th>User Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
+                        <th>Sex</th>
                         <th style="width: 150px;">Actions</th>
                     </tr>
                     </thead>
@@ -112,16 +114,20 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                                 <div class="col-md-4 text-left">
                                     <a class="notEdit" name="form-edit" data-name="id"></a>
                                 </div>
-                            </div>
-                            <div class="col-md-12">
                                 <div class="col-md-2 text-right">
                                     <span>User Namee:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="username" data-type="text"></a>
+                                    <a name="form-edit" data-name="username" data-type="text"></a>
                                 </div>
                             </div>
                             <div class="col-md-12">
+                                <div class="col-md-2 text-right">
+                                    <span>Phone:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="phone" data-type="text"></a>
+                                </div>
                                 <div class="col-md-2 text-right">
                                     <span>Email:</span>
                                 </div>
@@ -131,10 +137,35 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                             </div>
                             <div class="col-md-12 margint-10">
                                 <div class="col-md-2 text-right">
+                                    <span>Sex:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="sex" data-type="select"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
                                     <span>Activ:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a href="#" name="form-edit" data-name="active" data-type="select"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 margint-10">
+                                <div class="col-md-2 text-right">
+                                    <span>Sticky:</span>
+                                </div>
+                                <div class="input-icon right col-md-9 margin-l5">
+                                    <div class="fileinput fileinput-new">
+                                        <div id="iframe-image-show" class="fileinput-preview thumbnail" style="width: 200px; height: 130px;position: relative;"></div>
+                                        <div>
+                                            <span class="btn red btn-outline btn-file">
+                                                <span class="fileinput-new" id="upload" "> Select image </span>
+                                                <input type="file" id="file" style="display:none;">
+                                            </span>
+                                            <span class="btn red btn-outline btn-file">
+                                                <span class="delete-ing" id="deleteImg"> Delete image </span>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
