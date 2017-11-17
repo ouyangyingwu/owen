@@ -19,6 +19,9 @@
 .fieldset div {
     line-height: 2;
 }
+.help-block{
+    color: red;
+}
 h2{
     font-size: 24px;
     font-family: 楷体;

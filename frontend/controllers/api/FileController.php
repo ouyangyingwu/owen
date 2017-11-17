@@ -29,7 +29,6 @@ class FileController extends Controller
         $upload_file->tmp_name = $_FILES['file']['tmp_name'];
         $upload_file->error = $_FILES['file']['error'];
         $upload_file->size = $_FILES['file']['size'];
-        //var_dump($upload_file);die;
         return $upload_file ->FileUrl();
     }
     public function actionDelete()

@@ -51,6 +51,7 @@ class Article extends  BaseModel
     private $_query;
 
     const SCENARIO_SEARCH = 'list';
+    const SCENARIO_SEARCH_ONE = 'one';
     const SCENARIO_ADD = 'add';
     const SCENARIO_EDIT = 'edit';
 
@@ -61,7 +62,7 @@ class Article extends  BaseModel
     {
         return [
             [['id',],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id' ,'title' ,'content_url'],'required','on'=>self::SCENARIO_ADD],
+            [['user_id' ,'title'],'required','on'=>self::SCENARIO_ADD],
             [['create_time' , 'type' , 'endit_time', 'page' , 'user_id' ,'id'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
             [['content'], 'string', 'max' => 50000],
@@ -72,7 +73,8 @@ class Article extends  BaseModel
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
-            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content_url' , 'type'],
+            self::SCENARIO_SEARCH_ONE => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
+            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content' , 'content_url' , 'type'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -204,9 +206,6 @@ class Article extends  BaseModel
                 ->all();*/
             $this->addLimit();
             $result = $this->_query->all();
-            foreach($result as &$list){
-                $list['content'] = file_get_contents("../web/file/".$list['content_url']);
-            }
             return [$total , $result];
         }
     }
@@ -214,11 +213,15 @@ class Article extends  BaseModel
      * 单条数据查询
      */
     public function getOne(){
-        $this->scenario = self::SCENARIO_DELETE;
+        $this->scenario = self::SCENARIO_SEARCH_ONE;
         if($this->validate()){
             $this->createQuery();
             $this->addQueryExpand();
-            return $this->_query->one();
+            $result = $this->_query->one();
+            if($result['content_url']){
+                $result['content'] = file_get_contents("../web/file/".$result['content_url']);
+            }
+            return $result;
         }
     }
     /**
@@ -230,16 +233,18 @@ class Article extends  BaseModel
             $article = new Article();
             $article->scenario = self::SCENARIO_ADD;
             $article->setAttributes($this->safeAttributesData());
+            if(mb_strlen($article->content) > 500){
+                $file = new File();
+                $file->content = $article->content;
+                $article->content_url = $file->FileCreate();
+                $article->content = null;
+            }
             $article->create_time = time();
             $article->status = 1;
             $article->is_delete = 0;
+            var_dump($article);die;
             if($article->save())
             {
-                //var_dump($article);die;
-                //return $article;
-                $file = new File();
-                $file->name = date('Ymd' , time()).$article['id'].$article['user_id'];
-                $file->FileCreate();
                 return $article;
             }
             return null;

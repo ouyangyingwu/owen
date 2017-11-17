@@ -7,6 +7,7 @@ use frontend\assets\AppAsset;
 $this->title = 'Create article';
 $this->params['breadcrumbs'][] = $this->title;
 AppAsset::addScript($this , '@web/js/public/jquery.validate.js');   //数据验证插件
+AppAsset::addScript($this , '@web/js/public/message_zh.js');   //数据验证插件
 AppAsset::addScript($this , '@web/js/article/add.js');
 ?>
 <div class="site-about">
@@ -17,6 +18,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
     <div class="create-during">
         <div class="portlet-body form" id="form-add-article">
             <div class="form-horizontal">
+                <form id="add-article" method="post" action="" >
                 <div class="form-body">
                     <div class="form-group">
                         <label class="col-md-2 control-label bold">
@@ -24,7 +26,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-5">
-                            <input type="text" class="form-control" data-field="title" id="title" category="for-check">
+                            <input type="text" class="form-control" name="title">
                         </div>
                     </div>
                     <div class="form-group">
@@ -33,7 +35,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-5">
-                            <select class="form-control" id="type" data-field="type">
+                            <select class="form-control" name="type">
                                 <option value="">请选择类型</option>
                                 <option value="1">成长日记</option>
                                 <option value="2">日常小结</option>
@@ -48,16 +50,48 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             <span class="required">  </span>
                         </label>
                         <div class="col-md-8">
-                            <textarea data-field="summary" id="summary" class="form-control" rows="5" placeholder="Enter Summary ..."></textarea>
+                            <textarea name="summary" class="form-control" rows="5" placeholder="Enter Summary ..."></textarea>
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-md-2 control-label bold">
+                            Content Format:
+                            <span class="required"> * </span>
+                        </label>
+                        <div class="col-md-5">
+                            <select class="form-control" id="content-format">
+                                <option value="1">TEXT</option>
+                                <option value="0">URL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group content hide">
                         <label class="col-md-2 control-label bold">
                             Content
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-8">
-                            <textarea id="content" class="form-control" rows="10" placeholder="Content ..." ></textarea>
+                            <textarea name="content" class="form-control" rows="10" placeholder="Content ..." ></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group content-url">
+                        <label class="col-md-2 control-label bold">
+                            Content URL
+                            <span class="required"> * </span>
+                        </label>
+
+                        <div class="col-md-5" style="height: 50px;">
+                            <div style="width: 400px;height: 24px;border-radius: 12px;border: 1px solid #3598dc;">
+                                <div id="processerbar" style="width: 0px;height: 24px;border-radius: 12px;background-color: #3598dc;text-align: center">
+                                    <div class="numb hide"><span>0</span>%</div>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="btn red btn-outline btn-file">
+                                    <span class="fileinput-new" id="upload" "> Select image </span>
+                                    <input type="file" name="content_url" id="file" accept=".txt,.text,.doc,.docx" style="display:none;">
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -66,7 +100,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             <span class="required"> * </span>
                         </label>
                         <div class="col-md-5">
-                            <select class="form-control" id="is_released" data-field="is_released">
+                            <select class="form-control" id="is_released" name="is_released">
                                 <option value="0">NO</option>
                                 <option value="1">YES</option>
                             </select>
@@ -79,6 +113,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                         <button type="button" class="btn default" ng-click="resetNews()">Reset</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>

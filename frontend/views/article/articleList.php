@@ -66,7 +66,7 @@ AppAsset::addScript($this , '@web/js/article/list.js');
                 <i class="icon-shopping-cart"></i> Article List
             </div>
             <div class="actions">
-                <div class="btn-group btn-group-devided" data-toggle="buttons">
+                <div class="btn-group btn-group-devided">
                     <a href="/article/create" class="btn sbold green">
                         Add New <i class="icon-plus"></i>
                     </a>

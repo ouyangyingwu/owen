@@ -71,7 +71,7 @@ AppAsset::addScript($this , '@web/js/user/add.js');
                                 <div>
                                 <span class="btn red btn-outline btn-file">
                                     <span class="fileinput-new" id="upload" "> Select image </span>
-                                    <input type="file" id="file" style="display:none;">
+                                    <input type="file" id="file" accept="image/jpeg,image/gif,image/png" style="display:none;">
                                     </span>
                                 </div>
                             </div>

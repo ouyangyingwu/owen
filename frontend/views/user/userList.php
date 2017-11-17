@@ -56,7 +56,7 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                 <i class="icon-shopping-cart"></i> User List
             </div>
             <div class="actions">
-                <div class="btn-group btn-group-devided" data-toggle="buttons">
+                <div class="btn-group btn-group-devided">
                     <a href="/user/create" class="btn sbold green">
                         Add New <i class="icon-plus"></i>
                     </a>
@@ -159,7 +159,7 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                                         <div>
                                             <span class="btn red btn-outline btn-file">
                                                 <span class="fileinput-new" id="upload" "> Select image </span>
-                                                <input type="file" id="file" style="display:none;">
+                                                <input type="file" id="file" accept="image/jpeg,image/gif,image/png" style="display:none;">
                                             </span>
                                             <span class="btn red btn-outline btn-file">
                                                 <span class="delete-ing" id="deleteImg"> Delete image </span>
