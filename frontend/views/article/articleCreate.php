@@ -65,7 +65,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             </select>
                         </div>
                     </div>
-                    <div class="form-group content hide">
+                    <div class="form-group content">
                         <label class="col-md-2 control-label bold">
                             Content
                             <span class="required"> * </span>
@@ -74,24 +74,22 @@ AppAsset::addScript($this , '@web/js/article/add.js');
                             <textarea name="content" class="form-control" rows="10" placeholder="Content ..." ></textarea>
                         </div>
                     </div>
-                    <div class="form-group content-url">
+                    <div class="form-group content-url hide">
                         <label class="col-md-2 control-label bold">
                             Content URL
                             <span class="required"> * </span>
                         </label>
 
                         <div class="col-md-5" style="height: 50px;">
-                            <div style="width: 400px;height: 24px;border-radius: 12px;border: 1px solid #3598dc;">
-                                <div id="processerbar" style="width: 0px;height: 24px;border-radius: 12px;background-color: #3598dc;text-align: center">
+                            <div class="float-left" style="width: 302px;height: 20px;border-radius: 10px;border: 1px solid #3598dc;margin-top: 1px;">
+                                <div id="processerbar" style="width: 0px;height: 18px;border-radius: 10px;background-color: #3598dc;text-align: center;color: #ffffff;font-weight: bolder;">
                                     <div class="numb hide"><span>0</span>%</div>
                                 </div>
                             </div>
-                            <div>
-                                <span class="btn red btn-outline btn-file">
-                                    <span class="fileinput-new" id="upload" "> Select image </span>
-                                    <input type="file" name="content_url" id="file" accept=".txt,.text,.doc,.docx" style="display:none;">
-                                </span>
-                            </div>
+                            <a class="btn btn-xs green" id="upload" style="margin-left:15px;height: 20px">
+                                <i class="icon-plus"></i>Upload
+                            </a>
+                            <input type="file" name="content_url" id="file" accept=".txt,.text,.doc,.docx" style="display:none;">
                         </div>
                     </div>
                     <div class="form-group">

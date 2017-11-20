@@ -242,7 +242,6 @@ class Article extends  BaseModel
             $article->create_time = time();
             $article->status = 1;
             $article->is_delete = 0;
-            var_dump($article);die;
             if($article->save())
             {
                 return $article;

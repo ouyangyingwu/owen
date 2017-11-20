@@ -72,27 +72,20 @@ $(function(){
         $('#file').trigger('click');
     });
     $("#file").change(function(){
-       /* jQuery('head').append('<link>');
-        var a =jQuery('head').children(':last');
-        a.attr({
-            rel: 'stylesheet',
-            type: 'text/css',
-            href: '../css/css.css'
-        });*/
-        processerbar(10000);
+        timedCount(3000);
     });
 
     $.validator.setDefaults({
         submitHandler: function() {
             var postData = {};
             postData['_csrf'] = token;
+            postData['title'] = $('*[name="title"]').val();
+            postData['type'] = $('*[name="type"]').val();
+            postData['describe'] = $('*[name="summary"]').val();
+            postData['is_released'] = $('*[name="is_released"]').val();
 
             if($("#content-format").val() == 1){
-                postData['content'] = $('#content').val();
-                postData['title'] = $('#title').val();
-                postData['type'] = $('#type').val();
-                postData['describe'] = $('#summary').val();
-                postData['is_released'] = $('#is_released').val();
+                postData['content'] = $('*[name="content"]').val();
                 addarticle(postData);
             } else {
                 var formData = new FormData();
@@ -106,10 +99,6 @@ $(function(){
                     contentType: false
                 }).done(function(res) {
                     postData['content_url'] = res;
-                    postData['title'] = $('#title').val();
-                    postData['type'] = $('#type').val();
-                    postData['describe'] = $('#summary').val();
-                    postData['is_released'] = $('#is_released').val();
                     addarticle(postData);
                 }).fail(function(res) {
                     alert(res);
@@ -119,7 +108,6 @@ $(function(){
     });
 
     function addarticle(postData){
-        console.log(postData);return;
         $.ajax({
             url:"/api/article/add",
             data:postData,
@@ -133,19 +121,20 @@ $(function(){
             }
         });
     }
-    var c=0;
-    var t;
-    function processerbar(time){
-        //$("#processerbar").animate({width:'100%'} , time);
-        var numb = $("#processerbar").children('span');
-        numb.val(c);
-        /*if(numb.val() > 0){
-            numb.removeClass('hide');
-        } else if(numb.val() == 100){
-            numb.val("上传成功");
-        }*/
-        c++;
-        t=setTimeout("processerbar()",100)
-        if(c>100){clearTimeout(t);}
+    function timedCount(time)
+    {
+        var processer = $("#processerbar");
+        //重置
+        processer.css('width',0);
+        processer.find('span').text(0);
+        //进程
+        processer.animate({width:300+"px"},time);
+        processer.find('span').eq(0).numberRock({
+            speed:time/100,
+            count:100,
+            type:"width"
+        })
     }
 });
+
+
