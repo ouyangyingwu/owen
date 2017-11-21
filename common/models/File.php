@@ -12,6 +12,7 @@ class File extends  BaseModel
     public $error;
     public $size;
 
+    //上传文件或图片并返回文件名
     public function FileUrl()
     {
         if (@$this->error > 0) {
@@ -64,6 +65,7 @@ class File extends  BaseModel
         }
     }
 
+    //删除图片
     public function FileDelete(){
         if (@unlink ('../web/image/'.$this->name)) {
             return true;
@@ -72,6 +74,7 @@ class File extends  BaseModel
         }
     }
 
+    //创建文本，一般用于内容较多的文章
     public function FileCreate(){
         $name = 'CS'.date('YmdHis', time()).rand(1000 , 9999).'.txt';
         $url = '../web/file/'.$name;
@@ -81,4 +84,39 @@ class File extends  BaseModel
             return $name;
         }
     }
+
+    //下载文件
+//    public function FileDownLoad (){
+//        if($this->name && file_exists("../web/file/".$this->name)){
+//            $type = "url";
+//        }else{
+//            $type = "content";
+//        }
+//       // var_dump($type);die;
+//        switch($type){
+//            case "url":
+//                //var_dump(456);die;
+//                $filePath =  '../web/file/'.$this->name;                        //要下载的文件路径
+//                $filename = $this->name;                                        //下载时的文件名
+//                header('Content-Type:txt'); //指定下载文件类型
+//                header('Content-Disposition: attachment; filename="'.$filename.'"'); //指定下载文件的描述
+//                header('Content-Length:'.filesize($filename)); //指定下载文件的大小
+//                readfile($filename); //读取文件并在浏览器中输出
+//            break;
+//            case "content":
+//                /**
+//                 *因为没有文件存在，所以我们分三步执行
+//                 */
+//                //一：先创建文件，并且把内容写入文件
+//                $name = $this->FileCreate();
+//                //二：下载文件
+//                $filePath =  '../web/file/'.$name;
+//                $filename = $name;
+//                header("Content-type: txt/text/doc/docx");
+//                header("Content-Disposition: attachment; filename=".$filename);
+//                readfile($filePath);
+//                //二：删除该文件
+//                @unlink ('../web/file/'.$name);
+//        }
+//    }
 }

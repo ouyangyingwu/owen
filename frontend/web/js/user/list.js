@@ -5,17 +5,20 @@ $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token};
+    var params = {_csrf:token , per_page:2};
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
-        params = {_csrf:token};
+        params = {_csrf:token , per_page:2};
         params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
         if ($('.select-username').val()) {
             params["username"] = $('.select-username').val();
+        }
+        if ($('.select-phone').val()) {
+            params["phone"] = $('.select-phone').val();
         }
         if ($('.select-email').val()) {
             params["email"] = $('.select-email').val();
@@ -27,7 +30,7 @@ $(function(){
         $('.select-id').val('');
         $('.select-type').val('');
         $('.select-user_id').val('');
-        params = {page:1 , _csrf:token};
+        params = {page:1 , per_page:2 , _csrf:token};
         userList(params);
     });
 
@@ -41,9 +44,9 @@ $(function(){
                 ];
             case 'sex':
                 return [
+                    {value: 0, text: 'Unknown'},
                     {value: 1, text: 'Male'},
                     {value: 2, text: 'Female'},
-                    {value: 0, text: 'Unknown'}
                 ];
             default:
                 return null;
@@ -282,7 +285,8 @@ $(function(){
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    if(condition['id'] !== oldCondition['id'] || condition['username'] !== oldCondition['username'] || condition['email'] !== oldCondition['email'] ){
+                    if(condition['id'] !== oldCondition['id'] || condition['username'] !== oldCondition['username']
+                        || condition['email'] !== oldCondition['email'] || condition['phone'] !== oldCondition['phone']){
                         number_pages = true;
                         oldCondition = condition;
                     }

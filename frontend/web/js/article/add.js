@@ -85,7 +85,8 @@ $(function(){
             postData['is_released'] = $('*[name="is_released"]').val();
 
             if($("#content-format").val() == 1){
-                postData['content'] = $('*[name="content"]').val();
+                postData['article_url'] = $('*[name="content"]').val();
+                postData['strORurl'] = 'str';
                 addarticle(postData);
             } else {
                 var formData = new FormData();
@@ -98,7 +99,8 @@ $(function(){
                     processData: false,
                     contentType: false
                 }).done(function(res) {
-                    postData['content_url'] = res;
+                    postData['article_url'] = res;
+                    postData['strORurl'] = 'url';
                     addarticle(postData);
                 }).fail(function(res) {
                     alert(res);

@@ -44,4 +44,10 @@ class FileController extends Controller
         $create_file->content = Yii::$app->request->post('content');
         return $create_file ->FileCreate();
     }
+    /*public function actionDownLoad (){
+        $downLoad_file = new File();
+        $downLoad_file->name = Yii::$app->request->post('name');
+        $downLoad_file->content = Yii::$app->request->post('content');
+        $downLoad_file ->FileDownLoad();
+    }*/
 }

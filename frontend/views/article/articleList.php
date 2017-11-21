@@ -169,7 +169,7 @@ AppAsset::addScript($this , '@web/js/article/list.js');
                                     <a href="#" name="form-edit" data-name="title" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>Author Namee:</span>
+                                    <span>Author Name:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a class="notEdit" href="#" name="form-edit" data-name="user_id" data-type="select"></a>

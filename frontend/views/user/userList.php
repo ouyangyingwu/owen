@@ -25,16 +25,19 @@ AppAsset::addScript($this , '@web/js/user/list.js');
                 <div class="form-horizontal" role="form">
                     <div class="form-body paddingb-0">
                         <div class="form-group">
-                            <div class="col-sm-6 col-md-4 col-lg-3">
+                            <div class="col-sm-6 col-md-4 col-lg-3 margin-bottom-10">
                                 <input type="text" class="form-control select-id" placeholder="ID #">
                             </div>
-                            <div class="col-sm-6 col-md-4 col-lg-3">
+                            <div class="col-sm-6 col-md-4 col-lg-3 margin-bottom-10">
                                 <input type="text" class="form-control select-username" placeholder="User Name #">
                             </div>
-                            <div class="col-sm-6 col-md-4 col-lg-3">
+                            <div class="col-sm-6 col-md-4 col-lg-3 margin-bottom-10">
+                                <input type="text" class="form-control select-phone" placeholder="Phone #">
+                            </div>
+                            <div class="col-sm-6 col-md-4 col-lg-3 margin-bottom-10">
                                 <input type="text" class="form-control select-email" placeholder="Email #">
                             </div>
-                            <div class="col-sm-6 col-md-4 col-lg-3">
+                            <div class="col-sm-6 col-md-4 col-lg-3 margin-bottom-10">
                                 <div class="search-group">
                                     <div style="margin-top:0px;">
                                         <button type="submit" class="btn green marginr-10" id="searchResult">Submit</button>

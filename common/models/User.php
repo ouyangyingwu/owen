@@ -22,7 +22,7 @@ use common\exception\ModelException;
  * @property integer $updated_at
  * @property string $password write-only password
  */
-class User extends ActiveRecord implements IdentityInterface
+class User extends BaseModel implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
@@ -37,7 +37,7 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     public $page = 1;
-    public $per_page = 2;
+    public $per_page = 10;
     public $select;
     public $order_by;
     public $expand = [];
@@ -66,7 +66,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'page'],
+            self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'page' , 'per_page'],
             self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
             self::SCENARIO_STATUS => ['id' , 'status'],
@@ -95,6 +95,10 @@ class User extends ActiveRecord implements IdentityInterface
         if ($this->email)
         {
             $this->_query->andFilterWhere(['like', 'email', $this->email]);
+        }
+        if ($this->phone)
+        {
+            $this->_query->andFilterWhere(['like', 'phone', $this->phone]);
         }
         if ($this->username)
         {
@@ -234,6 +238,7 @@ class User extends ActiveRecord implements IdentityInterface
             $user->create_time = time();
             $user->status = 1;
             $user->is_delete = 0;
+            //var_dump($user);die;
             if($user->save())
             {
                 return $user;

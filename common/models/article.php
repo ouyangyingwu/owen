@@ -41,12 +41,13 @@ class Article extends  BaseModel
     public $is_delete;*/
 
     public $page = 1;
-    public $per_page = 2;
+    public $per_page = 10;
     public $select;
     public $order_by;
     public $expand = [];
     public $edit_name;
     public $edit_value;
+    public $strORurl;
 
     private $_query;
 
@@ -65,16 +66,15 @@ class Article extends  BaseModel
             [['user_id' ,'title'],'required','on'=>self::SCENARIO_ADD],
             [['create_time' , 'type' , 'endit_time', 'page' , 'user_id' ,'id'], 'integer'],                     //这条及以下的规则是当数据存在时验证
             [['describe'], 'string', 'max' => 50],
-            [['content'], 'string', 'max' => 50000],
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
-            self::SCENARIO_SEARCH_ONE => ['id', 'describe' , 'user_id' , 'title' , 'content','page', 'type'],
-            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title' , 'content' , 'content_url' , 'type'],
+            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' ,'page' , 'per_page' , 'type'],
+            self::SCENARIO_SEARCH_ONE => ['id', 'describe' , 'user_id' , 'title' ,'page', 'type'],
+            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title'  , 'article_url' , 'type' , 'strORurl'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -218,8 +218,8 @@ class Article extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             $result = $this->_query->one();
-            if($result['content_url']){
-                $result['content'] = file_get_contents("../web/file/".$result['content_url']);
+            if($result['article_url']){
+                $result['content'] = file_get_contents("../web/file/".$result['article_url']);
             }
             return $result;
         }
@@ -233,11 +233,10 @@ class Article extends  BaseModel
             $article = new Article();
             $article->scenario = self::SCENARIO_ADD;
             $article->setAttributes($this->safeAttributesData());
-            if(mb_strlen($article->content) > 500){
+            if($this->strORurl == 'str'){
                 $file = new File();
-                $file->content = $article->content;
-                $article->content_url = $file->FileCreate();
-                $article->content = null;
+                $file->content = $article->article_url;
+                $article->article_url = $file->FileCreate();
             }
             $article->create_time = time();
             $article->status = 1;

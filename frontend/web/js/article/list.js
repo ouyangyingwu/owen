@@ -5,11 +5,11 @@ $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token};
+    var params = {_csrf:token , per_page:2};
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
-        params = {_csrf:token};
+        params = {_csrf:token , per_page:2};
         params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
@@ -27,7 +27,7 @@ $(function(){
         $('.select-id').val('');
         $('.select-type').val('');
         $('.select-user_id').val('');
-        params = {page:1 , _csrf:token};
+        params = {page:1,per_page:2,_csrf:token};
         articleList(params);
     });
     //用户列表下拉框
@@ -40,12 +40,12 @@ $(function(){
             type:'POST',
             success:function(data){
                 if(data){
-                    user = data;
+                    user = data.data;
                     var html = '';
                     if(data){
-                        for (var i=0;i<data.length;i++){
-                            html += '<option value="'+data[i]['id']+'">';
-                            html += data[i]['username'];
+                        for (var i=0;i<user.length;i++){
+                            html += '<option value="'+user[i]['id']+'">';
+                            html += user[i]['username'];
                             html += '</option>';
                         }
                     } else {
@@ -214,9 +214,10 @@ $(function(){
             }
         }
     }
-    var createButtonList = function(row){
+    var createButtonList = function(row , url){
         var buttonList = [];
         buttonList.push("<a name=\"table-button-list\" class='article-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        buttonList.push("<a href=\"/file/"+url+"\" download=\""+url+"\" name=\"table-button-list\" class='article-edit' type='download' data-id='"+row+"' ><i class=\"icon-download-alt\"></i> DownLoad</a>");
         buttonList.push("<a name=\"table-button-list\" class='article-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
         return buttonList;
     };
@@ -243,11 +244,11 @@ $(function(){
                     //数据列表
                     for (var i=0;i<data.length;i++){
                         var describe = data[i]['describe'].length < 30 ? data[i]['describe'] : data[i]['describe'].substring(0,30)+'...';
-                        var button = createButtonList(data[i]['id'])
+                        var button = createButtonList(data[i]['id'] , data[i]['article_url']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td><a href="/article/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</td>';
+                        html +='<td><a href="/article/detail/'+data[i]["id"]+'">'+data[i]["id"]+'</a></td>';
                         html +='<td>'+ data[i]['user']['username'] +'</td>';
                         html +='<td>'+ data[i]['title']+'</td>';
                         html +='<td>'+ describe +'</td>';
@@ -294,7 +295,7 @@ $(function(){
                     if($(this).attr('type') == 'edit'){
                         $("#article-detail").modal("show");
                         initEditForm(htmlData);
-                    }else{
+                    } else if($(this).attr('type') == 'delete'){
                         $("#dialog-confirm").modal("show").find('p').text("你是否要删除这篇文章？");
                     }
                 });
