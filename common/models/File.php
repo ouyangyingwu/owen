@@ -51,13 +51,20 @@ class File extends  BaseModel
                     }
                 }
             } elseif(strstr($Text, $fileExt)){
-                $fileNewName = "CS" . date("YmdHis") . mt_rand(1000, 9999) . "." . $fileExt;
-                if (is_uploaded_file($this->tmp_name)) {  //判断文件是否通过HTTP POST方式上传的
-                    if (@move_uploaded_file($this->tmp_name, "./file/" . $fileNewName)) {
-                        return $fileNewName;
-                    } else {
-                        return "上传失败";
+                $text = file_get_contents($this->tmp_name);
+                $newText = $this->SafeFilter($text);
+                if($text === $newText){
+                    $fileNewName = "CS" . date("YmdHis") . mt_rand(1000, 9999) . "." . $fileExt;
+                    if (is_uploaded_file($this->tmp_name)) {  //判断文件是否通过HTTP POST方式上传的
+                        if (@move_uploaded_file($this->tmp_name, "./file/" . $fileNewName)) {
+                            return $fileNewName;
+                        } else {
+                            return "上传失败";
+                        }
                     }
+                } else {
+                    $this->content = $newText;
+                    return $this->FileCreate();
                 }
             }else {
                 echo $fileExt . "类型文件不允许上传！";
@@ -83,6 +90,18 @@ class File extends  BaseModel
         if(fclose($url)){
             return $name;
         }
+    }
+
+    /**
+     * XSS攻击通用过滤
+     */
+    public function SafeFilter ($data)
+    {
+        $data = trim($data);                                //清理空格
+        //$data = strip_tags($data);                        //过滤html标签
+        $data = htmlspecialchars($data,ENT_NOQUOTES);       //将字符内容转化为html实体
+        //$data = addslashes($data);                        //给单引号（'）、双引号（"）、反斜线（\）与 NUL（NULL 字符）
+        return $data;
     }
 
     //下载文件

@@ -30,22 +30,23 @@ class UserController extends Controller
         $user = new User();
         $user->scenario = User::SCENARIO_SEARCH;
         $user->setAttributes(Yii::$app->request->post());
-        //var_dump(Yii::$app->request->post() , $user);die;
         list($total, $result) = $user->getList();
         return ['data'=>$result , 'total' => $total];
     }
     public function actionEdit()
     {
-        $article = new User();
-        $article->scenario = User::SCENARIO_EDIT;
-        $article->setAttributes(Yii::$app->request->post());
-        return $article->getedit();
+        $user = new User();
+        $user->scenario = User::SCENARIO_EDIT;
+        $postData = Yii::$app->request->post();
+        $user->setAttributes($this->SafeFilter($postData));
+        return $user->getEdit();
     }
     public function actionAdd()
     {
         $user = new User();
         $user->scenario = User::SCENARIO_ADD;
-        $user->setAttributes(Yii::$app->request->post());
+        $postData = Yii::$app->request->post();
+        $user->setAttributes($this->SafeFilter($postData));
         return $user->getAdd();
 
     }

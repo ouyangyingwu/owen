@@ -254,7 +254,7 @@ class Article extends  BaseModel
     /**
      * 修改数据
      */
-    public function getedit()
+    public function getEdit()
     {
         if($this->validate())
         {

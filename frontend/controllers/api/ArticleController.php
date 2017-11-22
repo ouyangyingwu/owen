@@ -38,7 +38,8 @@ class ArticleController extends Controller
     {
         $article = new Article();
         $article->scenario = Article::SCENARIO_ADD;
-        $article->setAttributes(Yii::$app->request->post());
+        $postData = Yii::$app->request->post();
+        $article->setAttributes($this->SafeFilter($postData));
         $article->user_id = Yii::$app->user->identity->id;
         return $article->getAdd();
     }
@@ -46,7 +47,8 @@ class ArticleController extends Controller
     {
         $article = new Article();
         $article->scenario = Article::SCENARIO_EDIT;
-        $article->setAttributes(Yii::$app->request->post());
-        return $article->getedit();
+        $postData = Yii::$app->request->post();
+        $article->setAttributes($this->SafeFilter($postData));
+        return $article->getEdit();
     }
 }

@@ -205,7 +205,7 @@ class User extends BaseModel implements IdentityInterface
     /**
     * 修改数据
     */
-    public function getedit()
+    public function getEdit()
     {
         if($this->validate())
         {
@@ -238,7 +238,6 @@ class User extends BaseModel implements IdentityInterface
             $user->create_time = time();
             $user->status = 1;
             $user->is_delete = 0;
-            //var_dump($user);die;
             if($user->save())
             {
                 return $user;
