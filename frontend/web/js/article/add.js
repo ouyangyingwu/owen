@@ -119,14 +119,26 @@ $(function(){
                 }
             }
         }).done(function(res) {
+            if(article_url){
+                var postData = {};
+                postData["_csrf"] = token;
+                postData["name"] = article_url;
+                postData["url"] = 'file';
+                $.ajax({
+                    url:"/api/file/delete",
+                    data:postData,
+                    dataType:'json',
+                    type:'POST'
+                });
+            }
             if(res && res.match(/^CS[0-9]{18}.[a-z]{3,4}$/)){
                 article_url = res;
                 onprogressFast();
                 return false;
             }
-            console.log(res);
-            alert("上传失败！");
+            alert(res+"！");
         }).fail(function(res) {
+            console.log(res);
             alert(res);
         });
     });
@@ -137,7 +149,7 @@ $(function(){
         $("#processerbar").html( per +"%" );
         $("#processerbar").css("width" , per +"%");
     }
-    function onprogressFast(){
+    function onprogressFast(){                  //当后台数据返回确定成功
         $("#processerbar").html( 100 +"%" );
         $("#processerbar").css("width" , 100 +"%");
     }

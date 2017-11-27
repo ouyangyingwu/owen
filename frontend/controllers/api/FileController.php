@@ -36,6 +36,7 @@ class FileController extends Controller
     {
         $delete_file = new File();
         $delete_file->name = Yii::$app->request->post('name');
+        $delete_file->url = Yii::$app->request->post('url');
         return $delete_file ->FileDelete();
     }
 

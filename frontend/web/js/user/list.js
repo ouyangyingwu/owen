@@ -205,6 +205,7 @@ $(function(){
         switch (dataType){
             case 'img_url':
                 postData["name"] = $(this).parent().parent().attr('data-value');
+                postData["url"] = 'image';
                 $.ajax({
                     url:"/api/file/delete",
                     data:postData,

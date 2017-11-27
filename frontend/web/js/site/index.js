@@ -6,11 +6,12 @@ $(function(){
      *index-head
      */
     var arr = [];
+    var token = $('meta[name=csrf-token]').attr('content');     /*所有ajax的post请求都需要传递这个参数*/
     $(".index-head-left>div").each(function(){
         arr.push($(this).attr("data-id"));                      //获取首页展示的所有文章的id用于查询文章
     });
-    var token = $('meta[name=csrf-token]').attr('content');     /*所有ajax的post请求都需要传递这个参数*/
-    var list = [];
+
+    /*var list = [];
     if(list.length == 0){
         $.ajax({
             url:"/api/article/list",                         //(默认: 当前页地址) 发送请求的地址。
@@ -26,19 +27,21 @@ $(function(){
                 alert("数据连接失败！");
             }
         });
-    }
+    }*/
     var ladder = $(".index-head-left div");
     var content = $(".content");
     ladder.mouseenter(function(){
         var id = $(this).attr('data-id');
         var rightText = content.text();
-        for(var i=0;i<list.length;i++){
-            if(list[i].id == id){
-                var time = list[i].describe.length;
-                content.attr('href','/article/detail/'+list[i].id);
-                if(list[i].describe != rightText){
+        var articleList = SmsJs.config.get("articleList");
+        console.log(articleList);
+        for(var i=0;i<articleList.length;i++){
+            if(articleList[i].id == id){
+                var time = articleList[i].describe.length;
+                content.attr('href','/article/detail/'+articleList[i].id);
+                if(articleList[i].describe != rightText){
                     content.lbyl({
-                        content: list[i].describe,
+                        content: articleList[i].describe,
                         speed: time, type: 'show'
                     });
                 }

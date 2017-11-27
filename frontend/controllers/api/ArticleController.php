@@ -31,6 +31,7 @@ class ArticleController extends Controller
         $article->expand = ['user'];
         $article->status = 1;
         list($total, $result) = $article->getList();
+        var_dump($result);die;
         //return $result;
         return ['data'=>$result , 'total' => $total];
     }

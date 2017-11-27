@@ -4,6 +4,7 @@
 /* @var $content string */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
@@ -79,6 +80,24 @@ AppAsset::register($this);
 </footer>
 
 <?php $this->endBody() ?>
+<?php if(array_key_exists('js_path', $this->params) && !empty($this->params['js_path'])): ?>
+    <script type="text/javascript">
+        var _config = {"baseUrl":"<?= Url::base() ?>"};
+        <?php if(array_key_exists('js_config_param', $this->params) && is_array($this->params['js_config_param'])): ?>
+            <?php foreach ($this->params['js_config_param'] as $key => $val): ?>
+                _config["<?= $key ?>"] =  "<?= $val ?>";
+            <?php endforeach;?>
+        <?php endif; ?>
+        <?php /*var_dump($key , $val);die*/;?>
+        SmsJs.config.set(_config);
+        //SmsJs.run("<?= Yii::$app->controller->id ?>/<?= $this->params['js_path'] ?>");
+    </script>
+<?php else: ?>
+    <script type="text/javascript">
+        SmsJs.config.set("baseUrl", "<?= Url::base() ?>");
+        //SmsJs.run();
+    </script>
+<?php endif; ?>
 </body>
 </html>
 <?php $this->endPage() ?>

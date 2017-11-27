@@ -11,6 +11,7 @@ class File extends  BaseModel
     public $tmp_name;
     public $error;
     public $size;
+    public $url;
 
     //上传文件或图片并返回文件名
     public function FileUrl()
@@ -52,7 +53,20 @@ class File extends  BaseModel
                     }
                 }
             } elseif(strstr($Text, $fileExt)){
+                /**
+                 * file_put_contents(file,data,mode,context)
+                 * file	必需。规定要写入数据的文件。如果文件不存在，则创建一个新文件。
+                 * data	可选。规定要写入文件的数据。可以是字符串、数组或数据流。
+                 * mode 可选。规定如何打开/写入文件。可能的值：
+                    FILE_USE_INCLUDE_PATH ：检查 file 副本的内置路径
+                    FILE_APPEND ：在文件末尾以追加的方式写入数据
+                    LOCK_EX ：对文件上锁
+                 * context可选。规定文件句柄的环境。context 是一套可以修改流的行为的选项。若使用 null，则忽略。
+                */
                 $text = file_get_contents($this->tmp_name);
+                //转化编码格式，防止中文乱码
+                $text = iconv("gb2312", "utf-8//IGNORE",$text);
+                //过滤可疑字符
                 $newText = $this->SafeFilter($text);
                 if($text === $newText){
                     $fileNewName = "CS" . date("YmdHis") . mt_rand(1000, 9999) . "." . $fileExt;
@@ -79,7 +93,6 @@ class File extends  BaseModel
                 if (!$zip || is_numeric($zip)) return false;
 
                 while ($zip_entry = zip_read($zip)) {
-
                     if (zip_entry_open($zip, $zip_entry) == FALSE) continue;
 
                     if (zip_entry_name($zip_entry) != "word/document.xml") continue;
@@ -98,7 +111,7 @@ class File extends  BaseModel
                     "strip_content"=>$striped_content,
                     "content"=>$content);*/
 
-                $this->content = $striped_content;
+                $this->content =  $this->SafeFilter($striped_content);
                 return $this->FileCreate();
             } else {
                 echo $fileExt . "类型文件不允许上传！";
@@ -108,7 +121,7 @@ class File extends  BaseModel
 
     //删除图片
     public function FileDelete(){
-        if (@unlink ('../web/image/'.$this->name)) {
+        if (@unlink ('../web/'.$this->url.'/'.$this->name)) {
             return true;
         } else {
             return false;
@@ -119,7 +132,9 @@ class File extends  BaseModel
     public function FileCreate(){
         $name = 'CS'.date('YmdHis', time()).rand(1000 , 9999).'.txt';
         $url = '../web/file/'.$name;
+        //创建文件，并且给予它编辑的权限
         $url = fopen($url , "w");
+        //内容写入文件
         fwrite($url , $this->content);
         if(fclose($url)){
             return $name;

@@ -78,9 +78,8 @@ class SiteController extends Controller
         $article->order_by = ['id' => 1];
         $article->type = 1;
         $article->status = 1;
-        $article->select = ['id' , 'title'];
+        $article->select = ['id' , 'title' , 'describe'];
         list($total , $list) = $article->getList();
-
         return $this->render('index' , [
             'ArticleList' => $list
         ]);
