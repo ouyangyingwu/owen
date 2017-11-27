@@ -75,12 +75,3 @@ AppAsset::addScript($this , '@web/js/article/comment.js');
         <?php endif;?>
     </div>
 </div>
-<div id="uploadForm" class="clearfix">
-    <div id="uploadimg">
-        <input id="file" type="file"/>
-        <button id="upload" type="button">upload</button>
-    </div>
-    <div id="reveal">
-
-    </div>
-</div>

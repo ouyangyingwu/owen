@@ -110,6 +110,12 @@ class SiteController extends Controller
         }
     }
 
+    public function actionTest()
+    {
+        $this->layout = false;
+        return $this->render('test');
+    }
+
     /**
      * Logs out the current user.
      *

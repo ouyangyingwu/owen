@@ -74,27 +74,4 @@ $(function(){
         }
         return false;
     });
-
-    $("#upload").click(function(){
-        if($('#file').val()){
-            var formData = new FormData();
-            formData.append('file', $('#file')[0].files[0]);
-            $.ajax({
-                url:'/api/file/url',
-                type: 'POST',
-                cache: false,
-                data: formData,
-                processData: false,
-                contentType: false
-            }).done(function(res) {
-                $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});
-                var html = "<img src='/image/"+res+"'>";
-                $("#uploadForm").append(html);
-            }).fail(function(res) {
-                alert(res);
-            });
-        }
-    });
 });

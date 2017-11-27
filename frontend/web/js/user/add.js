@@ -7,27 +7,28 @@ $(function(){
     var img_url;
     $("#upload").click(function(){
         $('#file').click();
-        $('#file').change(function(){
-            var formData = new FormData();
-            formData.append('file', $('#file')[0].files[0]);
-            $.ajax({
-                url:'/api/file/url',
-                type: 'POST',
-                cache: false,
-                data: formData,
-                processData: false,
-                contentType: false
-            }).done(function(res) {
-                //在头部插入样式
-               /* $("head").append("<link>");
-                var css = $("head").children(":last");
-                css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});*/
-                var html = "<img src='/image/"+res+"'>";
-                $("#iframe-image-show").show().append(html);
-                img_url = res;
-            }).fail(function(res) {
-                alert(res);
-            });
+        //或者$('#file').trigger('click');
+    });
+    $('#file').change(function(){
+        var formData = new FormData();
+        formData.append('file', $('#file')[0].files[0]);
+        $.ajax({
+            url:'/api/file/url',
+            type: 'POST',
+            cache: false,
+            data: formData,
+            processData: false,
+            contentType: false
+        }).done(function(res) {
+            //在头部插入样式
+            /* $("head").append("<link>");
+             var css = $("head").children(":last");
+             css.attr({rel: "stylesheet", type: "text/css", href: "/css/upload.css"});*/
+            var html = "<img src='/image/"+res+"'>";
+            $("#iframe-image-show").append(html);
+            img_url = res;
+        }).fail(function(res) {
+            alert(res);
         });
     });
     //init validate

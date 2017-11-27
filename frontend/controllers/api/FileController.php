@@ -23,6 +23,7 @@ class FileController extends Controller
 
     public function actionUrl()
     {
+        //return false;
         $upload_file = new File();
         $upload_file->name = $_FILES['file']['name'];
         $upload_file->type = $_FILES['file']['type'];

@@ -39,7 +39,8 @@ class File extends  BaseModel
 
             //判断文件上传的后缀名是否为允许的类型
             $alowExt = "jpg,png,gif";
-            $Text ="txt,text,doc,docx";
+            $Text = "txt,text";
+            $Word = "doc,docx";
             if (strstr($alowExt, $fileExt)) {
                 //设置名字
                 $fileNewName = "CS" . date("YmdHis") . mt_rand(1000, 9999) . "." . $fileExt;
@@ -66,7 +67,40 @@ class File extends  BaseModel
                     $this->content = $newText;
                     return $this->FileCreate();
                 }
-            }else {
+            } elseif (strstr($Word, $fileExt)){
+                //如果上传文件是word文本类型，就把它转化为txt文本(注意:这段代码只能转化文字图片无法转化)
+                $filename = $this->tmp_name;
+                $striped_content = '';
+                $content = '';
+
+                if(!$filename || !file_exists($filename)) return false;
+
+                $zip = zip_open($filename);
+                if (!$zip || is_numeric($zip)) return false;
+
+                while ($zip_entry = zip_read($zip)) {
+
+                    if (zip_entry_open($zip, $zip_entry) == FALSE) continue;
+
+                    if (zip_entry_name($zip_entry) != "word/document.xml") continue;
+
+                    $content .= zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
+
+                    zip_entry_close($zip_entry);
+                }
+                zip_close($zip);
+                $content = str_replace('</w:r></w:p></w:tc><w:tc>', "<p>", $content);
+                $content = str_replace('</w:r></w:p>', "</p>", $content);
+                $striped_content = strip_tags($content);
+
+                /*echo $striped_content . $content;return;
+                return array(
+                    "strip_content"=>$striped_content,
+                    "content"=>$content);*/
+
+                $this->content = $striped_content;
+                return $this->FileCreate();
+            } else {
                 echo $fileExt . "类型文件不允许上传！";
             }
         }

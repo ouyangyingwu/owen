@@ -82,9 +82,7 @@ AppAsset::addScript($this , '@web/js/article/add.js');
 
                         <div class="col-md-5" style="height: 50px;">
                             <div class="float-left" style="width: 302px;height: 20px;border-radius: 10px;border: 1px solid #3598dc;margin-top: 1px;">
-                                <div id="processerbar" style="width: 0px;height: 18px;border-radius: 10px;background-color: #3598dc;text-align: center;color: #ffffff;font-weight: bolder;">
-                                    <div class="numb hide"><span>0</span>%</div>
-                                </div>
+                                <div id="processerbar" style="width: 0px;height: 18px;border-radius: 10px;background-color: #3598dc;text-align: center;color: #ffffff;font-weight: bolder;"></div>
                             </div>
                             <a class="btn btn-xs green" id="upload" style="margin-left:15px;height: 20px">
                                 <i class="icon-plus"></i>Upload
