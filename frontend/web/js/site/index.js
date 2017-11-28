@@ -33,19 +33,14 @@ $(function(){
     ladder.mouseenter(function(){
         var id = $(this).attr('data-id');
         var rightText = content.text();
-        var articleList = SmsJs.config.get("articleList");
-        console.log(articleList);
-        for(var i=0;i<articleList.length;i++){
-            if(articleList[i].id == id){
-                var time = articleList[i].describe.length;
-                content.attr('href','/article/detail/'+articleList[i].id);
-                if(articleList[i].describe != rightText){
-                    content.lbyl({
-                        content: articleList[i].describe,
-                        speed: time, type: 'show'
-                    });
-                }
-            }
+        var time = SmsJs.config.get(id).length;
+        console.log(rightText , SmsJs.config.get(id));
+        if(rightText != SmsJs.config.get(id)){
+            content.attr('href','/article/detail/'+id);
+            content.lbyl({
+                content: SmsJs.config.get(id),
+                speed: time, type: 'show'
+            });
         }
         if(ladder.is(":animated")){
             //停止当前的动画

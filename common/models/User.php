@@ -43,6 +43,8 @@ class User extends BaseModel implements IdentityInterface
     public $expand = [];
     public $edit_name;
     public $edit_value;
+    public $oldPassword;
+    public $newPassword;
 
     private $_query;
 
@@ -50,6 +52,8 @@ class User extends BaseModel implements IdentityInterface
     const SCENARIO_ADD = 'add';
     const SCENARIO_STATUS = 'status';
     const SCENARIO_EDIT = 'edit';
+    const SCENARIO_UPDATE = 'update';
+    const SCENARIO_RESET_PASSWORD = 'Password';
     const SCENARIO_DELETE = 'delete';
 
     /**
@@ -59,7 +63,7 @@ class User extends BaseModel implements IdentityInterface
     {
         return [
             [['id' , 'page'] , 'integer',],
-            [['email' , 'username'], 'string', 'max' => 15],
+            [['email' , 'username'], 'string'],
         ];
     }
 
@@ -68,6 +72,8 @@ class User extends BaseModel implements IdentityInterface
         return [
             self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'page' , 'per_page'],
             self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex'],
+            self::SCENARIO_UPDATE => ['email' , 'username' , 'phone'],
+            self::SCENARIO_RESET_PASSWORD => ['oldPassword' , 'newPassword'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
@@ -188,6 +194,10 @@ class User extends BaseModel implements IdentityInterface
             $this->addOrderBy();
             $this->addLimit();
             $result = $this->_query->all();
+            foreach($result as &$list){
+                unset($list['password_hash']);
+                unset($list['password_reset_token']);
+            }
             return [$total, $result];
         }
     }
@@ -199,11 +209,14 @@ class User extends BaseModel implements IdentityInterface
         if($this->validate()){
             $this->createQuery();
             $this->addQueryExpand();
-            return $this->_query->one();
+            $result = $this->_query->one();
+            unset($result['password_hash']);
+            unset($result['password_reset_token']);
+            return $result;
         }
     }
     /**
-    * 修改数据
+    * 编辑数据
     */
     public function getEdit()
     {
@@ -217,6 +230,53 @@ class User extends BaseModel implements IdentityInterface
                 if($user->save())
                 {
                     return [$this->edit_name => $this->edit_value];
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+    /**
+     * 修改数据
+     */
+    public function getUpdate()
+    {
+        if ($this->validate()) {
+            $user = User::find()->andFilterWhere(['id' => $this->id])->one();
+            if ($user) {
+                $user->scenario = self::SCENARIO_UPDATE;
+                $user->setAttributes($this->safeAttributesData());
+                $user->updated_at = time();
+                if ($user->save()) {
+                    return true;
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+    /**
+     * 重置密码
+     */
+    public function getResetPassword()
+    {
+        if ($this->validate()) {
+            $user = User::find()->andFilterWhere(['id' => $this->id])->one();
+            if ($user) {
+                $user->scenario = self::SCENARIO_RESET_PASSWORD;
+                if($user->password_hash === $this->oldPassword){
+                    $user->password_hash = $this->newPassword;
+                    $user->updated_at = time();
+                    if ($user->save()) {
+                        return true;
+                    }
+                } else {
+                    $errorStr = current($this->getFirstErrors());
+                    throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
                 }
             }
             return null;

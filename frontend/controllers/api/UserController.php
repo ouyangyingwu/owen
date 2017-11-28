@@ -41,6 +41,23 @@ class UserController extends Controller
         $user->setAttributes($this->SafeFilter($postData));
         return $user->getEdit();
     }
+    public function actionUpdate()
+    {
+        $user = new User();
+        $user->scenario = User::SCENARIO_UPDATE;
+        $postData = Yii::$app->request->post();
+        $user->setAttributes($this->SafeFilter($postData));
+        $user->id = Yii::$app->user->identity->id;
+        return $user->getUpdate();
+    }
+    public function actionResetPassword()
+    {
+        $user = new User();
+        $user->scenario = User::SCENARIO_RESET_PASSWORD;
+        $user->setAttributes(Yii::$app->request->post());
+        $user->id = Yii::$app->user->identity->id;
+        return $user->getResetPassword();
+    }
     public function actionAdd()
     {
         $user = new User();

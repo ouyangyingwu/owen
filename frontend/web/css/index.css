@@ -22,6 +22,9 @@
 .help-block{
     color: red;
 }
+.margin-lr-25{
+    margin: 0 25px;
+}
 h2{
     font-size: 24px;
     font-family: 楷体;
@@ -140,5 +143,25 @@ h2{
     /*输入框背景颜色透明*/
     background-color: transparent;
 }
-
-/*上传图片样式*/
+.profile-sidebar {
+    float: left;
+    width: 300px;
+    margin-right: 20px;
+}
+.profile-content {
+    overflow: hidden;
+}
+.img-style{
+    width: 210px;
+    height: 210px;
+}
+.img-round{
+    border-radius: 50%;
+}
+.profile-usertitle-name {
+    color: #5a7391;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 7px;
+    text-align:center;
+}

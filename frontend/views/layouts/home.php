@@ -11,7 +11,7 @@ use yii\widgets\Breadcrumbs;
 use frontend\assets\AppAsset;
 use common\widgets\Alert;
 
-//导入css，js文件
+//导入公共css，js文件
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -54,6 +54,8 @@ AppAsset::register($this);
             )
             . Html::endForm()
             . '</li>';
+        /*'<li style="padding: 7px;"><img src="../image/'.Yii::$app->user->identity->img_url.'" style="width: 60px; height: 40px; border-radius: 20px;"></li>';
+        $menuItems[] = ['label' => Yii::$app->user->identity->username , 'url' => ['/user/one']];*/
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -88,14 +90,10 @@ AppAsset::register($this);
                 _config["<?= $key ?>"] =  "<?= $val ?>";
             <?php endforeach;?>
         <?php endif; ?>
-        <?php /*var_dump($key , $val);die*/;?>
+        /**
+         *设置全局变量
+         */
         SmsJs.config.set(_config);
-        //SmsJs.run("<?= Yii::$app->controller->id ?>/<?= $this->params['js_path'] ?>");
-    </script>
-<?php else: ?>
-    <script type="text/javascript">
-        SmsJs.config.set("baseUrl", "<?= Url::base() ?>");
-        //SmsJs.run();
     </script>
 <?php endif; ?>
 </body>

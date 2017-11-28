@@ -7,16 +7,14 @@ use frontend\assets\AppAsset;
 $this->title = 'Owen Home';
 
 /**
- * 定义全局变量
+ * 定义全局变量（在这里是需要定义的值，设置过程写在布局文件中）
+ * 在全局变量中中能存字符串
+ * 如果要存数组则需要把数组中的元素分别赋值
 */
 $this->params['js_path'] = 'index';
 $describeList = [];
-/*foreach ($ArticleList as $item) {
-    $this->params['js_config_param'] = [
-        $item['id'] => $item['describe']
-    ];
-}*/
 $this->params['js_config_param'] = Traverse($ArticleList);
+
 function Traverse($ArticleList){
     $describeList = [];
     foreach ($ArticleList as $item) {
