@@ -454,7 +454,6 @@ var SmsJs = {};
     /*定义全局变量*/
     SmsJs.config = {
         set:function(){
-            console.log(arguments);
             if(arguments.length == 0){
                 return;
             }
@@ -1192,4 +1191,18 @@ var SmsJs = {};
             fn = null;
         }
     }
-})()
+})();
+
+//公共文件的一些特效
+$(function() {
+    $('#user-actions').on({
+        mouseover:function(){$(this).children('.ul-box').removeClass('hide')},
+        mouseout:function(){$(this).children('.ul-box').addClass('hide')},
+        click:function(){
+            if($(this).children('.ul-box').hasClass('hide')){
+                $(this).children('.ul-box').removeClass('hide');
+            }else{
+                $(this).children('.ul-box').addClass('hide')};
+            }
+    });
+});

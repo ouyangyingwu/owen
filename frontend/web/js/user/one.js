@@ -2,10 +2,7 @@
  * Created by admin on 2017/9/27.
  */
 $(function() {
-    //if(!$.cookie['user']){window.location.href = "/site/login";}
-    var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf: token};
 
     $('.nav-tabs li:last').click(function(){
         $('#information').addClass('hide');
@@ -16,15 +13,27 @@ $(function() {
         $('#information').removeClass('hide');
     });
 
+    //钟表
+    setInterval(function () {
+        var date = new Date();
+        var time = date.getFullYear()+'-'+supplement(date.getMonth())+'-'+ supplement(date.getDay()) +' '+supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
+        $('.now-time').text(time);
+    },1000);
+    function  supplement (x){
+        //补0
+        if(x<10) x = '0'+x;
+        return x;
+    }
+
     //定义新的规则
     $.validator.addMethod("reset_password", function(value){
         var tag = true;
-        var regexp = /^(?![0-9]+$)(?![a-zA-Z]+$)[\s\S]{8,20}$/;
+        var regexp = /^(?![0-9]+$)(?![a-zA-Z]+$)[\s\S]{8,30}$/;
         if(!value.match(regexp)){
             tag = false;
         }
         return tag;
-    }, "密码由数字字母和字符组成! ");
+    }, "密码由数字字母和字符组成，长度为8至30位! ");
 
     var validateRules = {
         "username": {required: true , rangelength:[1 , 20]},
@@ -83,7 +92,6 @@ $(function() {
             postData['_csrf'] = token;
             postData['old_password'] = $(".form-control[name='old_password']").val();
             postData['new_password'] = $(".form-control[name='new_password']").val();
-            //console.log(postData);return;
             $.ajax({
                 url:"/api/user/reset-password",
                 data:postData,

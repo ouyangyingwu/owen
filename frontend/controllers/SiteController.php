@@ -98,9 +98,6 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $user = new User();
-            $user->setAttributes(Yii::$app->request->post());
-            $_SESSION['user'] = $user->getOne();
             return $this->goBack();
         } else {
             return $this->render('login', [
@@ -124,7 +121,8 @@ class SiteController extends Controller
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->actionLogin();
+        //return $this->goHome();
     }
 
     /**

@@ -18,9 +18,10 @@ AppAsset::addScript($this , '@web/js/user/one.js');
             <!-- PORTLET MAIN -->
             <div class="portlet light">
                 <div class="profile-userpic margin-lr-25 padding-tb-10" id="iframe-image-show">
-                    <img src="<?= "/image/".$user['img_url']?>" class="img-style img-round" alt="">
+                    <img src="<?= "/image/".Yii::$app->user->identity->img_url?>" class="img-style img-round" alt="">
                     <div class="profile-usertitle padding-tb-10">
-                        <div class="profile-usertitle-name"> <?= $user['username']?> </div>
+                        <div class="profile-usertitle-name"> <?= Yii::$app->user->identity->username?> </div>
+                        <div class="profile-usertitle-name now-time"> <?=date("Y-m-d H:i:s")?> </div>
                     </div>
                 </div>
                 <div class="margin-lr-25 clearfix">
@@ -61,7 +62,7 @@ AppAsset::addScript($this , '@web/js/user/one.js');
                                             <label class="control-label">User Name</label>
                                             <div class="row">
                                                 <div class="col-md-12" >
-                                                    <input type="text" name="username" class="form-control" value="<?=$user['username']?>">
+                                                    <input type="text" name="username" class="form-control" value="<?=Yii::$app->user->identity->username?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -69,7 +70,7 @@ AppAsset::addScript($this , '@web/js/user/one.js');
                                             <label class="control-label">E-mail</label>
                                             <div class="row">
                                                 <div class="col-md-12" >
-                                                    <input type="text" name="email" class="form-control" value="<?=$user['email']?>">
+                                                    <input type="text" name="email" class="form-control" value="<?=Yii::$app->user->identity->email?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -77,7 +78,7 @@ AppAsset::addScript($this , '@web/js/user/one.js');
                                             <label class="control-label">Phone Number</label>
                                             <div class="row">
                                                 <div class="col-md-12" >
-                                                    <input type="text" name="phone" class="form-control" value="<?=$user['phone']?>">
+                                                    <input type="text" name="phone" class="form-control" value="<?=Yii::$app->user->identity->phone?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -124,49 +125,5 @@ AppAsset::addScript($this , '@web/js/user/one.js');
             </div>
         </div>
         <!-- END PROFILE CONTENT -->
-    </div>
-</div>
-<!-- loading dialog -->
-<div class="modal fade" id="dialog-loading" data-backdrop="static"
-     aria-hidden="false">
-    <div class="modal-content">
-        <div class="modal-body">
-            <img src="/img/loading-spinner-grey.gif" alt=""
-                 class="loading"> <span> &nbsp;&nbsp;Loading... </span>
-        </div>
-    </div>
-</div>
-<!-- delete dialog -->
-<div class="modal fade" id="delete-alert" data-backdrop="static" aria-hidden="false">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-            <h4 class="modal-title">Alert</h4>
-        </div>
-        <div class="modal-body">
-            <p data-name="text-alert-mesage"></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" data-dismiss="modal" class="btn btn-outline red">Close</button>
-            <button type="submit" id="deleteImg" class="btn green">Confirm</button>
-        </div>
-    </div>
-</div>
-<!-- alert dialog -->
-<div class="modal fade" id="dialog-alert" data-backdrop="static"
-     aria-hidden="false">
-    <div class="modal-content">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"
-                    aria-hidden="true"></button>
-            <h4 class="modal-title">Alert</h4>
-        </div>
-        <div class="modal-body">
-            <p data-name="text-alert-mesage"></p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" data-dismiss="modal"
-                    class="btn btn-outline red">Close</button>
-        </div>
     </div>
 </div>

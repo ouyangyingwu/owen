@@ -46,16 +46,13 @@ AppAsset::register($this);
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
     } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-        /*'<li style="padding: 7px;"><img src="../image/'.Yii::$app->user->identity->img_url.'" style="width: 60px; height: 40px; border-radius: 20px;"></li>';
-        $menuItems[] = ['label' => Yii::$app->user->identity->username , 'url' => ['/user/one']];*/
+        $menuItems[] = '<li style="position: relative" id="user-actions">'
+            .'<img src="/image/'.Yii::$app->user->identity->img_url.'">('.Yii::$app->user->identity->username.')'
+            . '<ul class="position-a ul-box hide">
+            <li><a href="/user/one"><i class="icon-user"></i> Account Info </a></li>
+            <li><form method="post" action="/site/logout"><a><i class="icon-key"></i><input type="hidden" name="_csrf" value="'.Yii::$app->getRequest()->getCsrfToken().'"><input type="submit" value="Log Out">
+            </a></form></li>
+            </ul></li>';
     }
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
@@ -69,7 +66,8 @@ AppAsset::register($this);
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <?= Alert::widget() ?>
-        <?= $content ?>
+        <div class="col-md-2"></div>
+        <div class="col-md-10"><?= $content ?></div>
     </div>
 </div>
 
@@ -82,20 +80,26 @@ AppAsset::register($this);
 </footer>
 
 <?php $this->endBody() ?>
-<?php if(array_key_exists('js_path', $this->params) && !empty($this->params['js_path'])): ?>
-    <script type="text/javascript">
+<script type="text/javascript">
+    /**
+     *  判断用户是否已登录，如果没有则跳转至登录页
+     */
+    <?php if(Yii::$app->user->isGuest && $this->title != 'Signup' && $this->title != 'Login'): ?>
+        window.location.href = "/site/login";
+    <?php endif; ?>
+    /**
+     *  设置全局变量
+     */
+    <?php if(array_key_exists('js_path', $this->params) && !empty($this->params['js_path'])): ?>
         var _config = {"baseUrl":"<?= Url::base() ?>"};
         <?php if(array_key_exists('js_config_param', $this->params) && is_array($this->params['js_config_param'])): ?>
-            <?php foreach ($this->params['js_config_param'] as $key => $val): ?>
-                _config["<?= $key ?>"] =  "<?= $val ?>";
-            <?php endforeach;?>
+        <?php foreach ($this->params['js_config_param'] as $key => $val): ?>
+        _config["<?= $key ?>"] =  "<?= $val ?>";
+        <?php endforeach;?>
         <?php endif; ?>
-        /**
-         *设置全局变量
-         */
         SmsJs.config.set(_config);
-    </script>
-<?php endif; ?>
+    <?php endif; ?>
+</script>
 </body>
 </html>
 <?php $this->endPage() ?>

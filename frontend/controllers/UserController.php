@@ -21,12 +21,6 @@ class UserController extends Controller
     }
     public function actionOne()
     {
-        $user = new User();
-        $user->id = Yii::$app->user->id;
-        $user = $user->getOne();
-        //var_dump($user);die;
-        return $this->render('userOne' , [
-            'user' => $user
-        ]);
+        return $this->render('userOne');
     }
 }

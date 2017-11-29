@@ -12,7 +12,6 @@ $this->title = 'Owen Home';
  * 如果要存数组则需要把数组中的元素分别赋值
 */
 $this->params['js_path'] = 'index';
-$describeList = [];
 $this->params['js_config_param'] = Traverse($ArticleList);
 
 function Traverse($ArticleList){
