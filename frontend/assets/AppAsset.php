@@ -14,6 +14,7 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         //'css/base.css',
+        'assets/bootstrap/css/bootstrap.min.css',
         'css/font-awesome.css',         //图标生成文件
         'css/components.min.css',
         'assets/bootstrap-modal/css/bootstrap-modal.css',
@@ -26,7 +27,7 @@ class AppAsset extends AssetBundle
         'js/public/jquery.min.js',
         'js/public/jQuery.cookie.js',   //cookie插件
         'js/public/main.js',            //常用的公共处理函数
-        'assets/bootstrap-editable/js/bootstrap.js',
+        'assets/bootstrap/js/bootstrap.min.js',
         'assets/bootstrap-editable/js/bootstrap-editable.js',   //数据编辑器js
     ];
     //把导入的js文件移动到头部
