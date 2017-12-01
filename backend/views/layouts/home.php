@@ -64,10 +64,10 @@ AppAsset::register($this);
         <?/*= Alert::widget() */?>
         <?/*= $content */?>
     </div>-->
-    <div class="row"><?php include ("head.php") ?></div>
+    <div class="row"><?php include ("head.php") ?><div style="width: 100%;height: 60px"></div></div>
     <div class="row full-h">
         <div class="col-md-1 full-h"><?php include ("left.php")?></div>
-        <div class="col-md-11"><?= $content ?></div>
+        <div class="col-md-11" style="margin: auto"><?= $content ?></div>
     </div>
 </div>
 

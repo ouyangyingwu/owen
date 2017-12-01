@@ -6,23 +6,15 @@
  * Time: 16:32
  */
 ?>
-<div class="content full-h">
-    <div class="wrap background-r">
+<div class="row full-h">
+    <div class="" id="left-style">
         <ul>
-            <li><a>
+            <li class="pager"><a>
                     <i class="icon-user"></i>
                     <span>User</span>
                     <span class="arrow"></span>
                 </a>
             </li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
-            <li>测试测试</li>
         </ul>
     </div>
 </div>

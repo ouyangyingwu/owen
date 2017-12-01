@@ -61,6 +61,14 @@ class LoginForm extends Model
             return false;
         }
     }
+    public function loginEmployee()
+    {
+        if ($this->validate()) {
+            return Yii::$app->user->login($this->getEmployee(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Finds user by [[username]]
@@ -71,6 +79,14 @@ class LoginForm extends Model
     {
         if ($this->_user === null) {
             $this->_user = User::findByUsername($this->username);
+        }
+
+        return $this->_user;
+    }
+    protected function getEmployee()
+    {
+        if ($this->_user === null) {
+            $this->_user = Employee::findByUsername($this->username);
         }
 
         return $this->_user;

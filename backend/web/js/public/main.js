@@ -1195,14 +1195,25 @@ var SmsJs = {};
 
 //公共文件的一些特效
 $(function() {
+    setInterval(function(){
+        var date = new Date();
+        var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
+        $('#dateTime').text(time);
+    },1000);
+    function  supplement (x){
+        //补0
+        if(x<10) x = '0'+x;
+        return x;
+    }
+
     $('#user-actions').on({
-        mouseover:function(){$(this).children('.ul-box').removeClass('hide')},
-        mouseout:function(){$(this).children('.ul-box').addClass('hide')},
+        mouseover:function(){$(this).children('#logout').removeClass('hide')},
+        mouseout:function(){$(this).children('#logout').addClass('hide')},
         click:function(){
-            if($(this).children('.ul-box').hasClass('hide')){
-                $(this).children('.ul-box').removeClass('hide');
+            if($(this).children('#logout').hasClass('hide')){
+                $(this).children('#logout').removeClass('hide');
             }else{
-                $(this).children('.ul-box').addClass('hide')};
+                $(this).children('#logout').addClass('hide')};
             }
     });
 });

@@ -16,7 +16,7 @@ $(function() {
     //钟表
     setInterval(function () {
         var date = new Date();
-        var time = date.getFullYear()+'-'+supplement(date.getMonth())+'-'+ supplement(date.getDay()) +' '+supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
+        var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' '+supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
         $('.now-time').text(time);
     },1000);
     function  supplement (x){

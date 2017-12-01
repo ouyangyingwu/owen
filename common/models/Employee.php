@@ -3,6 +3,7 @@
 namespace app\models;
 
 use common\models\BaseModel;
+use yii\web\IdentityInterface;
 use Yii;
 
 /**
@@ -23,8 +24,11 @@ use Yii;
  * @property integer $created_at
  * @property integer $updated_at
  */
-class Employee extends BaseModel
+class Employee extends BaseModel //implements IdentityInterface
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ACTIVE = 10;
+
     /**
      * @inheritdoc
      */
@@ -68,5 +72,15 @@ class Employee extends BaseModel
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+    /**
+     * Finds user by username
+     *
+     * @param string $username
+     * @return static|null
+     */
+    public static function findByUsername($username)
+    {
+        return static::findOne(['name' => $username, 'status' => self::STATUS_ACTIVE]);
     }
 }

@@ -270,8 +270,10 @@ class User extends BaseModel implements IdentityInterface
             $user = User::find()->andFilterWhere(['id' => $this->id])->one();
             if ($user) {
                 $user->scenario = self::SCENARIO_RESET_PASSWORD;
-                if(Yii::$app->security->validatePassword($this->old_password, $user->password_hash)){
-                    $user->password_hash = Yii::$app->security->generatePasswordHash($this->new_password);
+                //判断密码是否匹配
+                if($this->validatePassword($this->old_password, $user->password_hash)){
+                    //密码加密
+                    $user->password_hash = $this->setPassword($this->new_password);
                     $user->updated_at = time();
                     if ($user->save()) {
                         return true;
