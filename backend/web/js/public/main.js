@@ -1195,6 +1195,8 @@ var SmsJs = {};
 
 //公共文件的一些特效
 $(function() {
+    var _csrf = $('meta[name="csrf-token"]').attr('content');
+
     setInterval(function(){
         var date = new Date();
         var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
@@ -1205,8 +1207,8 @@ $(function() {
         if(x<10) x = '0'+x;
         return x;
     }
-
-    $('#user-actions').on({
+    //顶部头像
+    /*$('#user-actions').on({
         mouseover:function(){$(this).children('#logout').removeClass('hide')},
         mouseout:function(){$(this).children('#logout').addClass('hide')},
         click:function(){
@@ -1215,5 +1217,50 @@ $(function() {
             }else{
                 $(this).children('#logout').addClass('hide')};
             }
+    });*/
+    //左边菜单
+    $('#main-menu li a').on({
+        mouseover:function(){
+            $(this).addClass('active-over')
+        },
+        mouseout:function(){
+            $(this).removeClass('active-over')
+            /*if(!$(this).children('.adornment').hasClass('active')){
+                $(this).children('.adornment').addClass('hide');
+            }
+            $(this).children('ul').addClass('hide')*/
+        },
+        click:function(){
+            if($(this).hasClass('active-menu')){
+
+            }else{
+                $('#main-menu').find('li a').removeClass('active-menu');
+                $(this).addClass('active-menu');
+            }
+        }
     });
+    $("#sideNav").click(function(){
+        if($(this).hasClass('closed')){
+            $('.navbar-side').animate({left: '0px'});
+            $(this).removeClass('closed');
+            $('#page-wrapper').animate({'margin-left' : '260px'});
+
+        }
+        else{
+            $(this).addClass('closed');
+            $('.navbar-side').animate({left: '-260px'});
+            $('#page-wrapper').animate({'margin-left' : '0px'});
+        }
+    });
+    logout = function(){
+        $.ajax({
+            url:'site/logout',
+            data:{'_csrf-backend':_csrf},
+            type:'POST'
+            //dataType:'json'
+            /*success: function (data) {
+
+            }*/
+        });
+    }
 });

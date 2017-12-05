@@ -26,7 +26,7 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 
-<div class="wrap">
+<!--<div class="wrap">-->
     <?php
 /*    NavBar::begin([
         'brandLabel' => 'My Company',
@@ -64,20 +64,37 @@ AppAsset::register($this);
         <?/*= Alert::widget() */?>
         <?/*= $content */?>
     </div>-->
-    <div class="row"><?php include ("head.php") ?><div style="width: 100%;height: 60px"></div></div>
-    <div class="row full-h">
-        <div class="col-md-1 full-h"><?php include ("left.php")?></div>
-        <div class="col-md-11" style="margin: auto"><?= $content ?></div>
-    </div>
-</div>
+    <!--<div class="row"><?php /*include ("head.php") */?><div style="width: 100%;height: 60px"></div></div>
+    <div class="row full-h clearfix">
+        <div class="col-md-1 full-h" style="width: 10%;float: left"><?php /*include ("left.php")*/?></div>
+        <div class="float-right clearfix" style="width: 90%;float: right"><?/*= $content */?></div>
+    </div>-->
+<!--</div>
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; My Company <?/*= date('Y') */?></p>
 
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <p class="pull-right"><?/*= Yii::powered() */?></p>
     </div>
-</footer>
+</footer>-->
+
+<div id="wrapper">
+    <nav class="navbar navbar-default top-navbar" role="navigation">
+        <?php include ("template-head.php") ?>
+    </nav>
+    <!--/. NAV TOP  -->
+    <nav class="navbar-default navbar-side" role="navigation">
+        <?php include ("template-left.php") ?>
+    </nav>
+    <!-- /. NAV SIDE  -->
+    <div id="page-wrapper">
+        <div id="page-inner">
+            <?= $content ?>
+        </div>
+    </div>
+    <!-- /. PAGE WRAPPER  -->
+</div>
 
 <?php $this->endBody() ?>
 </body>
