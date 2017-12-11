@@ -60,6 +60,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        //var_dump($this->layout);die;
+        $this->layout = 'home';
         return $this->render('index');
     }
 
@@ -74,11 +76,14 @@ class SiteController extends Controller
             return $this->goHome();
         }
         $this->layout = 'main';
+        //$this->layout = false;
         $model = new LoginForm();
+        //var_dump(Yii::$app->request->post());die;
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         } else {
             return $this->render('login', [
+            //return $this->render('template-login', [
                 'model' => $model,
             ]);
         }
@@ -91,7 +96,7 @@ class SiteController extends Controller
      */
     public function actionLogout()
     {
-        var_dump(Yii::$app->request->post());die;
+        //var_dump(Yii::$app->request->post());die;
         Yii::$app->user->logout();
 
         return $this->goHome();

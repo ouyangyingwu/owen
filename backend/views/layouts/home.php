@@ -25,60 +25,6 @@ AppAsset::register($this);
 </head>
 <body>
 <?php $this->beginBody() ?>
-
-<!--<div class="wrap">-->
-    <?php
-/*    NavBar::begin([
-        'brandLabel' => 'My Company',
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-    } else {
-        $menuItems[] = '<li>'
-            . Html::beginForm(['/site/logout'], 'post')
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout']
-            )
-            . Html::endForm()
-            . '</li>';
-    }
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
-        'items' => $menuItems,
-    ]);
-    NavBar::end();
-    */?>
-
-    <!--<div class="container">
-        <?/*= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) */?>
-        <?/*= Alert::widget() */?>
-        <?/*= $content */?>
-    </div>-->
-    <!--<div class="row"><?php /*include ("head.php") */?><div style="width: 100%;height: 60px"></div></div>
-    <div class="row full-h clearfix">
-        <div class="col-md-1 full-h" style="width: 10%;float: left"><?php /*include ("left.php")*/?></div>
-        <div class="float-right clearfix" style="width: 90%;float: right"><?/*= $content */?></div>
-    </div>-->
-<!--</div>
-
-<footer class="footer">
-    <div class="container">
-        <p class="pull-left">&copy; My Company <?/*= date('Y') */?></p>
-
-        <p class="pull-right"><?/*= Yii::powered() */?></p>
-    </div>
-</footer>-->
-
 <div id="wrapper">
     <nav class="navbar navbar-default top-navbar" role="navigation">
         <?php include ("template-head.php") ?>

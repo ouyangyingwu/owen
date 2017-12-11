@@ -308,6 +308,9 @@ line-height: 30px;
 .main-chart {
 	background: #fff;
 }
+.color-w{
+    color: white;
+}
 
 .easypiechart-panel {
 	text-align: center;
@@ -629,5 +632,15 @@ font-size: 19px;
     height: 20px;
     border-radius: 50%;
 }
+/*.padingl-0{
+    padding-left: 0px !important;
+}
+.padingr-0{
+    padding-right: 0px !important;
+}
+.padingRL-0{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}*/
 
 

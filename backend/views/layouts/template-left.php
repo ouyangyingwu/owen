@@ -14,7 +14,18 @@
             <a class="active-menu" href="javascript:void(0)"><i class="icon-dashboard"></i> Dashboard</a>
         </li>
         <li>
-            <a href="javascript:void(0)"><i class="icon-desktop"></i> UI Elements</a>
+            <a href="#"><i class="icon-sitemap"></i> UI Elements<span class="icon-angle-down arrow"></span></a>
+            <ul class="nav nav-second-level hide">
+                <li>
+                    <a href="#">Second Level Link</a>
+                </li>
+                <li>
+                    <a href="#">Second Level Link</a>
+                </li>
+                <li>
+                    <a href="#">Second Level Link</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="javascript:void(0)"><i class="icon-bar-chart"></i> Charts</a>

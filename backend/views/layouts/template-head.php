@@ -13,10 +13,11 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>-->
-    <a class="navbar-brand" href=""><i class="icon-cog"></i> <strong>HYBRID</strong></a>
+    <a class="navbar-brand" href=""><i class="icon-cog"></i> <strong>Elective</strong></a>
 </div>
 
 <ul class="nav navbar-top-links navbar-right">
+    <li class="dropdown color-w" id="dateTime"><?=date('Y-m-d H:i:s')?></li>
     <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
             <i class="icon-envelope icon-fw"></i> <i class="icon-caret-down"></i>

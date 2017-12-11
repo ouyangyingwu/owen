@@ -1208,6 +1208,13 @@ $(function() {
         return x;
     }
     //顶部头像
+    logout = function(){
+        $.ajax({
+            url:'site/logout',
+            data:{'_csrf-backend':_csrf},
+            type:'POST'
+        });
+    }
     /*$('#user-actions').on({
         mouseover:function(){$(this).children('#logout').removeClass('hide')},
         mouseout:function(){$(this).children('#logout').addClass('hide')},
@@ -1218,27 +1225,31 @@ $(function() {
                 $(this).children('#logout').addClass('hide')};
             }
     });*/
-    //左边菜单
+    /**
+     * 左边菜单
+     */
+    //左边菜单鼠标事件
     $('#main-menu li a').on({
         mouseover:function(){
             $(this).addClass('active-over')
         },
         mouseout:function(){
             $(this).removeClass('active-over')
-            /*if(!$(this).children('.adornment').hasClass('active')){
-                $(this).children('.adornment').addClass('hide');
-            }
-            $(this).children('ul').addClass('hide')*/
         },
         click:function(){
-            if($(this).hasClass('active-menu')){
-
+            if($(this).children('span')){
+                $(this).siblings('ul').removeClass('hide');
             }else{
-                $('#main-menu').find('li a').removeClass('active-menu');
-                $(this).addClass('active-menu');
+                if($(this).hasClass('active-menu')){
+
+                }else{
+                    $('#main-menu').find('li a').removeClass('active-menu');
+                    $(this).addClass('active-menu');
+                }
             }
         }
     });
+    //
     $("#sideNav").click(function(){
         if($(this).hasClass('closed')){
             $('.navbar-side').animate({left: '0px'});
@@ -1252,15 +1263,4 @@ $(function() {
             $('#page-wrapper').animate({'margin-left' : '0px'});
         }
     });
-    logout = function(){
-        $.ajax({
-            url:'site/logout',
-            data:{'_csrf-backend':_csrf},
-            type:'POST'
-            //dataType:'json'
-            /*success: function (data) {
-
-            }*/
-        });
-    }
 });

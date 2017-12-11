@@ -239,6 +239,18 @@ $(function(){
                 });break;
         }
     });
+    resetModel = function (model) {
+        switch (model){
+            case 'edit':
+                $("#user-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+            case 'delete':
+                $("#dialog-confirm").modal("show").find('p').text("你是否要删除这个用户？");
+                $("#dialog-confirm").attr('data-type' , 'is_delete');
+                break;
+        }
+    };
     var createButtonList = function(row){
         var buttonList = [];
         buttonList.push("<a name=\"table-button-list\" class='user-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
@@ -315,13 +327,8 @@ $(function(){
                             htmlData = data[i];             //获取到当前id的所有数据
                         }
                     }
-                    if($(this).attr('type') == 'edit'){
-                        $("#user-detail").modal("show");
-                        initEditForm(htmlData);
-                    }else{
-                        $("#dialog-confirm").modal("show").find('p').text("你是否要删除这个用户？");
-                        $("#dialog-confirm").attr('data-type' , 'is_delete');
-                    }
+                    var Model = $(this).attr('type');
+                    resetModel(Model);
                 });
             },
             error:function(XMLHttpRequest){
