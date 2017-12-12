@@ -1230,26 +1230,32 @@ $(function() {
      */
     //左边菜单鼠标事件
     $('#main-menu li a').on({
-        mouseover:function(){
-            $(this).addClass('active-over')
-        },
-        mouseout:function(){
-            $(this).removeClass('active-over')
-        },
+        mouseover:function(){$(this).addClass('active-over')},
+        mouseout:function(){$(this).removeClass('active-over')},
         click:function(){
-            if($(this).children('span')){
-                $(this).siblings('ul').removeClass('hide');
-            }else{
-                if($(this).hasClass('active-menu')){
-
-                }else{
-                    $('#main-menu').find('li a').removeClass('active-menu');
-                    $(this).addClass('active-menu');
+            $(this).parent().siblings().children('a').removeClass('active-menu');
+            /*实现局部刷新（头部与导航不刷新）*/
+            var html = $(this).attr('href').split('#/')[1];
+            if(html) {
+                $('#page-inner').load('views/'+html);
+            }
+            //二极菜单的显示影藏
+            if($(this).children('span').hasClass('arrow')){
+                if($(this).siblings('ul').is(':hidden')){
+                    $(this).parent().siblings().children('ul').slideUp();
+                    $(this).parent().siblings().children('a').children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
+                    $(this).siblings('ul').slideDown();
+                    $(this).children('span').removeClass('icon-angle-right').addClass('icon-angle-down');
+                }else {
+                    $(this).siblings('ul').slideUp();
+                    $(this).children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
                 }
+            } else {
+                $(this).addClass('active-menu');
             }
         }
     });
-    //
+    //导航栏的显示影藏
     $("#sideNav").click(function(){
         if($(this).hasClass('closed')){
             $('.navbar-side').animate({left: '0px'});

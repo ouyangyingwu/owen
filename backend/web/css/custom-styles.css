@@ -251,22 +251,22 @@ color:#fff;
 background-color: #F5B252;
 color:#fff;
 } 
- .back-footer-red {
-background-color: #F0433D;
-color:#fff;
-border-top: 0px solid #fff;
+.back-footer-red {
+    background-color: #F0433D;
+    color:#fff;
+    border-top: 0px solid #fff;
 }
  
- .icon-box-right {
-display: block;
-float: right;
-margin: 0 15px 10px 0;
-width: 70px;
-height: 70px;
-line-height: 75px;
-vertical-align: middle;
-text-align: center;
-font-size: 40px;
+.icon-box-right {
+    display: block;
+    float: right;
+    margin: 0 15px 10px 0;
+    width: 70px;
+    height: 70px;
+    line-height: 75px;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 40px;
 }
 
  .main-temp-back {
@@ -283,26 +283,26 @@ font-size: 40px;
     padding:20px;
     font-size:20px;
     font-weight:500;
-  -webkit-border-radius: 0px;
--moz-border-radius: 0px;
-border-radius: 0px;
-background-color:#2EA7EB;
-color:#fff;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    background-color:#2EA7EB;
+    color:#fff;
 }
-    .back-dash p {
-        padding-top:16px;
-        font-size:13px;
-        color:#fff;
-        line-height:25px;
-        text-align:justify;
-    }
+.back-dash p {
+    padding-top:16px;
+    font-size:13px;
+    color:#fff;
+    line-height:25px;
+    text-align:justify;
+}
 
-     .color-bottom-txt {
+.color-bottom-txt {
    color: #000;
-font-size: 16px;
-line-height: 30px;
+    font-size: 16px;
+    line-height: 30px;
 }
-     /*CHAT PANEL*/
+/*CHAT PANEL*/
 /*Charts*/
 
 .main-chart {
@@ -310,6 +310,9 @@ line-height: 30px;
 }
 .color-w{
     color: white;
+}
+#main-menu .b-color-d{
+    background: darkcyan;
 }
 
 .easypiechart-panel {
@@ -631,6 +634,9 @@ font-size: 19px;
     width: 20px;
     height: 20px;
     border-radius: 50%;
+}
+.hidee{
+    display: none;
 }
 /*.padingl-0{
     padding-left: 0px !important;
