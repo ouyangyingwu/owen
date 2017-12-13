@@ -15,15 +15,15 @@
         </li>
         <li>
             <a href="javascript:void(0)"><i class="icon-user"></i> User <span class="icon-angle-right arrow"></span></a>
-            <ul class="nav nav-second-level b-color-d hidee">
+            <ul class="nav nav-second-level b-color hidee">
                 <li>
-                    <a href="/#/user_list.html"><i class="icon-cogs"></i>User list</a>
+                    <a href="/#/user_list.html"><i class="icon-cogs"></i>User List</a>
                 </li>
                 <li>
                     <a href="/#/user_add.html"><i class="icon-cogs"></i>User Add</a>
                 </li>
                 <li>
-                    <a href="#"><i class="icon-cogs"></i>Second Level Link</a>
+                    <a href="#"><i class="icon-cogs"></i>Pending User</a>
                 </li>
             </ul>
         </li>
@@ -42,27 +42,12 @@
         </li>
         <li>
             <a href="/#/empty.html"><i class="icon-sitemap"></i> Multi-Level Dropdown<span class="icon-angle-right arrow"></span></a>
-            <ul class="nav nav-second-level hidee">
+            <ul class="nav nav-second-level hidee b-color">
                 <li>
                     <a href="#">Second Level Link</a>
                 </li>
                 <li>
                     <a href="#">Second Level Link</a>
-                </li>
-                <li>
-                    <a href="#">Second Level Link<span class="icon-angle-right arrow"></span></a>
-                    <ul class="nav nav-third-level hidee">
-                        <li>
-                            <a href="#">Third Level Link</a>
-                        </li>
-                        <li>
-                            <a href="#">Third Level Link</a>
-                        </li>
-                        <li>
-                            <a href="#">Third Level Link</a>
-                        </li>
-                    </ul>
-
                 </li>
             </ul>
         </li>

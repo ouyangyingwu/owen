@@ -1,0 +1,377 @@
+<div class="row" ng-controller="addUserController">
+    <div class="col-md-12">
+        <!-- BEGIN SAMPLE FORM PORTLET-->
+        <div class="portlet light">
+            <div class="portlet-title clearfix border-b">
+                <div class="caption font-red-sunglo">
+                    <i class=" icon-asterisk"></i>
+                    <span class="caption-subject font-dark sbold"> Add User </span>
+                </div>
+            </div>
+            <div class="portlet-body form" id="form-add-user">
+                <div class="form-horizontal">
+                    <div class="form-body">
+                        <div class="form-group ">
+                            <h4 class="col-md-4 control-label caption-subject font-dark bold">General</h4>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">
+                                Location:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" readonly id="input-current-location" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">
+                                Login Email:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" autocomplete="off" data-field="email" ng-model="user.email">
+                            </div>
+                        </div>
+                        <div class="form-group" style="display:none;">
+                            <label class="col-md-4 control-label">
+                                Password:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="password" id="password" autocomplete="off" class="form-control" data-field="password" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">
+                                Work Email:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" autocomplete="off" data-field="work_email" ng-model="user.work_email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">
+                                Personal Email:
+                                <span class="required"> </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" autocomplete="off" data-field="personal_email" ng-model="user.personal_email">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                User type:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="user.type">
+                                    <option ng-repeat="userType in userTypeList" value="{{ userType.id }}"> {{ userType.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Relationship To User:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" id="select-relation-to-employee" ng-model="user.relationship_to_employee">
+                                    <option value="Self">Self</option>
+                                    <option value="Family Member">Family Member</option>
+                                    <option value="Friend">Friend</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="form-family" style="display:none;">
+                            <label class="col-md-4 control-label">
+                                Who's Family:
+                                <span class="required"></span>
+                            </label>
+                            <div class="col-md-5">
+                                <select id="form-invite-user" style="width:400px;" class="form-control select2"></select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                First Name:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="first_name" ng-model="user.first_name"/>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Middle Name:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" placeholder="Optional" data-field="middle_name" ng-model="user.middle_name" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Last Name:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="last_name" ng-model="user.last_name" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Cell Phone:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" id="input-cell-phone" class="form-control"
+                                       data-field="cell_phone" ng-model="user.cell_phone" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Gender:
+                                <span class="required"> * </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="user.gender">
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                    <option value="0">Not specified</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Site:
+                                <span class="required"> </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="user.site" data-field="site">
+                                    <option ng-repeat="v in userSiteList" value="{{ v.id }}">{{ v.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Title:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="title" ng-model="user.profile.title" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Department:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="department" ng-model="user.profile.department" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Employee Id:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="employee_id" ng-model="user.employee_id" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Job Role:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="user.profile.job_role">
+                                    <option ng-repeat="jobRole in userJobRoleList" value="{{ jobRole.id }}">{{ jobRole.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Preferred Communication:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="user.profile.communication">
+                                    <option ng-repeat="communication in userCommunicationList" value="{{ communication.id }}">{{ communication.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- work info -->
+                        <div class="form-group ">
+                            <a ng-click="workInfoDown()" ><h4 class="col-md-4 control-label caption-subject font-dark bold">Work Info&nbsp;<i class="fa fa-angle-down po-right"></i></h4></a>
+                        </div>
+                        <div class="work-info">
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    Street Address:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-street1"
+                                           id="input-workaddress-street" ng-model="user.workAddress.street1" />
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    Apt #:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-street2" placeholder="Optional"
+                                           ng-model="user.workAddress.street2" />
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    City:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-city"
+                                           id="input-workaddress-city" ng-model="user.workAddress.city" />
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    State:
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control select2" data-field="workaddress-state" id="input-workaddress-state">
+                                        <option ng-repeat="state in stateList" value="{{ state }}">{{ state }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    Zipcode:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-zipcode"
+                                           id="input-workaddress-zipcode" ng-model="user.workAddress.zipcode" />
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    Phone:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-phone"
+                                           id="input-workaddress-phone" ng-model="user.workAddress.phone" />
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    Fax:
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" data-field="workaddress-fax"
+                                           id="input-workaddress-fax" placeholder="Optional" ng-model="user.workAddress.fax" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- home info -->
+                        <div class="form-group ">
+                            <h4 class="col-md-4 control-label caption-subject font-dark bold">Home Info</h4>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Street Address:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-street1" placeholder="Optional"
+                                       id="input-homeaddress-street" ng-model="user.homeAddress.street1" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Apt #:
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-street2" placeholder="Optional"
+                                       ng-model="user.homeAddress.street2" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                City:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-city"
+                                       id="input-homeaddress-city" ng-model="user.homeAddress.city" placeholder="Optional" />
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                State:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control select2" data-field="homeaddress-state" id="input-homeaddress-state">
+                                    <option ng-repeat="state in stateList" value="{{ state }}">{{ state }}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Zipcode:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-zipcode"
+                                       id="input-homeaddress-zipcode" ng-model="user.homeAddress.zipcode" placeholder="Optional"/>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Phone:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-phone"
+                                       id="input-homeaddress-phone" ng-model="user.homeAddress.phone" placeholder="Optional"/>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label">
+                                Fax:
+                                <span class="required">  </span>
+                            </label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" data-field="homeaddress-fax"
+                                       id="input-homeaddress-fax" placeholder="Optional" ng-model="user.homeAddress.fax" placeholder="Optional"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions right">
+                        <div class="col-md-9">
+                            <button type="button" class="btn default"  ng-click="resetUser()">Reset</button>
+                            <button type="submit" class="btn blue"  ng-click="addUser()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- alert dialog -->
+    <div class="modal fade" id="dialog-alert" data-backdrop="static" aria-hidden="false">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">Alert</h4>
+            </div>
+            <div class="modal-body">
+                <p data-name="text-alert-mesage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-outline dark">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

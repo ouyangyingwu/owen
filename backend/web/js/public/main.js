@@ -1196,7 +1196,6 @@ var SmsJs = {};
 //公共文件的一些特效
 $(function() {
     var _csrf = $('meta[name="csrf-token"]').attr('content');
-
     setInterval(function(){
         var date = new Date();
         var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
@@ -1211,46 +1210,63 @@ $(function() {
     logout = function(){
         $.ajax({
             url:'site/logout',
-            data:{'_csrf-backend':_csrf},
+            data:{'_csrf':_csrf},
             type:'POST'
         });
     }
-    /*$('#user-actions').on({
-        mouseover:function(){$(this).children('#logout').removeClass('hide')},
-        mouseout:function(){$(this).children('#logout').addClass('hide')},
-        click:function(){
-            if($(this).children('#logout').hasClass('hide')){
-                $(this).children('#logout').removeClass('hide');
-            }else{
-                $(this).children('#logout').addClass('hide')};
-            }
-    });*/
     /**
      * 左边菜单
      */
+    var html = location.href.split('#/')[1];
+    if(html) {
+        $('#page-inner').load('views/'+html);
+        $('#main-menu li a').removeClass('active-menu');
+        $('#main-menu').find('a').each(function(){
+            if($(this).attr('href').split('#/')[1] == html){
+                $(this).addClass('active-menu');
+                $(this).parent('li').parent('ul').siblings('a').addClass('active-menu');
+                var jsc = html.substring(0,html.indexOf('.')).split('_');
+                $('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
+            }
+        });
+    }
     //左边菜单鼠标事件
     $('#main-menu li a').on({
         mouseover:function(){$(this).addClass('active-over')},
         mouseout:function(){$(this).removeClass('active-over')},
         click:function(){
-            $(this).parent().siblings().children('a').removeClass('active-menu');
             /*实现局部刷新（头部与导航不刷新）*/
             var html = $(this).attr('href').split('#/')[1];
             if(html) {
                 $('#page-inner').load('views/'+html);
+                var jsc = html.substring(0,html.indexOf('.')).split('_');
+                $('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
             }
+
             //二极菜单的显示影藏
             if($(this).children('span').hasClass('arrow')){
                 if($(this).siblings('ul').is(':hidden')){
+                    $(this).parent().siblings('li').each(function(){
+                        if($(this).children('ul').children('li').children('a').hasClass('active-menu')){
+                            $(this).children('a').addClass('active-menu');
+                        }
+                    });
+                    if($(this).siblings('ul').children('li').children('a').hasClass('active-menu')){
+                        $(this).removeClass('active-menu');
+                    }
                     $(this).parent().siblings().children('ul').slideUp();
                     $(this).parent().siblings().children('a').children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
                     $(this).siblings('ul').slideDown();
                     $(this).children('span').removeClass('icon-angle-right').addClass('icon-angle-down');
                 }else {
+                    if($(this).siblings('ul').children('li').children('a').hasClass('active-menu')){
+                        $(this).addClass('active-menu');
+                    }
                     $(this).siblings('ul').slideUp();
                     $(this).children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
                 }
             } else {
+                $('#main-menu li a').removeClass('active-menu');
                 $(this).addClass('active-menu');
             }
         }

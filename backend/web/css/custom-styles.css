@@ -27,7 +27,7 @@ body {
     margin:10px 20px 10px 0px;
     background-color:transparent;
     padding:10px;
-    min-height:1200px;
+    /*min-height:1200px;*/
 }
 
 .text-center {
@@ -311,8 +311,8 @@ font-size: 40px;
 .color-w{
     color: white;
 }
-#main-menu .b-color-d{
-    background: darkcyan;
+#main-menu .b-color{
+    background: #32b7c0;
 }
 
 .easypiechart-panel {
@@ -598,23 +598,17 @@ line-height: 1.428571429;
  
  @media(min-width:768px) {
      #page-wrapper{
-               margin: 0 0 0 260px;
-        padding: 15px 30px;
-        
-               min-height: 1200px;
-		
-    }
-	
-	
+         margin: 0 0 0 260px;
+         padding: 15px 30px;
+         /*min-height: 1200px;*/
+     }
     .navbar-side {
         width: 260px;
         z-index: 1;
     }
-
    .navbar {
- border-radius: 0px; 
-}
-   
+        border-radius: 0px;
+   }
 }
  @media(max-width:480px) {
 .page-header small {
@@ -638,7 +632,41 @@ font-size: 19px;
 .hidee{
     display: none;
 }
-/*.padingl-0{
+.portlet{
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+.portlet.light{
+    padding: 12px 20px 15px;
+    background-color: #fff;
+}
+.portlet-title{
+    padding: 15px 20px 10px;
+    font-size: 16px;
+}
+.form-body{
+    padding-top: 20px;
+}
+.caption{
+    color: #666;
+    padding: 20px 0;
+    float: left;
+    display: inline-block;
+    font-size: 18px;
+    line-height: 18px;
+}
+.border-b{
+    border-bottom: 1px solid #eef1f5;
+}
+.btn.green{
+    color: #FFF;
+    background-color: #32c5d2;
+    border-color: #32c5d2
+}
+.margin-bottom-10{
+    margin-bottom: 10px;
+}
+.padingl-0{
     padding-left: 0px !important;
 }
 .padingr-0{
@@ -647,6 +675,11 @@ font-size: 19px;
 .padingRL-0{
     padding-left: 0px !important;
     padding-right: 0px !important;
-}*/
+}
+.upload-img{
+    width: 200px;
+    height: 130px;
+    position: relative;
+}
 
 
