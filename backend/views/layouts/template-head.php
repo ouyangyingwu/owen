@@ -207,7 +207,7 @@
     <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
             <span><img src="../image/<?=Yii::$app->user->identity->img_url?:'head-default.png'?>" class="img_url"></span>
-            <span><?=Yii::$app->user->identity->username?></span><i class="icon-caret-down"></i>            <!--<i class="icon-user fa-fw"></i> <i class="icon-caret-down"></i>-->
+            <span><?=Yii::$app->user->identity->username?></span><i class="icon-caret-down"></i>
         </a>
         <ul class="dropdown-menu dropdown-user">
             <li><a href="#"><i class="icon-user fa-fw"></i> User Profile</a></li>

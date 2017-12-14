@@ -5,7 +5,7 @@ $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token , per_page:2};
+    var params = {_csrf:token , per_page:10};
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
@@ -120,9 +120,9 @@ $(function(){
     function intTostr(value , type){
         if(type == 'active') {
             if (value == 1) {
-                return 'Active';
+                return 'Yes';
             } else if (value == 0) {
-                return 'Freeze';
+                return 'No';
             }
         }
         if(type == 'sex') {
@@ -300,7 +300,7 @@ $(function(){
     function userList(params){
         $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
-            url:"/api/user/list",
+            url:"/api/class-room/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -310,7 +310,7 @@ $(function(){
                 var html = '';
                 if(data){
                     if(data.length < total){
-                        total = Math.ceil(total/2);
+                        total = Math.ceil(total/10);
                     }else {
                         total = 1;
                     }
@@ -321,11 +321,11 @@ $(function(){
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td>'+data[i]["id"]+'</td>';
-                        html +='<td>'+ data[i]['username'] +'</td>';
-                        html +='<td>'+ data[i]['email']+'</td>';
-                        html +='<td>'+ data[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(data[i]['sex'] , 'sex') +'</td>';
+                        html +='<td>'+data[i]["crNo"]+'</td>';
+                        html +='<td>'+ data[i]['crBuildingName'] +'</td>';
+                        html +='<td>'+ data[i]['crRoomNo']+'</td>';
+                        html +='<td>'+ data[i]['crNumberOfSeat']+'</td>';
+                        html +='<td>'+ intTostr(data[i]['active'] , 'active') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }

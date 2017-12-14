@@ -65,6 +65,7 @@ class UserController extends Controller
         $user->scenario = User::SCENARIO_ADD;
         $postData = Yii::$app->request->post();
         $user->setAttributes($this->SafeFilter($postData));
+        $user->dirthday = time($user->dirthday);
         return $user->getAdd();
 
     }

@@ -33,6 +33,9 @@ body {
 .text-center {
     text-align:center;
 }
+.text-right {
+    text-align:right;
+}
 .no-boder {
     border:1px solid #f3f3f3;
 }
@@ -301,6 +304,9 @@ font-size: 40px;
    color: #000;
     font-size: 16px;
     line-height: 30px;
+}
+.text-red{
+    color: red;
 }
 /*CHAT PANEL*/
 /*Charts*/
@@ -677,9 +683,21 @@ font-size: 19px;
     padding-right: 0px !important;
 }
 .upload-img{
-    width: 200px;
-    height: 130px;
+    max-width: 270px;
+    height: 180px;
     position: relative;
 }
-
-
+.form-actions{
+    padding: 20px 0 40px 0;
+    margin: 0;
+    background-color: #ffffff;
+    border-top: 1px solid #e7ecf1;
+}
+.bold {
+    font-weight: 700!important;
+}
+.required{
+    color: #e02222;
+    font-size: 12px;
+    padding-left: 2px;
+}

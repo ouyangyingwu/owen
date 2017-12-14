@@ -73,7 +73,7 @@ class User extends BaseModel implements IdentityInterface
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'page' , 'per_page'],
-            self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex'],
+            self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex' , 'dirthday' , 'position'],
             self::SCENARIO_UPDATE => ['email' , 'username' , 'phone'],
             self::SCENARIO_RESET_PASSWORD => ['old_password' , 'new_password'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
@@ -302,6 +302,7 @@ class User extends BaseModel implements IdentityInterface
             $user->create_time = time();
             $user->status = 1;
             $user->is_delete = 0;
+            $user->password_hash = $this->setPassword('123456');
             if($user->save())
             {
                 return $user;
