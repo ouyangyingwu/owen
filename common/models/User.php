@@ -4,7 +4,6 @@ namespace common\models;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use common\exception\ModelException;
 
@@ -12,12 +11,18 @@ use common\exception\ModelException;
  * User model
  *
  * @property integer $id
+ * @property integer $type
  * @property string $username
+ * @property integer $sex
+ * @property integer $dirthday
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
- * @property string $auth_key
  * @property integer $status
+ * @property string $auth_key
+ * @property integer $phone
+ * @property string $img_url
+ *  @property integer $is_delete
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
@@ -49,6 +54,7 @@ class User extends BaseModel implements IdentityInterface
     private $_query;
 
     const SCENARIO_SEARCH = 'list';
+    const SCENARIO_ONE = 'one';
     const SCENARIO_ADD = 'add';
     const SCENARIO_STATUS = 'status';
     const SCENARIO_EDIT = 'edit';
@@ -77,6 +83,7 @@ class User extends BaseModel implements IdentityInterface
             self::SCENARIO_UPDATE => ['email' , 'username' , 'phone'],
             self::SCENARIO_RESET_PASSWORD => ['old_password' , 'new_password'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
+            self::SCENARIO_ONE => ['id'  , 'type'],
             self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
         ];
@@ -112,6 +119,10 @@ class User extends BaseModel implements IdentityInterface
         {
             $this->_query->andFilterWhere(['like', 'username', $this->username]);
         }
+        if ($this->type)
+        {
+            $this->_query->andFilterWhere(['type'=> $this->type]);
+        }
         if(count($this->select)>0)
         {
             $this->_query->select($this->select);
@@ -123,9 +134,17 @@ class User extends BaseModel implements IdentityInterface
      * 一对一用hasOne来执行连接
      * 一对多用hasMany
      */
-    public function getUser()
+    public function getStudent()
     {
-        return $this->hasOne(User::className(),['id'=>'user_id']);
+        return $this->hasOne(UserStudent::className(),['user_id'=>'id']);
+    }
+    public function getTeacher()
+    {
+        return $this->hasOne(UserStudent::className(),['user_id'=>'id']);
+    }
+    public function getAdmin()
+    {
+        return $this->hasOne(UserAdmin::className(),['user_id'=>'id']);
     }
     public function getComment()
     {
@@ -138,20 +157,19 @@ class User extends BaseModel implements IdentityInterface
     private function addQueryExpand()
     {
         if (count($this->expand)>0){
-            if(in_array('user' , $this->expand)){
-                //$this->_query->with('user');              //查询User的所有字段
-                $this->_query->with([
+            if(in_array('student' , $this->expand)){
+                $this->_query->with('student');              //查询UserStudent的所有字段
+                /*$this->_query->with([                   //查询UserStudent的指定字段
                     'user' => function($query) {
-                        $query->select(['id', 'username']);
+                        $query->select(['id', 'user_id']);
                     }
-                ]);
+                ]);*/
             }
-            if(in_array('comment' , $this->expand)){
-                $this->_query->with([
-                    'comment'=>function($query){
-                        $query->select(['article_id', 'create_time','content'])->andFilterWhere(['status'=>1]);
-                    }
-                ]);
+            if(in_array('teacher' , $this->expand)){
+                $this->_query->with('teacher');
+            }
+            if(in_array('admin' , $this->expand)){
+                $this->_query->with('admin');
             }
         }
     }
@@ -211,6 +229,7 @@ class User extends BaseModel implements IdentityInterface
         if($this->validate()){
             $this->createQuery();
             $this->addQueryExpand();
+            $this->addOrderBy();
             $result = $this->_query->one();
             unset($result['password_hash']);
             unset($result['password_reset_token']);

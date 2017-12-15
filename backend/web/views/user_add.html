@@ -13,17 +13,17 @@
                     <div class="form-horizontal">
                         <div class="form-body">
                             <div class="form-group ">
-                                <h4 class="col-md-4 control-label caption-subject font-dark bold">General</h4>
+                                <h4 class="col-md-4 control-label caption-subject font-dark bold">基本信息</h4>
                             </div>
                             <div class="form-group ">
                                 <label class="col-md-4 control-label">
-                                    Position:
+                                    Type:
                                     <span class="required"> * </span>
                                 </label>
                                 <div class="col-md-5">
-                                    <select class="form-control" name="position">
+                                    <select class="form-control" name="type">
                                         <option value="1">学生</option>
-                                        <option value="2">教师</option>
+                                        <option value="2">教职工</option>
                                         <option value="3">管理员</option>
                                     </select>
                                 </div>
@@ -76,6 +76,84 @@
                                 </label>
                                 <div class="col-md-5">
                                     <input type="text" class="form-control" name="phone">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <h4 class="col-md-4 control-label caption-subject font-dark bold">详细信息</h4>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    学号:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="stuNo" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    教职工号:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="teachNo" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    系:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control" name="department_id">
+                                        <option value="1">土木系</option>
+                                        <option value="2">计算机系</option>
+                                        <option value="3">软件系</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    专业:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control" name="marjor_id">
+                                        <option value="1">电子商务</option>
+                                        <option value="2">土木工程</option>
+                                        <option value="3">软件开发</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    职位:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="position">
+                                    <!--<select class="form-control" name="position">
+                                        <option value="1">教师</option>
+                                        <option value="2">教室管理员</option>
+                                        <option value="3">图书管理员</option>
+                                        <option value="3">图书管理员</option>
+                                        <option value="4">采购员</option>
+                                        <option value="5">宿舍管理员</option>
+                                        <option value="6">安全管理员</option>
+                                    </select>-->
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    权限:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control" name="purview">
+                                        <option value="1">信息查看员</option>
+                                        <option value="2">信息管理员</option>
+                                        <option value="10">管理员</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
