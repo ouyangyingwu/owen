@@ -140,7 +140,7 @@ class User extends BaseModel implements IdentityInterface
     }
     public function getTeacher()
     {
-        return $this->hasOne(UserStudent::className(),['user_id'=>'id']);
+        return $this->hasOne(UserTeacher::className(),['user_id'=>'id']);
     }
     public function getAdmin()
     {
