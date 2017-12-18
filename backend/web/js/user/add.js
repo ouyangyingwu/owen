@@ -7,7 +7,6 @@ $(function(){
     function userClass(position){
         var position = position ? position : $(".form-control[name='type']").val();
         Numbering(position);
-        department();
         if(position == 1){
             $(".form-control[name='stuNo']").parent().parent().show();
             $(".form-control[name='teachNo']").parent().parent().hide();
@@ -37,8 +36,10 @@ $(function(){
     });
 
     //计算出新用户的编号
+    var numbe;
     function Numbering(type){
-        var expand , last , numbe , timestamp = new Date().getTime();
+        //var numbe;
+        var expand , last , timestamp = new Date().getTime();
         if( type == 1 )  expand='student',last='S';
         if( type == 2 )  expand='teacher',last='T';
 
@@ -65,11 +66,9 @@ $(function(){
                 if( type == 2 )  $(".form-control[name='teachNo']").val(numbe);
             }
         });
-        //return last+CommonTool.formatTime(Math.round(timestamp/1000) , 'Y')+numbe;
     }
     //department list
-    //var department_id;
-    function department(){
+    (function (){
         var postData = {_csrf:token};
         $.ajax({
             url: 'api/department/list',
@@ -78,20 +77,18 @@ $(function(){
             dataType:'json',
             success:function(data){
                 var html = '';
+                $(".form-control[name='major_id']").empty();
+                html+= '<option value="0">请选择</option>';
                 if(data.total > 0){
                     for(var i=0 ; i < data.total ; i++){
                         html+= '<option value="'+data["data"][i]['id']+'">'+data["data"][i]['depName']+'</option>';
                     }
-                    $(".form-control[name='department_id']").append(html);
-                }else{
-                    html+= '<option value="0">没有可以选择的系</option>';
-                    $(".form-control[name='department_id']").empty().append(html);
-                }
-                marjor( data["data"][0]['id']);
+                }else{html+= '<option value="0">没有可以选择的系</option>';}
+                $(".form-control[name='department_id']").append(html);
             }
         });
-    }
-    //department list
+    })();
+    //major list
     function marjor(department_id){
         var postData = {_csrf:token,department_id:department_id};
         $.ajax({
@@ -102,13 +99,12 @@ $(function(){
             success:function(data){
                 var html = '';
                 $(".form-control[name='major_id']").empty();
+                html+= '<option value="0">请选择</option>';
                 if(data.total > 0){
                     for(var i=0 ; i < data.total ; i++){
                         html+= '<option value="'+data["data"][i]['id']+'">'+data["data"][i]['majorName']+'</option>';
                     }
-                    $(".form-control[name='major_id']").append(html);return;
-                }
-                html+= '<option value="0">没有可以选择的专业</option>';
+                }else {html+= '<option value="0">没有可以选择的专业</option>';}
                 $(".form-control[name='major_id']").append(html);return;
             }
         });
@@ -173,12 +169,11 @@ $(function(){
         submitHandler: function() {
             var postData = {};
             postData['_csrf'] = token;
-            postData['position'] = $(".form-control[name='position']").val();
-            postData['sex'] = $(".form-control[name='sex']").val();
-            postData['dirthday'] = $(".form-control[name='dirthday']").val();
-            postData['username'] = $(".form-control[name='username']").val();
-            postData['email'] = $(".form-control[name='email']").val();
-            postData['phone'] = $(".form-control[name='phone']").val();
+            $(".form-control").each(function(){
+                if($(this).is(':visible')){
+                    postData[$(this).attr('name')] = $(this).val();
+                }
+            });
             $.ajax({
                 url: "/api/user/add",
                 data: postData,

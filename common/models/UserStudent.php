@@ -5,7 +5,7 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * User model
+ * This is the model class for table "user_student".
  *
  * @property integer $id
  * @property integer $user_id
@@ -52,16 +52,16 @@ class UserStudent extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','stuNo','department_id','marjor_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id','stuNo','department_id','major_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','department_id','marjor_id'],
+            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','department_id','major_id'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','department_id','marjor_id'],
+            self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -181,6 +181,9 @@ class UserStudent extends  BaseModel
             $userStudent = new UserStudent();
             $userStudent->scenario = self::SCENARIO_ADD;
             $userStudent->setAttributes($this->safeAttributesData());
+            $userStudent->credit = 0;
+            $userStudent->status = 1;
+            $userStudent->create_time = time();
             if($userStudent->save())
             {
                 return $userStudent;

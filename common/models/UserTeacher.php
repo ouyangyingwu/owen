@@ -5,18 +5,15 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "Article".
+ * This is the model class for table "user_teacher".
  *
  * @property integer $id
  * @property integer $user_id
- * @property string $title
- * @property string $describe
- * @property string $content
- * @property integer $status
- * @property integer $type
+ * @property string $teachNo
+ * @property string $position
+ * @property string $course
+ * @property integer $department_id
  * @property string $create_time
- * @property string $edit_time
- * @property integer $is_delete
  */
 class UserTeacher extends  BaseModel
 {
@@ -50,16 +47,16 @@ class UserTeacher extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','stuNo','college_id','department_id','marjor_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id','teachNo','position','department_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','college_id','department_id','marjor_id'],
+            self::SCENARIO_LIST => ['id','user_id','teachNo','position','department_id'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','college_id','department_id','marjor_id'],
+            self::SCENARIO_ADD => ['user_id','teachNo','position','department_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -167,9 +164,6 @@ class UserTeacher extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             $result = $this->_query->one();
-            if($result['article_url']){
-                $result['content'] = file_get_contents("../web/file/".$result['article_url']);
-            }
             return $result;
         }
     }
@@ -179,20 +173,13 @@ class UserTeacher extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $article = new Article();
-            $article->scenario = self::SCENARIO_ADD;
-            $article->setAttributes($this->safeAttributesData());
-            if($this->strORurl == 'str'){
-                $file = new File();
-                $file->content = $article->article_url;
-                $article->article_url = $file->FileCreate();
-            }
-            $article->create_time = time();
-            $article->status = 1;
-            $article->is_delete = 0;
-            if($article->save())
+            $userTeacher = new UserTeacher();
+            $userTeacher->scenario = self::SCENARIO_ADD;
+            $userTeacher->setAttributes($this->safeAttributesData());
+            $userTeacher->create_time = time();
+            if($userTeacher->save())
             {
-                return $article;
+                return $userTeacher;
             }
             return null;
         } else {
@@ -207,13 +194,13 @@ class UserTeacher extends  BaseModel
     {
         if($this->validate())
         {
-            $article = Article::find()->andFilterWhere(['id' => $this->id])->one();
-            if($article)
+            $userTeacher = UserTeacher::find()->andFilterWhere(['id' => $this->id])->one();
+            if($userTeacher)
             {
-                $article->scenario = self::SCENARIO_EDIT;
-                $article->setAttribute($this->edit_name, $this->edit_value);
-                $article->edit_time = time();
-                if($article->save())
+                $userTeacher->scenario = self::SCENARIO_EDIT;
+                $userTeacher->setAttribute($this->edit_name, $this->edit_value);
+                $userTeacher->edit_time = time();
+                if($userTeacher->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

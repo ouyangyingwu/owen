@@ -5,18 +5,12 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "Article".
+ * This is the model class for table "user_admin".
  *
  * @property integer $id
  * @property integer $user_id
- * @property string $title
- * @property string $describe
- * @property string $content
- * @property integer $status
- * @property integer $type
+ * @property integer $purview
  * @property string $create_time
- * @property string $edit_time
- * @property integer $is_delete
  */
 class UserAdmin extends  BaseModel
 {
@@ -50,7 +44,7 @@ class UserAdmin extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','stuNo','college_id','department_id','marjor_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id','purview',],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
@@ -59,7 +53,7 @@ class UserAdmin extends  BaseModel
         return [
             self::SCENARIO_LIST => ['id','user_id','stuNo','credit','college_id','department_id','marjor_id'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','college_id','department_id','marjor_id'],
+            self::SCENARIO_ADD => ['user_id','purview'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -167,9 +161,6 @@ class UserAdmin extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             $result = $this->_query->one();
-            if($result['article_url']){
-                $result['content'] = file_get_contents("../web/file/".$result['article_url']);
-            }
             return $result;
         }
     }
@@ -179,20 +170,13 @@ class UserAdmin extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $article = new Article();
-            $article->scenario = self::SCENARIO_ADD;
-            $article->setAttributes($this->safeAttributesData());
-            if($this->strORurl == 'str'){
-                $file = new File();
-                $file->content = $article->article_url;
-                $article->article_url = $file->FileCreate();
-            }
-            $article->create_time = time();
-            $article->status = 1;
-            $article->is_delete = 0;
-            if($article->save())
+            $userAdmin = new UserAdmin();
+            $userAdmin->scenario = self::SCENARIO_ADD;
+            $userAdmin->setAttributes($this->safeAttributesData());
+            $userAdmin->create_time = time();
+            if($userAdmin->save())
             {
-                return $article;
+                return $userAdmin;
             }
             return null;
         } else {
@@ -207,13 +191,13 @@ class UserAdmin extends  BaseModel
     {
         if($this->validate())
         {
-            $article = Article::find()->andFilterWhere(['id' => $this->id])->one();
-            if($article)
+            $userAdmin = UserAdmin::find()->andFilterWhere(['id' => $this->id])->one();
+            if($userAdmin)
             {
-                $article->scenario = self::SCENARIO_EDIT;
-                $article->setAttribute($this->edit_name, $this->edit_value);
-                $article->edit_time = time();
-                if($article->save())
+                $userAdmin->scenario = self::SCENARIO_EDIT;
+                $userAdmin->setAttribute($this->edit_name, $this->edit_value);
+                $userAdmin->edit_time = time();
+                if($userAdmin->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

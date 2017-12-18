@@ -701,3 +701,30 @@ font-size: 19px;
     font-size: 12px;
     padding-left: 2px;
 }
+.fieldset {
+    border: 1px dashed #aaa;
+    width: 100%;
+    height: auto;
+}
+.fieldset legend {
+    width: auto;
+    margin: 0 15px !important;
+    color: #333 !important;
+    border-bottom: none !important;
+    padding: 0 15px;
+}
+.paddingb-20 {
+    padding-bottom: 20px !important;
+}
+.paddingt-10 {
+    padding-top: 10px !important;
+}
+.modal-title {
+    font-size: 16px;
+    color: #2f353b!important;
+    font-weight: 600!important;
+}
+.padding-LR-10{
+    padding-left: 10px;
+    padding-right: 10px;
+}

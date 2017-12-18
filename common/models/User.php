@@ -56,7 +56,6 @@ class User extends BaseModel implements IdentityInterface
     const SCENARIO_SEARCH = 'list';
     const SCENARIO_ONE = 'one';
     const SCENARIO_ADD = 'add';
-    const SCENARIO_STATUS = 'status';
     const SCENARIO_EDIT = 'edit';
     const SCENARIO_UPDATE = 'update';
     const SCENARIO_RESET_PASSWORD = 'password';
@@ -78,13 +77,12 @@ class User extends BaseModel implements IdentityInterface
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'page' , 'per_page'],
-            self::SCENARIO_ADD => ['username' , 'phone' , 'email' , 'img_url' , 'sex' , 'dirthday' , 'position'],
+            self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'type' , 'per_page' , 'page'],
+            self::SCENARIO_ADD => ['type', 'username' , 'phone' , 'email' , 'img_url' , 'sex' , 'dirthday' ],
             self::SCENARIO_UPDATE => ['email' , 'username' , 'phone'],
             self::SCENARIO_RESET_PASSWORD => ['old_password' , 'new_password'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
             self::SCENARIO_ONE => ['id'  , 'type'],
-            self::SCENARIO_STATUS => ['id' , 'status'],
             self::SCENARIO_DELETE => ['id'],
         ];
     }
@@ -119,6 +117,10 @@ class User extends BaseModel implements IdentityInterface
         {
             $this->_query->andFilterWhere(['like', 'username', $this->username]);
         }
+        if (is_array($this->type))
+        {
+            $this->_query->andFilterWhere(['in' , 'type', $this->type]);
+        }
         if ($this->type)
         {
             $this->_query->andFilterWhere(['type'=> $this->type]);
@@ -145,10 +147,6 @@ class User extends BaseModel implements IdentityInterface
     public function getAdmin()
     {
         return $this->hasOne(UserAdmin::className(),['user_id'=>'id']);
-    }
-    public function getComment()
-    {
-        return $this->hasMany(Comment::className(),['article_id'=>'id']);
     }
     /**
      * add expand query
@@ -290,9 +288,8 @@ class User extends BaseModel implements IdentityInterface
             if ($user) {
                 $user->scenario = self::SCENARIO_RESET_PASSWORD;
                 //判断密码是否匹配
-                if($this->validatePassword($this->old_password, $user->password_hash)){
-                    //密码加密
-                    $user->password_hash = $this->setPassword($this->new_password);
+                if(Yii::$app->security->validatePassword($this->old_password, $user->password_hash)){
+                    $user->password_hash = Yii::$app->security->generatePasswordHash($this->new_password);
                     $user->updated_at = time();
                     if ($user->save()) {
                         return true;
@@ -321,7 +318,7 @@ class User extends BaseModel implements IdentityInterface
             $user->create_time = time();
             $user->status = 1;
             $user->is_delete = 0;
-            $user->password_hash = $this->setPassword('123456');
+            $user->password_hash = Yii::$app->security->generatePasswordHash(123456);
             if($user->save())
             {
                 return $user;

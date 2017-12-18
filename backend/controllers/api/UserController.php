@@ -68,30 +68,46 @@ class UserController extends Controller
     {
         $user = new User();
         $user->scenario = User::SCENARIO_ADD;
-        $postData = $this->SafeFilter(Yii::$app->request->post());
-        $user->setAttributes($postData);
-        $user->dirthday = time($user->dirthday);
+        $postData = Yii::$app->request->post();
+        $user->setAttributes($this->SafeFilter($postData));
+        $user->dirthday = strtotime($user->dirthday);
+
+        //开始事务
+        $transaction = Yii::$app->db->beginTransaction();
         $user = $user->getAdd();
-        if($user->type == 1){
-            $userStudent = new UserStudent();
-            $userStudent->user_id = $user->id;
-            $userStudent->credit = 0;
-            $userStudent->status = 1;
-            $userStudent->create_time = time();
-            $userStudent->setAttributes(Yii::$app->request->post());
-            $userStudent->getAdd();
-        }elseif($user->type == 2){
-            $userTeacher = new UserTeacher();
-            $userTeacher->user_id = $user->id;
-            $userTeacher->create_time = time();
-            $userTeacher->setAttributes(Yii::$app->request->post());
-            $userTeacher->getAdd();
-        }elseif($user->type == 3){
-            $userAdmin = new UserAdmin();
-            $userAdmin->user_id = $user->id;
-            $userAdmin->create_time = time();
-            $userAdmin->setAttributes(Yii::$app->request->post());
-            $userAdmin->getAdd();
+        try{
+            if(!$user){
+                throw new \Exception('用户创建失败！');
+            }
+            if($user->type == 1){
+                $userStudent = new UserStudent();
+                $userStudent->scenario = UserStudent::SCENARIO_ADD;
+                $userStudent->user_id = $user->id;
+                $userStudent->setAttributes(Yii::$app->request->post());
+                if(!$userStudent->getAdd()){
+                    throw new \Exception('角色生成失败！');
+                }
+            }elseif($user->type == 2){
+                $userTeacher = new UserTeacher();
+                $userTeacher->scenario = UserTeacher::SCENARIO_ADD;
+                $userTeacher->user_id = $user->id;
+                $userTeacher->setAttributes(Yii::$app->request->post());
+                if(!$userTeacher->getAdd()){
+                    throw new \Exception('角色生成失败！');
+                }
+            }elseif($user->type == 3){
+                $userAdmin = new UserAdmin();
+                $userAdmin->scenario = UserAdmin::SCENARIO_ADD;
+                $userAdmin->user_id = $user->id;
+                $userAdmin->setAttributes(Yii::$app->request->post());
+                if(!$userAdmin->getAdd()){
+                    throw new \Exception('角色生成失败！');
+                }
+            }
+            $transaction->commit();
+        } catch(\Exception $e){
+            $transaction->rollback();
+            throw new \Exception($e->getMessage());
         }
         return true;
     }

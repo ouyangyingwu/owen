@@ -5,11 +5,11 @@ $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token , per_page:2};
+    var params = {_csrf:token , per_page:10};
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
-        params = {_csrf:token , per_page:2};
+        params = {_csrf:token , per_page:10};
         params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
@@ -23,6 +23,9 @@ $(function(){
         if ($('.select-email').val()) {
             params["email"] = $('.select-email').val();
         }
+        if ($('.select-type').val()) {
+            params["type"] = $('.select-type').val();
+        }
         userList(params);
     });
     //清除所有筛选条件
@@ -30,7 +33,7 @@ $(function(){
         $('.select-id').val('');
         $('.select-type').val('');
         $('.select-user_id').val('');
-        params = {page:1 , per_page:2 , _csrf:token};
+        params = {page:1 , per_page:10 , _csrf:token};
         userList(params);
     });
 
@@ -44,9 +47,9 @@ $(function(){
                 ];
             case 'sex':
                 return [
-                    {value: 0, text: 'Unknown'},
-                    {value: 1, text: 'Male'},
-                    {value: 2, text: 'Female'},
+                    {value: 0, text: '第三性别'},
+                    {value: 1, text: '男'},
+                    {value: 2, text: '女'},
                 ];
             default:
                 return null;
@@ -55,10 +58,10 @@ $(function(){
     //修改、详情
     function initEditForm(data){
         $("#iframe-image-show").empty();
-        if(data.img_url){
-            var html = "<img src='/image/"+data.img_url+"'>";
-            $("#iframe-image-show").empty().append(html);
-        }
+        if(data.type == 1) $('#student').removeClass('hide').siblings().addClass('hide');
+        if(data.type == 2) $('#teacher').removeClass('hide').siblings().addClass('hide');
+        if(data.type == 3) $('#admin').removeClass('hide').siblings().addClass('hide');
+
         $.fn.editable.defaults.mode = 'inline';
         $('#user-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
@@ -113,6 +116,8 @@ $(function(){
             if(dataType == 'select'){
                 displayValue = intTostr(data[name] , name);
             }
+            if(name == 'dirthday'){displayValue = CommonTool.formatTime(displayValue , 'm月d日');}
+            if(!displayValue){displayValue="Empty";}
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
@@ -126,15 +131,24 @@ $(function(){
             }
         }
         if(type == 'sex') {
+            if (value == 1)return '男';
+            if (value == 2)return '女';
+            if (value == 0)return '第三类性别';
+        }
+        if(type == 'type') {
             if (value == 1) {
-                return 'Male';
+                return '学生';
             } else if (value == 2) {
-                return 'Female';
-            }else {
-                return 'Unknown';
+                return '教职工';
+            }else if(value == 3) {
+                return '管理员';
             }
         }
     }
+    //add Footprint
+    $("#addFootprint").click(function(){
+        
+    });
     //图片处理
     $("#upload").click(function(){
         $('#file').trigger('click');
@@ -310,7 +324,7 @@ $(function(){
                 var html = '';
                 if(data){
                     if(data.length < total){
-                        total = Math.ceil(total/2);
+                        total = Math.ceil(total/10);
                     }else {
                         total = 1;
                     }
@@ -326,6 +340,7 @@ $(function(){
                         html +='<td>'+ data[i]['email']+'</td>';
                         html +='<td>'+ data[i]['phone']+'</td>';
                         html +='<td>'+ intTostr(data[i]['sex'] , 'sex') +'</td>';
+                        html +='<td>'+ intTostr(data[i]['type'] , 'type') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
