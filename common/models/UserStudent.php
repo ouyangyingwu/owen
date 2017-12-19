@@ -205,8 +205,7 @@ class UserStudent extends  BaseModel
             if($userStudent)
             {
                 $userStudent->scenario = self::SCENARIO_EDIT;
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
-                $userStudent->edit_time = time();
+                $userStudent->setAttribute($this->edit_name, json_encode($this->edit_value));
                 if($userStudent->save())
                 {
                     return [$this->edit_name => $this->edit_value];

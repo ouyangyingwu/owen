@@ -57,8 +57,25 @@ $(function(){
     };
     //修改、详情
     function initEditForm(data){
-        $("#iframe-image-show").empty();
-        if(data.type == 1) $('#student').removeClass('hide').siblings().addClass('hide');
+        //$("#iframe-image-show").empty();
+        if(data.type == 1) {
+            $('#student').removeClass('hide').siblings().addClass('hide');
+            $('#reward-table').find('.odd').remove();
+            if(data['student']['reward']){
+                var html = '', value = data['student']['reward'];
+                for (var i=0 ; i<data['student']['reward'].length ; i++){
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ (value[i]["reward_time"]?value[i]["reward_time"]:'') +'</td>';
+                    html +='<td>'+ (value[i]['reward_name']?value[i]['reward_name']:'') +'</td>';
+                    html +='<td>'+ (value[i]['reward_type']?intTostr(value[i]['reward_type'] , 'reward_type'):'') +'</td>';
+                    html +='<td>'+ (value[i]['reward_ranking']?intTostr(value[i]['reward_ranking'] , 'reward_ranking'):'') +'</td>';
+                    html +='<td>'+ (value[i]['reward_level']?intTostr(value[i]['reward_level'] , 'reward_level'):'') +'</td>';
+                    html +='<td class="delete-reward" data-id="'+i+'"><i class="icon-trash"></i>删除</td>';
+                    html +='</tr>';
+                }
+                $("#reward-table tbody").append(html)
+            }
+        };
         if(data.type == 2) $('#teacher').removeClass('hide').siblings().addClass('hide');
         if(data.type == 3) $('#admin').removeClass('hide').siblings().addClass('hide');
 
@@ -144,11 +161,130 @@ $(function(){
                 return '管理员';
             }
         }
+        if(type == 'reward_type'){
+            if(value == 0) return '奖助学金';
+            if(value == 1) return '奥数比赛';
+            if(value == 2) return '演讲比赛';
+            if(value == 3) return '文章发表';
+            if(value == 4) return '运动会';
+            if(value == 5) return '书法文艺';
+            if(value == 6) return '音乐舞蹈';
+            if(value == 7) return '其他';
+        }
+        if(type == 'reward_ranking'){
+            if(value == 0) return '此类比赛无名次';
+            if(value == 1) return '第一名';
+            if(value == 2) return '第二名';
+            if(value == 3) return '第三名';
+            if(value == 4) return '特等奖';
+            if(value == 5) return '参与奖';
+        }
+        if(type == 'reward_level'){
+            if(value == 1) return '奖助学金';
+            if(value == 2) return '班级';
+            if(value == 3) return '院校级';
+            if(value == 4) return '市级';
+            if(value == 5) return '省级';
+            if(value == 6) return '国家级';
+            if(value == 7) return '世界级';
+        }
+        if(type == 'reward_level'){
+            if(value == 1) return '奖助学金';
+            if(value == 2) return '班级';
+            if(value == 3) return '院校级';
+            if(value == 4) return '市级';
+            if(value == 5) return '省级';
+            if(value == 6) return '国家级';
+            if(value == 7) return '世界级';
+        }
     }
-    //add Footprint
-    $("#addFootprint").click(function(){
-        
+    //显示添加
+    $("#add-reward").click(function(){
+        $('#form-add-reward').removeClass('hide');
     });
+    $("#add-punish").click(function(){
+        $('#form-add-punish').removeClass('hide');
+    });
+    //取消添加
+    $('#cancel-reward').click(function(){
+        $('#form-add-reward').addClass('hide');
+    });
+    $('#cancel-punish').click(function(){
+        $('#form-add-punish').addClass('hide');
+    });
+    //添加记录
+    $('#insert-reward').click(function(){
+        var postData = {},value = {};
+        var $type = htmlData.student ? 'student' : (htmlData.teacher?'teacher':'admin');
+        var edit_value = htmlData[$type] && htmlData[$type]['reward'] ? htmlData[$type]['reward'] : [];
+        postData['_csrf'] = token;
+        postData['id'] = htmlData[$type]['id'];
+        postData['type'] = $type;
+        $("#form-add-reward .form-control").each(function(){
+            value[$(this).attr('data-name')] = $(this).val();
+        });
+        edit_value.push(value);
+        postData['edit_name'] = 'reward';
+        postData['edit_value'] = edit_value;
+        console.log(postData);
+        $.ajax({
+            url: 'api/user/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                if(data){
+                    var html = '';
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ value["reward_time"] +'</td>';
+                    html +='<td>'+ value['reward_name'] +'</td>';
+                    html +='<td>'+ intTostr(value['reward_type'] , 'reward_type')+'</td>';
+                    html +='<td>'+ intTostr(value['reward_ranking'] , 'reward_ranking')+'</td>';
+                    html +='<td>'+ intTostr(value['reward_level'] , 'reward_level')+'</td>';
+                    html +='<td class="delete-reward"><i class="icon-trash"></i>删除</td>';
+                    html +='</tr>';
+                    $("#reward-table tbody").append(html)
+                }
+            }
+        });
+    });
+    //删除奖惩记录（detail列表内的记录）
+    $('#reward-table').on('click', '.delete-reward' , function(){
+        var id = $(this).attr('data-id');
+        var reward = htmlData['student']['reward'];
+        var $type = htmlData.student ? 'student' : (htmlData.teacher?'teacher':'admin');
+        var postData = {};
+        reward.splice(id , 1);
+        //htmlData = reward;  //刷新原始数据的
+        console.log(reward , htmlData['student']['reward']);
+        postData['_csrf'] = token;
+        postData['id'] = htmlData[$type]['id'];
+        postData['type'] = $type;
+        postData['edit_name'] = 'reward';
+        postData['edit_value'] = reward;
+        $(this).parents('.odd').remove();
+        $.ajax({
+            url: 'api/user/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            //success:function(){}
+        });
+        return;
+    });
+    //选择时间
+    var preset = 'date';
+    var options = {
+        preset : preset,
+        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
+        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
+        theme: "android-ics light",
+        mode: "scroller",
+        dateFormat: 'yyyy-mm-dd',
+        display: "modal"
+    };
+    $('.scheduleTime').val("").scroller("destroy");
+    $('.scheduleTime').scroller(options);
     //图片处理
     $("#upload").click(function(){
         $('#file').trigger('click');

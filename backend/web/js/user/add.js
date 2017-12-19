@@ -36,10 +36,8 @@ $(function(){
     });
 
     //计算出新用户的编号
-    var numbe;
     function Numbering(type){
-        //var numbe;
-        var expand , last , timestamp = new Date().getTime();
+        var expand , last , numbe , timestamp = new Date().getTime();
         if( type == 1 )  expand='student',last='S';
         if( type == 2 )  expand='teacher',last='T';
 
