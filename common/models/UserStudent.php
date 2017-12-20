@@ -11,12 +11,14 @@ use common\exception\ModelException;
  * @property integer $user_id
  * @property string $stuNo
  * @property integer $credit
- * @property string $footprint
+ * @property string $reward
+ * @property string $punish
  * @property integer $status
  * @property integer $create_time
  * @property integer $graduation_time
  * @property integer $leaveschool_time
  * @property integer $dropout_time
+ * @property integer $class
  * @property integer $marjor_id
  * @property integer $department_id
  */

@@ -11,9 +11,11 @@ use common\exception\ModelException;
  * @property integer $user_id
  * @property string $teachNo
  * @property string $position
- * @property string $course
+ * @property integer $course
  * @property integer $department_id
- * @property string $create_time
+ * @property string $reward
+ * @property string $punish
+ * @property integer $create_time
  */
 class UserTeacher extends  BaseModel
 {
@@ -198,8 +200,7 @@ class UserTeacher extends  BaseModel
             if($userTeacher)
             {
                 $userTeacher->scenario = self::SCENARIO_EDIT;
-                $userTeacher->setAttribute($this->edit_name, $this->edit_value);
-                $userTeacher->edit_time = time();
+                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
                 if($userTeacher->save())
                 {
                     return [$this->edit_name => $this->edit_value];

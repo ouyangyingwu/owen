@@ -79,14 +79,12 @@ class UserController extends Controller
                 case 'teacher':
                     $user = new UserTeacher();
                     $user->scenario = UserTeacher::SCENARIO_EDIT;
-                    $postData = Yii::$app->request->post();
-                    $user->setAttributes($this->SafeFilter($postData));
+                    $user->setAttributes(Yii::$app->request->post());
                     return $user->getEdit();break;
                 case 'admin':
                     $user = new UserAdmin();
                     $user->scenario = UserAdmin::SCENARIO_EDIT;
-                    $postData = Yii::$app->request->post();
-                    $user->setAttributes($this->SafeFilter($postData));
+                    $user->setAttributes(Yii::$app->request->post());
                     return $user->getEdit();break;
             }
         }

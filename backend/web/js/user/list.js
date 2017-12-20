@@ -7,6 +7,32 @@ $(function(){
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
+    //
+    var department , major;
+    (function(){
+        var postDate = {};
+        postDate['_csrf'] = token;
+        postDate['per_page'] = 'all';
+        $.ajax({
+            url:'api/department/list',
+            data:postDate,
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                department = data.data;
+            }
+        });
+        $.ajax({
+            url:'api/major/list',
+            data:postDate,
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                major = data.data;
+            }
+        });
+    })();
+
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
         params = {_csrf:token , per_page:10};
@@ -26,6 +52,12 @@ $(function(){
         if ($('.select-type').val()) {
             params["type"] = $('.select-type').val();
         }
+        /*if ($('.select-type').val()) {
+            params["type"] = $('.select-type').val();
+        }
+        if ($('.select-type').val()) {
+            params["type"] = $('.select-type').val();
+        }*/
         userList(params);
     });
     //清除所有筛选条件
@@ -37,6 +69,34 @@ $(function(){
         userList(params);
     });
 
+    //二级列表
+    function towForm(data , type , RewardOrPunish){
+        var html = '', value = data[type][RewardOrPunish];
+        if(data[type][RewardOrPunish] && RewardOrPunish == 'reward'){
+            for (var i=0 ; i<data[type][RewardOrPunish].length ; i++){
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ (value[i]["reward_time"]?value[i]["reward_time"]:'') +'</td>';
+                html +='<td>'+ (value[i]['reward_name']?value[i]['reward_name']:'') +'</td>';
+                html +='<td>'+ (value[i]['reward_type']?intTostr(value[i]['reward_type'] , 'reward_type'):'') +'</td>';
+                html +='<td>'+ (value[i]['reward_ranking']?intTostr(value[i]['reward_ranking'] , 'reward_ranking'):'') +'</td>';
+                html +='<td>'+ (value[i]['reward_level']?intTostr(value[i]['reward_level'] , 'reward_level'):'') +'</td>';
+                html +='<td class="delete-reward" data-id="'+value[i]['dataTime']+'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+            }
+            $("#reward-table tbody").append(html);return;
+        }
+        if(data[type][RewardOrPunish] && RewardOrPunish == 'punish'){
+            for (var i=0 ; i<data[type][RewardOrPunish].length ; i++){
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ (value[i]["punish_time"]?value[i]["punish_time"]:'') +'</td>';
+                html +='<td>'+ (value[i]['punish_reason']?value[i]['punish_reason']:'') +'</td>';
+                html +='<td>'+ (value[i]['punish_content']?intTostr(value[i]['punish_content'] , 'punish_content'):'') +'</td>';
+                html +='<td class="delete-punish" data-id="'+value[i]['dataTime']+'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+            }
+            $("#punish-table tbody").append(html)
+        }
+    }
     //init edit form
     var getEditSource = function(name){
         switch(name){
@@ -44,13 +104,32 @@ $(function(){
                 return [
                     {value: 1, text: 'Active'},
                     {value: 0, text: 'Freeze'}
-                ];
+                ];break;
             case 'sex':
                 return [
                     {value: 0, text: '第三性别'},
                     {value: 1, text: '男'},
                     {value: 2, text: '女'},
-                ];
+                ];break;
+            case 'student.department_id':
+            case 'teacher.department_id':
+                var departmentList = [];
+                for(var i = 0,len = department.length; i<len; i++){
+                    departmentList.push({value: department[i]['id'], text: department[i]['depName']});
+                }
+                return departmentList;break;
+            case 'student.major_id':
+                var majorList = [];
+                for(var i = 0,len = major.length; i<len; i++){
+                    majorList.push({value: major[i]['id'], text: major[i]['majorName']});
+                }
+                return majorList;break;
+            case 'student.class':
+                return [
+                    {value: 1, text: '第三性别'},
+                    {value: 2, text: '男'},
+                    {value: 3, text: '女'},
+                ];break;
             default:
                 return null;
         }
@@ -58,80 +137,68 @@ $(function(){
     //修改、详情
     function initEditForm(data){
         //$("#iframe-image-show").empty();
-        if(data.type == 1) {
-            $('#student').removeClass('hide').siblings().addClass('hide');
-            $('#reward-table').find('.odd').remove();
-            if(data['student']['reward']){
-                var html = '', value = data['student']['reward'];
-                for (var i=0 ; i<data['student']['reward'].length ; i++){
-                    html += '<tr class="odd" role="row">';
-                    html +='<td>'+ (value[i]["reward_time"]?value[i]["reward_time"]:'') +'</td>';
-                    html +='<td>'+ (value[i]['reward_name']?value[i]['reward_name']:'') +'</td>';
-                    html +='<td>'+ (value[i]['reward_type']?intTostr(value[i]['reward_type'] , 'reward_type'):'') +'</td>';
-                    html +='<td>'+ (value[i]['reward_ranking']?intTostr(value[i]['reward_ranking'] , 'reward_ranking'):'') +'</td>';
-                    html +='<td>'+ (value[i]['reward_level']?intTostr(value[i]['reward_level'] , 'reward_level'):'') +'</td>';
-                    html +='<td class="delete-reward" data-id="'+i+'"><i class="icon-trash"></i>删除</td>';
-                    html +='</tr>';
-                }
-                $("#reward-table tbody").append(html)
-            }
-        };
-        if(data.type == 2) $('#teacher').removeClass('hide').siblings().addClass('hide');
-        if(data.type == 3) $('#admin').removeClass('hide').siblings().addClass('hide');
+        $('#reward-table').find('.odd').remove();
+        $('#punish-table').find('.odd').remove();
+        var $type = data.student ? 'student' : (data.teacher?'teacher':'admin');
+        $('#'+$type).removeClass('hide').siblings().addClass('hide');
+        towForm(data , $type , 'reward');
+        towForm(data , $type , 'punish');
 
         $.fn.editable.defaults.mode = 'inline';
         $('#user-detail').find("[name='form-edit']").each(function(){
-            var name = $(this).attr("data-name");
-            var dataType = $(this).attr("data-type");
-            var copythis = this;
-            var editSource = getEditSource(name);
-            var displayValue = data[name];
-            var notEdit = false;                                //默认为可编辑
-            if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
-            var options = {
-                type: dataType,
-                name: name,
-                value: displayValue,
-                disabled:notEdit,           //是否可编辑，默认为false(可编辑)
-                inputclass: "form-control",
-                url: function(param){
-                    var oldValue = $(copythis).text();
-                    var postData = {};
-                    postData["_csrf"] = token;
-                    postData["edit_name"] = name;
-                    postData["edit_value"] = param["value"];
-                    postData["id"] = data.id;
-                    $.ajax({
-                        url:"/api/user/edit",
-                        data:postData,
-                        dataType:'json',
-                        type:'POST',
-                        success:function(data){
-                            $(copythis).text(intTostr(data[name] , name));
-                            userList(params);
-                        },
-                        error:function(XMLHttpRequest){
-                            alert(XMLHttpRequest.responseJSON.message+"");
-                            $(copythis).text(oldValue);
-                        }
-                    });
-                },
-                validate: function(value){
-                    var needValidate = $(copythis).attr("data-need-validate");
-                    if(needValidate){
-                        var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
-                        if(msg){
-                            return msg;
+            if(!$(this).parents('fieldset').hasClass('hide')){
+                var name = $(this).attr("data-name");
+                var dataType = $(this).attr("data-type");
+                var copythis = this;
+                var editSource = getEditSource(name);
+                var displayValue = eval("data." + name);
+                var notEdit = false;                                //默认为可编辑
+                if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                var options = {
+                    type: dataType,
+                    name: name,
+                    value: displayValue,
+                    disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                    inputclass: "form-control",
+                    url: function(param){
+                        var oldValue = $(copythis).text();
+                        var postData = {};
+                        postData["_csrf"] = token;
+                        postData["edit_name"] = name;
+                        postData["edit_value"] = param["value"];
+                        postData["id"] = data.id;
+                        $.ajax({
+                            url:"/api/user/edit",
+                            data:postData,
+                            dataType:'json',
+                            type:'POST',
+                            success:function(data){
+                                $(copythis).text(intTostr(data[name] , name));
+                                userList(params);
+                            },
+                            error:function(XMLHttpRequest){
+                                alert(XMLHttpRequest.responseJSON.message+"");
+                                $(copythis).text(oldValue);
+                            }
+                        });
+                    },
+                    validate: function(value){
+                        var needValidate = $(copythis).attr("data-need-validate");
+                        if(needValidate){
+                            var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                            if(msg){
+                                return msg;
+                            }
                         }
                     }
-                }
-            };
+                };
+            }
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
             //为data-name为describe的项做数据验证
             switch (name){}
             if(dataType == 'select'){
-                displayValue = intTostr(data[name] , name);
+                displayValue = intTostr(displayValue , name);
             }
             if(name == 'dirthday'){displayValue = CommonTool.formatTime(displayValue , 'm月d日');}
             if(!displayValue){displayValue="Empty";}
@@ -141,11 +208,8 @@ $(function(){
     }
     function intTostr(value , type){
         if(type == 'active') {
-            if (value == 1) {
-                return 'Active';
-            } else if (value == 0) {
-                return 'Freeze';
-            }
+            if (value == 1) return '激活';
+            if (value == 0) return '冻结';
         }
         if(type == 'sex') {
             if (value == 1)return '男';
@@ -153,13 +217,43 @@ $(function(){
             if (value == 0)return '第三类性别';
         }
         if(type == 'type') {
-            if (value == 1) {
-                return '学生';
-            } else if (value == 2) {
-                return '教职工';
-            }else if(value == 3) {
-                return '管理员';
+            if (value == 1) return '学生';
+            if (value == 2) return '教职工';
+            if(value == 3) return '管理员';
+        }
+        if(type == 'student.department_id' || type == 'teacher.department_id'){
+            for(var i = 0,len = department.length; i<len; i++){
+                if(value == department[i]['id']){
+                    return value = department[i]['depName'];
+                }
             }
+        }
+        if(type == 'student.major_id'){
+            for(var i = 0,len = major.length; i<len; i++){
+                if(value == major[i]['id']){
+                    return value = major[i]['majorName'];
+                }
+            }
+        }
+        if(type == 'student.class'){
+            if(value == 1) return '一班';
+            if(value == 2) return '二班';
+            if(value == 3) return '三班';
+            if(value == 3) return '四班';
+        }
+        if(type == 'student.status'){
+            if(value == 1) return '在读';
+            if(value == 2) return '毕业';
+            if(value == 3) return '休学';
+            if(value == 4) return '退学';
+            if(value == 5) return '考研';
+            if(value == 6) return '硕博';
+            if(value == 7) return '其他';
+        }
+        if(type == 'admin.purview'){
+            if(value == 1) return '信息查看员';
+            if(value == 2) return '信息管理员';
+            if(value == 10) return '管理员';
         }
         if(type == 'reward_type'){
             if(value == 0) return '奖助学金';
@@ -197,6 +291,16 @@ $(function(){
             if(value == 6) return '国家级';
             if(value == 7) return '世界级';
         }
+        if(type == 'punish_content'){
+            if(value == 0) return '请选择';
+            if(value == 1) return '警告处分';
+            if(value == 2) return '记小过一次';
+            if(value == 3) return '记大过一次';
+            if(value == 4) return '留校查看';
+            if(value == 5) return '劝退';
+            if(value == 6) return '开除';
+            if(value == 7) return '其他';
+        }
     }
     //显示添加
     $("#add-reward").click(function(){
@@ -214,64 +318,97 @@ $(function(){
     });
     //添加记录
     $('#insert-reward').click(function(){
+        insertRewardOrPunish('reward');
+        $('#form-add-reward').addClass('hide');
+    });
+    $('#insert-punish').click(function(){
+        insertRewardOrPunish('punish');
+        $('#form-add-punish').addClass('hide');
+    });
+    //删除记录（detail列表内的记录）
+    $('#reward-table').on('click', '.delete-reward' , function(){
+        var $this = this;
+        deleteRewardOrPunish($this , 'reward');
+    });
+    $('#punish-table').on('click', '.delete-punish' , function(){
+        var $this = this;
+        deleteRewardOrPunish($this , 'punish');
+    });
+    function insertRewardOrPunish(RewardOrPunish){
         var postData = {},value = {};
         var $type = htmlData.student ? 'student' : (htmlData.teacher?'teacher':'admin');
-        var edit_value = htmlData[$type] && htmlData[$type]['reward'] ? htmlData[$type]['reward'] : [];
+        var edit_value = htmlData[$type] && htmlData[$type][RewardOrPunish] ? htmlData[$type][RewardOrPunish] : [];
         postData['_csrf'] = token;
         postData['id'] = htmlData[$type]['id'];
         postData['type'] = $type;
-        $("#form-add-reward .form-control").each(function(){
-            value[$(this).attr('data-name')] = $(this).val();
-        });
+        if(RewardOrPunish == 'reward'){
+            $("#form-add-reward .form-control").each(function(){
+                value[$(this).attr('data-name')] = $(this).val();
+            });
+        }else  if(RewardOrPunish == 'punish'){
+            $("#form-add-punish .form-control").each(function(){
+                value[$(this).attr('data-name')] = $(this).val();
+            });
+        }
+        value['dataTime'] = Math.round((new Date().getTime())/1000);
         edit_value.push(value);
-        postData['edit_name'] = 'reward';
+        postData['edit_name'] = RewardOrPunish;
         postData['edit_value'] = edit_value;
-        console.log(postData);
+        htmlData[$type][RewardOrPunish] = edit_value;
         $.ajax({
             url: 'api/user/edit',
             data: postData,
             type: 'post',
             dataType: 'json',
             success:function(data){
-                if(data){
-                    var html = '';
+                var html = '';
+                if(RewardOrPunish == 'reward'){
                     html += '<tr class="odd" role="row">';
                     html +='<td>'+ value["reward_time"] +'</td>';
                     html +='<td>'+ value['reward_name'] +'</td>';
                     html +='<td>'+ intTostr(value['reward_type'] , 'reward_type')+'</td>';
                     html +='<td>'+ intTostr(value['reward_ranking'] , 'reward_ranking')+'</td>';
                     html +='<td>'+ intTostr(value['reward_level'] , 'reward_level')+'</td>';
-                    html +='<td class="delete-reward"><i class="icon-trash"></i>删除</td>';
+                    html +='<td class="delete-reward" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
                     html +='</tr>';
-                    $("#reward-table tbody").append(html)
+                    $("#reward-table tbody").append(html);return;
+                }
+                if(RewardOrPunish == 'punish'){
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ value["punish_time"] +'</td>';
+                    html +='<td>'+ value['punish_reason'] +'</td>';
+                    html +='<td>'+ intTostr(value['punish_content'] , 'punish_content')+'</td>';
+                    html +='<td class="delete-punish" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                    html +='</tr>';
+                    $("#punish-table tbody").append(html);return;
                 }
             }
         });
-    });
-    //删除奖惩记录（detail列表内的记录）
-    $('#reward-table').on('click', '.delete-reward' , function(){
-        var id = $(this).attr('data-id');
-        var reward = htmlData['student']['reward'];
+    }
+    function deleteRewardOrPunish($this , RewardOrPunish){
+        var id = $($this).attr('data-id');
         var $type = htmlData.student ? 'student' : (htmlData.teacher?'teacher':'admin');
+        var reward = htmlData[$type][RewardOrPunish];
         var postData = {};
-        reward.splice(id , 1);
-        //htmlData = reward;  //刷新原始数据的
-        console.log(reward , htmlData['student']['reward']);
+        for(var i = 0,len = reward.length ; i<len ; i++){
+            if(id == reward[i]['dataTime']){
+                reward.splice(i , 1);
+            }
+        }
         postData['_csrf'] = token;
         postData['id'] = htmlData[$type]['id'];
         postData['type'] = $type;
-        postData['edit_name'] = 'reward';
+        postData['edit_name'] = RewardOrPunish;
         postData['edit_value'] = reward;
-        $(this).parents('.odd').remove();
+        $($this).parents('.odd').remove();
         $.ajax({
             url: 'api/user/edit',
             data: postData,
             type: 'post',
-            dataType: 'json',
-            //success:function(){}
+            dataType: 'json'
         });
         return;
-    });
+    }
     //选择时间
     var preset = 'date';
     var options = {

@@ -10,6 +10,8 @@ use common\exception\ModelException;
  * @property integer $id
  * @property integer $user_id
  * @property integer $purview
+ * @property string $reward
+ * @property string $punish
  * @property string $create_time
  */
 class UserAdmin extends  BaseModel
@@ -195,8 +197,7 @@ class UserAdmin extends  BaseModel
             if($userAdmin)
             {
                 $userAdmin->scenario = self::SCENARIO_EDIT;
-                $userAdmin->setAttribute($this->edit_name, $this->edit_value);
-                $userAdmin->edit_time = time();
+                $userAdmin->setAttribute($this->edit_name, json_encode($this->edit_value));
                 if($userAdmin->save())
                 {
                     return [$this->edit_name => $this->edit_value];
