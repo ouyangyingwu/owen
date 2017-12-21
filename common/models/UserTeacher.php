@@ -200,7 +200,8 @@ class UserTeacher extends  BaseModel
             if($userTeacher)
             {
                 $userTeacher->scenario = self::SCENARIO_EDIT;
-                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
+                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
+                $userTeacher->setAttribute($this->edit_name, $this->edit_value);
                 if($userTeacher->save())
                 {
                     return [$this->edit_name => $this->edit_value];

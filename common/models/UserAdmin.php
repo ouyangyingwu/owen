@@ -197,7 +197,8 @@ class UserAdmin extends  BaseModel
             if($userAdmin)
             {
                 $userAdmin->scenario = self::SCENARIO_EDIT;
-                $userAdmin->setAttribute($this->edit_name, json_encode($this->edit_value));
+                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
+                $userAdmin->setAttribute($this->edit_name, $this->edit_value);
                 if($userAdmin->save())
                 {
                     return [$this->edit_name => $this->edit_value];

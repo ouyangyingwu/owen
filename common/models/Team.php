@@ -5,31 +5,23 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "user_student".
+ * This is the model class for table "team".    班级表
  *
  * @property integer $id
+ * @property integer $period
+ * @property integer $number_limit
+ * @property integer $major_id
  * @property integer $user_id
- * @property string $stuNo
- * @property integer $credit
- * @property string $reward
- * @property string $punish
- * @property integer $status
- * @property integer $create_time
- * @property integer $graduation_time
- * @property integer $leaveschool_time
- * @property integer $dropout_time
- * @property integer $class
- * @property integer $marjor_id
- * @property integer $department_id
+ * @property string $teachNo
  */
-class UserStudent extends  BaseModel
+class Team extends  BaseModel
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%user_student}}';
+        return '{{%team}}';
     }
 
     public $page = 1;
@@ -54,16 +46,14 @@ class UserStudent extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','stuNo','department_id','major_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id','className','number_limit','major_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','department_id','major_id'],
-            self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
+            self::SCENARIO_LIST => ['id','user_id','className','period','major_id','per_page'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -85,6 +75,10 @@ class UserStudent extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if($this->major_id)
+        {
+            $this->_query->andFilterWhere(['major_id' => $this->major_id]);
         }
         if(count($this->select)>0)
         {
@@ -147,7 +141,7 @@ class UserStudent extends  BaseModel
      * 列表查询
      */
     public function getList(){
-        $this->scenario = self::SCENARIO_SEARCH;
+        $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
             $total = $this->_query->count();
@@ -180,15 +174,13 @@ class UserStudent extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userStudent = new UserStudent();
-            $userStudent->scenario = self::SCENARIO_ADD;
-            $userStudent->setAttributes($this->safeAttributesData());
-            $userStudent->credit = 0;
-            $userStudent->status = 1;
-            $userStudent->create_time = time();
-            if($userStudent->save())
+            $userTeacher = new UserTeacher();
+            $userTeacher->scenario = self::SCENARIO_ADD;
+            $userTeacher->setAttributes($this->safeAttributesData());
+            $userTeacher->create_time = time();
+            if($userTeacher->save())
             {
-                return $userStudent;
+                return $userTeacher;
             }
             return null;
         } else {
@@ -203,13 +195,12 @@ class UserStudent extends  BaseModel
     {
         if($this->validate())
         {
-            $userStudent = UserStudent::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userStudent)
+            $userTeacher = UserTeacher::find()->andFilterWhere(['id' => $this->id])->one();
+            if($userTeacher)
             {
-                $userStudent->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
-                if($userStudent->save())
+                $userTeacher->scenario = self::SCENARIO_EDIT;
+                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
+                if($userTeacher->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

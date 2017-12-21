@@ -8,8 +8,8 @@ $(function(){
     var params = {_csrf:token , per_page:10};
 
     //
-    var department , major;
-    (function(){
+    var department , major , team;
+    function departmentList(){
         var postDate = {};
         postDate['_csrf'] = token;
         postDate['per_page'] = 'all';
@@ -22,6 +22,12 @@ $(function(){
                 department = data.data;
             }
         });
+    }
+    function majorList(department_id){
+        var postDate = {};
+        postDate['_csrf'] = token;
+        postDate['department_id'] = department_id;
+        postDate['per_page'] = 'all';
         $.ajax({
             url:'api/major/list',
             data:postDate,
@@ -31,7 +37,22 @@ $(function(){
                 major = data.data;
             }
         });
-    })();
+    }
+    function teamList(major_id){
+        var postDate = {};
+        postDate['_csrf'] = token;
+        postDate['major_id'] = major_id;
+        postDate['per_page'] = 'all';
+        $.ajax({
+            url:'api/team/list',
+            data:postDate,
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                team = data.data;
+            }
+        });
+    }
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
@@ -124,11 +145,29 @@ $(function(){
                     majorList.push({value: major[i]['id'], text: major[i]['majorName']});
                 }
                 return majorList;break;
-            case 'student.class':
+            case 'student.team_id':
+                var teamList = [];
+                for(var i = 0,len = team.length; i<len; i++){
+                    teamList.push({value: team[i]['id'], text: team[i]['teamName']});
+                }
+                return teamList;break;
+            case 'student.status':
                 return [
-                    {value: 1, text: '第三性别'},
-                    {value: 2, text: '男'},
-                    {value: 3, text: '女'},
+                    {value: 0, text: '开除'},
+                    {value: 1, text: '在读'},
+                    {value: 2, text: '毕业'},
+                    {value: 3, text: '休学'},
+                    {value: 4, text: '退学'},
+                    {value: 5, text: '考研'},
+                    {value: 6, text: '硕博'},
+                    {value: 7, text: '其他'},
+
+                ];break;
+            case 'admin.purview':
+                return [
+                    {value: 1, text: '信息查看员'},
+                    {value: 2, text: '信息管理员'},
+                    {value: 10, text: '管理员'},
                 ];break;
             default:
                 return null;
@@ -164,9 +203,14 @@ $(function(){
                         var oldValue = $(copythis).text();
                         var postData = {};
                         postData["_csrf"] = token;
-                        postData["edit_name"] = name;
-                        postData["edit_value"] = param["value"];
                         postData["id"] = data.id;
+                        postData["edit_value"] = param["value"];
+                        postData["edit_name"] = name;
+                        if(name.split('.').length == 2){
+                            postData["type"] = name.split('.')[0];
+                            postData["edit_name"] = name.split('.')[1];
+                            postData["id"] = data[(name.split('.')[0])]['id'];
+                        }
                         $.ajax({
                             url:"/api/user/edit",
                             data:postData,
@@ -235,11 +279,12 @@ $(function(){
                 }
             }
         }
-        if(type == 'student.class'){
-            if(value == 1) return '一班';
-            if(value == 2) return '二班';
-            if(value == 3) return '三班';
-            if(value == 3) return '四班';
+        if(type == 'student.team_id'){
+            for(var i = 0,len = team.length; i<len; i++){
+                if(value == team[i]['id']){
+                    return value = team[i]['teamName'];
+                }
+            }
         }
         if(type == 'student.status'){
             if(value == 1) return '在读';
@@ -568,6 +613,9 @@ $(function(){
         switch (model){
             case 'edit':
                 $("#user-detail").modal("show");
+                console.log(htmlData.type , htmlData['student']['department_id'])
+                if(htmlData.type == 1) {departmentList();majorList(htmlData['student']['department_id']);teamList(htmlData['student']['major_id']);}
+                if(htmlData.type == 2) {departmentList();}
                 initEditForm(htmlData);
                 break;
             case 'delete':

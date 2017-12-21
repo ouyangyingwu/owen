@@ -5,31 +5,26 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "user_student".
+ * This is the model class for table "user_teacher".
  *
  * @property integer $id
  * @property integer $user_id
- * @property string $stuNo
- * @property integer $credit
+ * @property string $teachNo
+ * @property string $position
+ * @property integer $course
+ * @property integer $department_id
  * @property string $reward
  * @property string $punish
- * @property integer $status
  * @property integer $create_time
- * @property integer $graduation_time
- * @property integer $leaveschool_time
- * @property integer $dropout_time
- * @property integer $class
- * @property integer $marjor_id
- * @property integer $department_id
  */
-class UserStudent extends  BaseModel
+class Course extends  BaseModel
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%user_student}}';
+        return '{{%course}}';
     }
 
     public $page = 1;
@@ -54,16 +49,16 @@ class UserStudent extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','stuNo','department_id','major_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
+            [['user_id','teachNo','position','department_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','department_id','major_id'],
+            self::SCENARIO_LIST => ['id','user_id','teachNo','position','department_id'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
+            self::SCENARIO_ADD => ['user_id','teachNo','position','department_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -180,15 +175,13 @@ class UserStudent extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userStudent = new UserStudent();
-            $userStudent->scenario = self::SCENARIO_ADD;
-            $userStudent->setAttributes($this->safeAttributesData());
-            $userStudent->credit = 0;
-            $userStudent->status = 1;
-            $userStudent->create_time = time();
-            if($userStudent->save())
+            $userTeacher = new UserTeacher();
+            $userTeacher->scenario = self::SCENARIO_ADD;
+            $userTeacher->setAttributes($this->safeAttributesData());
+            $userTeacher->create_time = time();
+            if($userTeacher->save())
             {
-                return $userStudent;
+                return $userTeacher;
             }
             return null;
         } else {
@@ -203,13 +196,12 @@ class UserStudent extends  BaseModel
     {
         if($this->validate())
         {
-            $userStudent = UserStudent::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userStudent)
+            $userTeacher = UserTeacher::find()->andFilterWhere(['id' => $this->id])->one();
+            if($userTeacher)
             {
-                $userStudent->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
-                if($userStudent->save())
+                $userTeacher->scenario = self::SCENARIO_EDIT;
+                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
+                if($userTeacher->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }
