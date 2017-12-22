@@ -209,6 +209,12 @@ class UserStudent extends  BaseModel
                 $userStudent->scenario = self::SCENARIO_EDIT;
                 if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
                 $userStudent->setAttribute($this->edit_name, $this->edit_value);
+                if($this->edit_name == 'department_id'){
+                    $userStudent->major_id = 0;
+                    $userStudent->team_id = 0;
+                }elseif($this->edit_name == 'major_id'){
+                    $userStudent->team_id = 0;
+                }
                 if($userStudent->save())
                 {
                     return [$this->edit_name => $this->edit_value];

@@ -1213,10 +1213,8 @@ $(function() {
             data:{'_csrf':_csrf},
             type:'POST'
         });
-    }
-    /**
-     * 左边菜单
-     */
+    };
+
     var html = location.href.split('#/')[1];
     if(html) {
         $('#page-inner').load('views/'+html);
@@ -1226,23 +1224,37 @@ $(function() {
                 $(this).addClass('active-menu');
                 $(this).parent('li').parent('ul').siblings('a').addClass('active-menu');
                 var jsc = html.substring(0,html.indexOf('.')).split('_');
-                $('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
+                var script = document.createElement("script");
+                script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+                $('#addScript').html(script);
+                //$('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
             }
         });
     }
+    /*实现局部刷新（头部与导航不刷新）*/
+    $(function(){
+        $('a.location-file').click(function(){
+            var html = $(this).attr('href').split('#/')[1];
+            if(html) {
+                $('#page-inner').load('views/'+html);
+                var jsc = html.substring(0,html.indexOf('.')).split('_');
+                var script = document.createElement("script");
+                script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+                $('#addScript').html(script);
+                //var jsc = html.substring(0,html.indexOf('.')).split('_');
+                //$('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random());
+            }
+        });
+    })
+
+    /**
+     * 左边菜单
+     */
     //左边菜单鼠标事件
     $('#main-menu li a').on({
         mouseover:function(){$(this).addClass('active-over')},
         mouseout:function(){$(this).removeClass('active-over')},
         click:function(){
-            /*实现局部刷新（头部与导航不刷新）*/
-            var html = $(this).attr('href').split('#/')[1];
-            if(html) {
-                $('#page-inner').load('views/'+html);
-                var jsc = html.substring(0,html.indexOf('.')).split('_');
-                $('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
-            }
-
             //二极菜单的显示影藏
             if($(this).children('span').hasClass('arrow')){
                 if($(this).siblings('ul').is(':hidden')){

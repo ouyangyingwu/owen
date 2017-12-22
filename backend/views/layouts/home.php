@@ -41,9 +41,10 @@ AppAsset::register($this);
     </div>
     <!-- /. PAGE WRAPPER  -->
 </div>
+<div id="addScript">
 
+</div>
 <?php $this->endBody() ?>
 </body>
-<script id="addScript"></script>
 </html>
 <?php $this->endPage() ?>

@@ -2,7 +2,92 @@
  * Created by admin on 2017/9/27.
  */
 $(function() {
-    var token = $('meta[name=csrf-token]').attr('content');
+    var htmlData , token = $('meta[name=csrf-token]').attr('content');
+
+    //图片处理
+    $("#upload-img").click(function(){
+        $('#file').trigger('click');
+    });
+    $('#file').change(function(){
+        if($(this).val()){
+            var formData = new FormData();
+            formData.append('file', $('#file')[0].files[0]);
+            //上传图片
+            $.ajax({
+                url:'/api/file/url',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function(res) {
+                if(res && res.split('/')[1].match(/^CS[0-9]{18}.[a-z]{3,4}$/)){
+                    var postData = {};
+                    postData["_csrf"] = token;
+                    postData["edit_name"] = 'img_url';
+                    postData["edit_value"] = res;
+                    postData["id"] = htmlData.id;
+                    //修改数据
+                    $.ajax({
+                        url:"/api/user/edit",
+                        data:postData,
+                        dataType:'json',
+                        type:'POST',
+                        success:function(data){
+                            if(htmlData.img_url){
+                                var postData = {};
+                                postData["_csrf"] = token;
+                                postData["name"] = htmlData.img_url;
+                                postData["url"] = 'image';
+                                //删除旧的图片
+                                $.ajax({
+                                    url:"/api/file/delete",
+                                    data:postData,
+                                    type:'POST'
+                                });
+                            }
+                            userOne()
+                        }
+                    });
+                    return;
+                }
+                alert(res);
+            }).fail(function(res) {
+                alert(res);
+            });
+        }
+    });
+
+    $("#delete-img").click(function(){
+        //判断图片是否存在
+        if(htmlData.img_url){
+            $('#iframe-image img').attr('src' , '/image/head-default.png');
+            var postData = {};
+            postData["_csrf"] = token;
+            postData["edit_name"] = 'img_url';
+            postData["edit_value"] = null;
+            postData["id"] = htmlData.id;
+            $.ajax({
+                url:"/api/user/edit",
+                data:postData,
+                dataType:'json',
+                type:'POST',
+                success:function(data){
+                    var postData = {};
+                    postData["_csrf"] = token;
+                    postData["name"] = htmlData.img_url;
+                    postData["url"] = 'image';
+                    //删除源图片
+                    $.ajax({
+                        url:"/api/file/delete",
+                        data:postData,
+                        type:'POST'
+                    });
+                    userOne()
+                }
+            });
+        }
+    });
 
     $('.nav-tabs li:last').click(function(){
         $('#information').addClass('hide');
@@ -12,18 +97,6 @@ $(function() {
         $('#ResetPassword').addClass('hide');
         $('#information').removeClass('hide');
     });
-
-    //钟表
-    setInterval(function () {
-        var date = new Date();
-        var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' '+supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
-        $('.now-time').text(time);
-    },1000);
-    function  supplement (x){
-        //补0
-        if(x<10) x = '0'+x;
-        return x;
-    }
 
     //定义新的规则
     $.validator.addMethod("reset_password", function(value){
@@ -70,7 +143,8 @@ $(function() {
                  dataType: 'json',
                  type: 'POST',
                  success: function (data) {
-                     location.reload(true);
+                     userOne();
+                     //location.reload(true);
                      //window.location.href = "/user/index";
                  },
                  error: function (XMLHttpRequest) {
@@ -99,7 +173,7 @@ $(function() {
                 type:'POST',
                 success:function(data){
                     alert('密码修改成功');
-                    location.reload(true);
+                    //location.reload(true);
                     //window.location.href = "/user/index";
                 },
                 error:function(XMLHttpRequest){
@@ -109,4 +183,21 @@ $(function() {
         }
     })
 
+    function userOne(){
+        $.ajax({
+            url:'api/user/one',
+            data:{_csrf:token,expand:['admin']},
+            type:'post',
+            dataType:'json',
+            success:function(data){
+                htmlData = data;
+                data.img_url ? $('#iframe-image img').attr('src' , '/image/'+data.img_url) : '';
+                $('#iframe-image .profile-name').text(data.username);
+                $('.form-control[name="username"]').val(data.username);
+                $('.form-control[name="phone"]').val(data.phone);
+                $('.form-control[name="email"]').val(data.email);
+            }
+        })
+    }
+    userOne();
 });

@@ -40,7 +40,7 @@ class AppAsset extends AssetBundle
         //时间插件
         'assets/mobile/mobiscroll.min.js',
         //公共特效
-        'js/public/main.js',
+        'js/main.js',
     ];
     //把导入的js文件移动到头部
     public $jsOptions = ['position' => View::POS_HEAD];

@@ -39,6 +39,9 @@ body {
 .no-boder {
     border:1px solid #f3f3f3;
 }
+.help-block {
+    color: red;
+}
 
 h1, .h1, h2, .h2, h3, .h3 {
 margin-top: 7px;
@@ -649,6 +652,7 @@ font-size: 19px;
 .portlet-title{
     padding: 15px 20px 10px;
     font-size: 16px;
+    border-bottom: 1px solid #eee;
 }
 .form-body{
     padding-top: 20px;
@@ -727,4 +731,25 @@ font-size: 19px;
 .padding-LR-10{
     padding-left: 10px;
     padding-right: 10px;
+}
+.padding-LR-25{
+    padding-left: 25px;
+    padding-right: 25px;
+}
+.padding-TB-25{
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+.profile-sidebar {
+    float: left;
+    width: 300px;
+    margin-right: 20px;
+}
+.img-style {
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+}
+.profile-content {
+    overflow: hidden;
 }

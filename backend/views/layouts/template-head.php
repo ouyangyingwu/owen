@@ -210,7 +210,7 @@
             <span><?=Yii::$app->user->identity->username?></span><i class="icon-caret-down"></i>
         </a>
         <ul class="dropdown-menu dropdown-user">
-            <li><a href="#"><i class="icon-user fa-fw"></i> User Profile</a></li>
+            <li><a href="/#/user_one.html" class="location-file"><i class="icon-user fa-fw"></i> User Profile</a></li>
             <li><a href="#"><i class="icon-gear fa-fw"></i> Settings</a></li>
             <li class="divider"></li>
             <li><a href="#" onclick="logout()"><i class="icon-signin fa-fw"></i> Logout</a></li>

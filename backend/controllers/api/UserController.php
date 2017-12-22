@@ -28,6 +28,7 @@ class UserController extends Controller
         $user->scenario = User::SCENARIO_ONE;
         $user->setAttributes(Yii::$app->request->post());
         $user->expand = Yii::$app->request->post('expand');
+        //$user->id = Yii::$app->user->identity->id;
         $user->order_by = ['id'=>2];
         return $user->getOne();
     }

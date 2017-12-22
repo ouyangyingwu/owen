@@ -1,13 +1,13 @@
 /**
  * Created by admin on 2017/9/27.
  */
+
 $(function(){
     //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
-    //
     var department , major , team;
     function departmentList(){
         var postDate = {};
@@ -53,6 +53,7 @@ $(function(){
             }
         });
     }
+    departmentList();majorList();teamList();
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
@@ -73,12 +74,6 @@ $(function(){
         if ($('.select-type').val()) {
             params["type"] = $('.select-type').val();
         }
-        /*if ($('.select-type').val()) {
-            params["type"] = $('.select-type').val();
-        }
-        if ($('.select-type').val()) {
-            params["type"] = $('.select-type').val();
-        }*/
         userList(params);
     });
     //清除所有筛选条件
@@ -123,7 +118,7 @@ $(function(){
         switch(name){
             case 'active':
                 return [
-                    {value: 1, text: 'Active'},
+                    {value: 1, text: '激活冻结'},
                     {value: 0, text: 'Freeze'}
                 ];break;
             case 'sex':
@@ -141,14 +136,14 @@ $(function(){
                 return departmentList;break;
             case 'student.major_id':
                 var majorList = [];
-                for(var i = 0,len = major.length; i<len; i++){
-                    majorList.push({value: major[i]['id'], text: major[i]['majorName']});
+                for(var i = 0,len = myMajor.length; i<len; i++){
+                    majorList.push({value: myMajor[i]['id'], text: myMajor[i]['majorName']});
                 }
                 return majorList;break;
             case 'student.team_id':
                 var teamList = [];
-                for(var i = 0,len = team.length; i<len; i++){
-                    teamList.push({value: team[i]['id'], text: team[i]['teamName']});
+                for(var i = 0,len = myTeam.length; i<len; i++){
+                    teamList.push({value: myTeam[i]['id'], text: myTeam[i]['teamName']});
                 }
                 return teamList;break;
             case 'student.status':
@@ -217,8 +212,12 @@ $(function(){
                             dataType:'json',
                             type:'POST',
                             success:function(data){
-                                $(copythis).text(intTostr(data[name] , name));
-                                userList(params);
+                                $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                if(name.split('.')[1] == 'department_id'){
+                                    htmlData['student']['team_id'] = 0;
+                                }
+                                resetModel('edit');
                             },
                             error:function(XMLHttpRequest){
                                 alert(XMLHttpRequest.responseJSON.message+"");
@@ -273,16 +272,16 @@ $(function(){
             }
         }
         if(type == 'student.major_id'){
-            for(var i = 0,len = major.length; i<len; i++){
-                if(value == major[i]['id']){
-                    return value = major[i]['majorName'];
+            for(var i = 0,len = myMajor.length; i<len; i++){
+                if(value == myMajor[i]['id']){
+                    return value = myMajor[i]['majorName'];
                 }
             }
         }
         if(type == 'student.team_id'){
-            for(var i = 0,len = team.length; i<len; i++){
-                if(value == team[i]['id']){
-                    return value = team[i]['teamName'];
+            for(var i = 0,len = myTeam.length; i<len; i++){
+                if(value == myTeam[i]['id']){
+                    return value = myTeam[i]['teamName'];
                 }
             }
         }
@@ -467,106 +466,7 @@ $(function(){
     };
     $('.scheduleTime').val("").scroller("destroy");
     $('.scheduleTime').scroller(options);
-    //图片处理
-    $("#upload").click(function(){
-        $('#file').trigger('click');
-    });
-    $('#file').change(function(){
-        if($(this).val()){
-            $('.progress').removeClass('hide');
-            var formData = new FormData();
-            formData.append('file', $('#file')[0].files[0]);
-            //上传图片
-            $.ajax({
-                url:'/api/file/url',
-                type: 'POST',
-                cache: false,
-                data: formData,
-                processData: false,
-                contentType: false,
-                xhr: function(){
-                    var xhr = $.ajaxSettings.xhr();
-                    if(onprogress && xhr.upload) {
-                        xhr.upload.addEventListener("progress" , onprogress, false);
-                        return xhr;
-                    }
-                }
-            }).done(function(res) {
-                if(res && res.split('/')[1].match(/^CS[0-9]{18}.[a-z]{3,4}$/)){
-                    var postData = {};
-                    postData["_csrf"] = token;
-                    postData["edit_name"] = 'img_url';
-                    postData["edit_value"] = res;
-                    postData["id"] = htmlData.id;
-                    //修改数据
-                    $.ajax({
-                        url:"/api/user/edit",
-                        data:postData,
-                        dataType:'json',
-                        type:'POST',
-                        success:function(data){
-                            onprogressFast();
-                            if(htmlData.img_url){
-                                var postData = {};
-                                postData["_csrf"] = token;
-                                postData["name"] = htmlData.img_url;
-                                postData["url"] = 'image';
-                                //删除旧的图片
-                                $.ajax({
-                                    url:"/api/file/delete",
-                                    data:postData,
-                                    type:'POST'
-                                });
-                            }
-                            var html = "<img src='/image/"+res+"'>";
-                            $('.progress').addClass('hide');
-                            $("#iframe-image-show").show().empty().append(html);
-                            userList(params);
-                        }
-                    });
-                    return;
-                }
-                alert(res);
-            }).fail(function(res) {
-                alert(res);
-            });
-        }
-    });
-    function onprogress(evt){
-        var loaded = evt.loaded;                //已经上传大小情况
-        var tot = evt.total;                    //附件总大小
-        var per = Math.floor(50*loaded/tot);    //已经上传的百分比
-        $(".progress-bar").html( per +"%" );
-        $(".progress-bar").css("width" , per +"%");
-    }
-    function onprogressFast(){                  //当后台数据返回确定成功
-        $(".progress-bar").html( 100 +"%" );
-        $(".progress-bar").css("width" , 100 +"%");
-    }
 
-    $("#deleteImg").click(function(){
-        //判断图片是否存在
-        if($("#iframe-image-show").children().length){
-            var postData = {};
-            postData["_csrf"] = token;
-            postData["edit_name"] = 'img_url';
-            postData["edit_value"] = null;
-            postData["id"] = htmlData.id;
-            $.ajax({
-                url:"/api/user/edit",
-                data:postData,
-                dataType:'json',
-                type:'POST',
-                success:function(data){
-                    $("#iframe-image-show").show().empty();
-                    $("#dialog-confirm").modal("show").find('p').text("是否同时删除源文件？");
-                    $("#dialog-confirm").attr({'data-type': 'img_url' , 'data-value': htmlData.img_url });
-                    htmlData.img_url = null;
-                    //userList(params);
-                }
-            });
-        }
-    });
     //删除
     $("#doConfirm").click(function(){
         var dataType = $(this).parent().parent().attr('data-type');
@@ -609,13 +509,26 @@ $(function(){
                 });break;
         }
     });
+    var myMajor, myTeam;
     resetModel = function (model) {
         switch (model){
             case 'edit':
                 $("#user-detail").modal("show");
-                console.log(htmlData.type , htmlData['student']['department_id'])
-                if(htmlData.type == 1) {departmentList();majorList(htmlData['student']['department_id']);teamList(htmlData['student']['major_id']);}
-                if(htmlData.type == 2) {departmentList();}
+                if(htmlData.type == 1) {
+                    myMajor = []; myTeam = [];
+                    for(var i= 0,len=major.length; i<len ; i++){
+                        if(major[i]['department_id'] == htmlData.student.department_id){
+                            myMajor.push(major[i]);
+                        }
+                    }
+                    for(var i= 0,len=team.length; i<len ; i++){
+                        if(team[i]['major_id'] == htmlData.student.major_id){
+                            myTeam.push(team[i]);
+                        }
+                    }
+                   // $('a[data-name="student.team_id"]').text('6546546');
+
+                }
                 initEditForm(htmlData);
                 break;
             case 'delete':
@@ -633,7 +546,6 @@ $(function(){
     //userList
     var  oldCondition = params;
     function userList(params){
-        $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
             url:"/api/user/list",
             data:params,
@@ -693,7 +605,6 @@ $(function(){
                 if(title = 0) $('#visible-pages').empty();
                 $('#table-user-list tbody').empty();
                 $('#table-user-list tbody').append(html);
-                $('.content').addClass('hide');             //圈圈影藏
                 $('.user-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
