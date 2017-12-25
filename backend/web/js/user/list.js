@@ -212,12 +212,17 @@ $(function(){
                             dataType:'json',
                             type:'POST',
                             success:function(data){
-                                $(copythis).text(intTostr(data[name.split('.')[1]] , name));
-                                htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
-                                if(name.split('.')[1] == 'department_id'){
-                                    htmlData['student']['team_id'] = 0;
+                                if(name.split('.').length == 2){
+                                    $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                    htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                    if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                        htmlData['student']['team_id'] = 0;
+                                    }
+                                    resetModel('edit');
+                                    return;
                                 }
-                                resetModel('edit');
+                                $(copythis).text(intTostr(data[name] , name));
+                                userList(params);
                             },
                             error:function(XMLHttpRequest){
                                 alert(XMLHttpRequest.responseJSON.message+"");
@@ -243,7 +248,7 @@ $(function(){
             if(dataType == 'select'){
                 displayValue = intTostr(displayValue , name);
             }
-            if(name == 'dirthday'){displayValue = CommonTool.formatTime(displayValue , 'm月d日');}
+            if(name == 'birth'){displayValue = CommonTool.formatTime(displayValue , 'm月d日');}
             if(!displayValue){displayValue="Empty";}
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);

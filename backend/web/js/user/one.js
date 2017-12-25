@@ -98,6 +98,19 @@ $(function() {
         $('#information').removeClass('hide');
     });
 
+    //选择时间
+    var preset = 'date';
+    var options = {
+        preset : preset,
+        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
+        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
+        theme: "android-ics light",
+        mode: "scroller",
+        dateFormat: 'yyyy-mm-dd',
+        display: "modal"
+    };
+    $('.scheduleTime').val("").scroller("destroy");
+    $('.scheduleTime').scroller(options);
     //定义新的规则
     $.validator.addMethod("reset_password", function(value){
         var tag = true;
@@ -172,12 +185,13 @@ $(function() {
                 dataType:'json',
                 type:'POST',
                 success:function(data){
-                    alert('密码修改成功');
-                    //location.reload(true);
-                    //window.location.href = "/user/index";
+                    //alert('密码修改成功');
+                    $("#dialog-confirm").modal("show").find('p').text("密码修改成功!!");
                 },
                 error:function(XMLHttpRequest){
-                    alert(XMLHttpRequest.responseJSON.message+"");
+                    alert(XMLHttpRequest.responseJSON.message+"!");
+                   /* console.log(XMLHttpRequest.responseJSON.message);
+                    $("#dialog-confirm").modal("show").find('p').text(XMLHttpRequest.responseJSON.message+"!");*/
                 }
             });
         }
@@ -196,6 +210,7 @@ $(function() {
                 $('.form-control[name="username"]').val(data.username);
                 $('.form-control[name="phone"]').val(data.phone);
                 $('.form-control[name="email"]').val(data.email);
+                $('.form-control[name="birth"]').val(CommonTool.formatTime(data.birth , 'Y-m-d'));
             }
         })
     }

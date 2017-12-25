@@ -2,65 +2,97 @@
  * Created by admin on 2017/9/27.
  */
 $(function(){
-    //if(!$.cookie['user']){window.location.href = "/site/login";}
-    var htmlData;
+    var htmlData,userList;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
-        params = {_csrf:token , per_page:2};
+        params = {_csrf:token , per_page:10};
         params["page"] = 1;
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
-        if ($('.select-username').val()) {
-            params["username"] = $('.select-username').val();
+        if ($('.select-crNo').val()) {
+            params["crNo"] = $('.select-crNo').val();
         }
-        if ($('.select-phone').val()) {
-            params["phone"] = $('.select-phone').val();
+        if ($('.select-crBuildingName').val()) {
+            params["crBuildingName"] = $('.select-crBuildingName').val();
         }
-        if ($('.select-email').val()) {
-            params["email"] = $('.select-email').val();
+        if ($('.select-crRoomNo').val()) {
+            params["crRoomNo"] = $('.select-crRoomNo').val();
         }
-        userList(params);
+        if ($('.select-crNumberOfSeat').val()) {
+            params["crNumberOfSeat"] = $('.select-crNumberOfSeat').val();
+        }
+        classRoomList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
         $('.select-id').val('');
-        $('.select-type').val('');
-        $('.select-user_id').val('');
-        params = {page:1 , per_page:2 , _csrf:token};
-        userList(params);
+        $('.select-crNo').val('');
+        $('.select-crBuildingName').val('');
+        $('.select-crRoomNo').val('');
+        $('.select-crNumberOfSeat').val('');
+        params = {page:1 , per_page:10 , _csrf:token};
+        classRoomList(params);
     });
+    (function(){
+        $.ajax({
+            url: 'api/user/list',
+            data: {_csrf:token,type:2},
+            type: 'post',
+            dataTye: 'json',
+            success:function(data){
+                userList = data.data;
+                var html = '';
+                html += '<option value="">请选择负责人</option>';
+                for(var i= 0,len =userList.length; i<len; i++){
+                    html += '<option value="'+userList[i]['id']+'">'+userList[i]['username']+'</option>';
+                }
+                $('.select-user_id').append(html);
+                $('#add-maintain-records [data-name="username"]').append(html);
+            }
+        })
+    })();
 
     //init edit form
     var getEditSource = function(name){
         switch(name){
             case 'active':
                 return [
-                    {value: 1, text: 'Active'},
-                    {value: 0, text: 'Freeze'}
+                    {value: 1, text: '是'},
+                    {value: 0, text: '否'}
                 ];
-            case 'sex':
-                return [
-                    {value: 0, text: 'Unknown'},
-                    {value: 1, text: 'Male'},
-                    {value: 2, text: 'Female'},
-                ];
+            case 'user_id':
+                var user = [];
+                for (var i=0,len=userList.length ; i<len ; i++){
+                    user.push({value:userList[i]['id'] , text:userList[i]['username']});
+                }
+                return user;
             default:
                 return null;
         }
     };
     //修改、详情
     function initEditForm(data){
-        $("#iframe-image-show").empty();
-        if(data.img_url){
-            var html = "<img src='/image/"+data.img_url+"'>";
-            $("#iframe-image-show").empty().append(html);
+        $('#maintain-records-table').find('.odd').remove();
+        if(data.maintain){
+            var html = '';
+            for(var i=0,len = data.maintain.length; i<len; i++){
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ data['maintain'][i]["start_time"] +'</td>';
+                html +='<td>'+ data['maintain'][i]['end_time'] +'</td>';
+                html +='<td>'+ data['maintain'][i]['reason'] +'</td>';
+                html +='<td>'+ data['maintain'][i]['money'] +'</td>';
+                html +='<td>'+ intTostr(data['maintain'][i]['username'] , 'user_id') +'</td>';
+                html +='<td class="delete-maintain-records" data-id="'+ data['maintain'][i]["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+                $("#maintain-records-table tbody").append(html);
+            }
         }
         $.fn.editable.defaults.mode = 'inline';
-        $('#user-detail').find("[name='form-edit']").each(function(){
+        $('#classRoom-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -82,13 +114,14 @@ $(function(){
                     postData["edit_value"] = param["value"];
                     postData["id"] = data.id;
                     $.ajax({
-                        url:"/api/user/edit",
+                        url:"/api/class-room/edit",
                         data:postData,
                         dataType:'json',
                         type:'POST',
                         success:function(data){
                             $(copythis).text(intTostr(data[name] , name));
-                            userList(params);
+                            htmlData[name] = data[name];
+                            classRoomList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -109,9 +142,18 @@ $(function(){
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
             //为data-name为describe的项做数据验证
-            switch (name){}
+            if (name == 'crNumberOfSeat' || name == 'reason'){
+                options["validate"] = function(value){
+                    if(name == 'crNumberOfSeat' && value > data['max_crNumberOfSeat']){
+                        return '座位数不能超出上限值'+data['max_crNumberOfSeat'];
+                    }
+                    if(name == 'reason' && htmlData['active'] == 1 && value != ''){
+                        return '只有关闭该教室后才能填写!';
+                    }
+                }
+            }
             if(dataType == 'select'){
-                displayValue = intTostr(data[name] , name);
+                displayValue = intTostr(displayValue , name);
             }
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
@@ -120,184 +162,179 @@ $(function(){
     function intTostr(value , type){
         if(type == 'active') {
             if (value == 1) {
-                return 'Yes';
+                return '是';
             } else if (value == 0) {
-                return 'No';
+                return '否';
             }
         }
-        if(type == 'sex') {
-            if (value == 1) {
-                return 'Male';
-            } else if (value == 2) {
-                return 'Female';
-            }else {
-                return 'Unknown';
+        if(type == 'user_id'){
+            for (var i=0,len=userList.length ; i<len ; i++){
+                if(value == userList[i]['id']){
+                    return userList[i]['username'];
+                }
             }
         }
     }
-    //图片处理
-    $("#upload").click(function(){
-        $('#file').trigger('click');
+    //显示添加
+    $("#maintain-records").click(function(){
+        $('#add-maintain-records').removeClass('hide');
     });
-    $('#file').change(function(){
-        if($(this).val()){
-            $('.progress').removeClass('hide');
-            var formData = new FormData();
-            formData.append('file', $('#file')[0].files[0]);
-            //上传图片
-            $.ajax({
-                url:'/api/file/url',
-                type: 'POST',
-                cache: false,
-                data: formData,
-                processData: false,
-                contentType: false,
-                xhr: function(){
-                    var xhr = $.ajaxSettings.xhr();
-                    if(onprogress && xhr.upload) {
-                        xhr.upload.addEventListener("progress" , onprogress, false);
-                        return xhr;
-                    }
-                }
-            }).done(function(res) {
-                if(res && res.split('/')[1].match(/^CS[0-9]{18}.[a-z]{3,4}$/)){
-                    var postData = {};
-                    postData["_csrf"] = token;
-                    postData["edit_name"] = 'img_url';
-                    postData["edit_value"] = res;
-                    postData["id"] = htmlData.id;
-                    //修改数据
-                    $.ajax({
-                        url:"/api/user/edit",
-                        data:postData,
-                        dataType:'json',
-                        type:'POST',
-                        success:function(data){
-                            onprogressFast();
-                            if(htmlData.img_url){
-                                var postData = {};
-                                postData["_csrf"] = token;
-                                postData["name"] = htmlData.img_url;
-                                postData["url"] = 'image';
-                                //删除旧的图片
-                                $.ajax({
-                                    url:"/api/file/delete",
-                                    data:postData,
-                                    type:'POST'
-                                });
-                            }
-                            var html = "<img src='/image/"+res+"'>";
-                            $('.progress').addClass('hide');
-                            $("#iframe-image-show").show().empty().append(html);
-                            userList(params);
-                        }
-                    });
-                    return;
-                }
-                alert(res);
-            }).fail(function(res) {
-                alert(res);
-            });
-        }
+    //取消添加
+    $('#cancel-maintain-records').click(function(){
+        $('#add-maintain-records').addClass('hide');
     });
-    function onprogress(evt){
-        var loaded = evt.loaded;                //已经上传大小情况
-        var tot = evt.total;                    //附件总大小
-        var per = Math.floor(50*loaded/tot);    //已经上传的百分比
-        $(".progress-bar").html( per +"%" );
-        $(".progress-bar").css("width" , per +"%");
-    }
-    function onprogressFast(){                  //当后台数据返回确定成功
-        $(".progress-bar").html( 100 +"%" );
-        $(".progress-bar").css("width" , 100 +"%");
-    }
-
-    $("#deleteImg").click(function(){
-        //判断图片是否存在
-        if($("#iframe-image-show").children().length){
-            var postData = {};
-            postData["_csrf"] = token;
-            postData["edit_name"] = 'img_url';
-            postData["edit_value"] = null;
-            postData["id"] = htmlData.id;
-            $.ajax({
-                url:"/api/user/edit",
-                data:postData,
-                dataType:'json',
-                type:'POST',
-                success:function(data){
-                    $("#iframe-image-show").show().empty();
-                    $("#dialog-confirm").modal("show").find('p').text("是否同时删除源文件？");
-                    $("#dialog-confirm").attr({'data-type': 'img_url' , 'data-value': htmlData.img_url });
-                    htmlData.img_url = null;
-                    //userList(params);
-                }
-            });
-        }
+    //添加记录
+    $('#insert-maintain-records').click(function(){
+        $('#add-maintain-records').addClass('hide');
+        var postData = {},value = {},edit_value = htmlData.maintain? htmlData.maintain:[];
+        postData['_csrf'] = token;
+        postData['id'] = htmlData['id'];
+        value['dataTime'] = Math.round((new Date().getTime())/1000);
+        $('#add-maintain-records .form-control').each(function(){
+            value[$(this).attr('data-name')] = $(this).val();
+        });
+        value['dataTime'] = Math.round((new Date().getTime())/1000);
+        edit_value.push(value);
+        postData['edit_name'] = 'maintain';
+        postData['edit_value'] = edit_value;
+        $.ajax({
+            url: 'api/class-room/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                var html = '';
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ value["start_time"] +'</td>';
+                html +='<td>'+ value['end_time'] +'</td>';
+                html +='<td>'+ value['reason'] +'</td>';
+                html +='<td>'+ value['money'] +'</td>';
+                html +='<td>'+ intTostr(value['username'] , 'user_id') +'</td>';
+                html +='<td class="delete-maintain-records" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+                $("#maintain-records-table tbody").append(html);return;
+            }
+        });
     });
-    //删除
-    $("#doConfirm").click(function(){
-        var dataType = $(this).parent().parent().attr('data-type');
+    //删除记录（detail列表内的记录）
+    $('#maintain-records-table').on('click', '.delete-maintain-records' , function(){
+        var id = $(this).attr('data-id');
         var postData = {};
-        postData["_csrf"] = token;
-        switch (dataType){
-            case 'img_url':
-                postData["name"] = $(this).parent().parent().attr('data-value');
-                postData["url"] = 'image';
-                $.ajax({
-                    url:"/api/file/delete",
-                    data:postData,
-                    dataType:'json',
-                    type:'POST',
-                    success:function(data){
-                        $("#dialog-confirm").modal("hide");
-                    },
-                    error:function(XMLHttpRequest){
-                        alert(XMLHttpRequest.responseJSON.message+"");
-                        $(copythis).text(oldValue);
-                    }
-                });break;
-            case 'is_delete':
-                postData["edit_name"] = 'is_delete';
-                postData["edit_value"] = 1;
-                postData["id"] = htmlData.id;
-                $.ajax({
-                    url:"/api/user/edit",
-                    data:postData,
-                    dataType:'json',
-                    type:'POST',
-                    success:function(data){
-                        $("#dialog-confirm").modal("hide");
-                        userList(params);
-                    },
-                    error:function(XMLHttpRequest){
-                        alert(XMLHttpRequest.responseJSON.message+"");
-                        $(copythis).text(oldValue);
-                    }
-                });break;
+        for(var i = 0,len = htmlData.maintain.length ; i<len ; i++){
+            if($(this).attr('data-id') == htmlData['maintain'][i]['dataTime']){
+                htmlData.maintain.splice(i , 1);
+            }
+        }
+        postData['_csrf'] = token;
+        postData['id'] = htmlData['id'];
+        postData['edit_name'] = 'maintain';
+        postData['edit_value'] = htmlData.maintain;
+        $(this).parents('.odd').remove();
+        $.ajax({
+            url: 'api/class-room/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json'
+        });
+        return;
+    });
+
+    //选择时间
+    var preset = 'date';
+    var options = {
+        preset : preset,
+        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
+        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
+        theme: "android-ics light",
+        mode: "scroller",
+        dateFormat: 'yyyy-mm-dd',
+        display: "modal"
+    };
+    $('.scheduleTime').val("").scroller("destroy");
+    $('.scheduleTime').scroller(options);
+
+    var validateRules = {
+        "reason": {required: true}
+    };
+    var validateMessages = {};
+    $('#edit-close').validate({
+        rules:validateRules,
+        messages: validateMessages,
+        errorClass: "help-block",
+        //错误提示的html标签
+        errorElement:'span',
+        submitHandler: function() {
+            var postData = {};
+            postData['_csrf'] = token;
+            postData['id'] = htmlData['id'];
+            postData['active'] = 0;
+            postData['reason'] = $(".form-control[name='reason']").val();
+            $.ajax({
+                url: "/api/class-room/update",
+                data: postData,
+                dataType: 'json',
+                type: 'POST',
+                success: function (data) {
+                    $("#exampleModal").modal("hide");
+                    classRoomList(params);
+                },
+                error: function (XMLHttpRequest) {
+                    alert(XMLHttpRequest.responseJSON.message + "");
+                }
+            })
         }
     });
+
+    $('#doConfirm').click(function () {
+        var postData = {};
+        postData['_csrf'] = token;
+        console.log(htmlData);
+        postData['id'] = htmlData['id'];
+        postData['active'] = 1;
+        postData['reason'] = null;
+        $.ajax({
+            url: "/api/class-room/update",
+            data: postData,
+            dataType: 'json',
+            type: 'POST',
+            success: function (data) {
+                $("#dialog-confirm").modal("hide");
+                classRoomList(params);
+            },
+            error: function (XMLHttpRequest) {
+                alert(XMLHttpRequest.responseJSON.message + "");
+            }
+        })
+    });
+
     resetModel = function (model) {
         switch (model){
             case 'edit':
-                $("#user-detail").modal("show");
+                $("#classRoom-detail").modal("show");
                 initEditForm(htmlData);
                 break;
-            case 'delete':
-                $("#dialog-confirm").modal("show").find('p').text("你是否要删除这个用户？");
-                $("#dialog-confirm").attr('data-type' , 'is_delete');
+            case  'close':
+                $("#exampleModal").modal("show");
+                break;
+            case 'open':
+                $("#dialog-confirm").modal("show").find('p').text("是否开放该教室？");
+                $("#dialog-confirm").attr('data-type' , 'open');
                 break;
         }
     };
-    var createButtonList = function(row){
+    var createButtonList = function(row , active){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
+        buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        if(active == 1){
+            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
+        }else {
+            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
+        }
         return buttonList;
     };
-    //userList
+    //classRoomList
     var  oldCondition = params;
-    function userList(params){
+    function classRoomList(params){
         $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
             url:"/api/class-room/list",
@@ -317,14 +354,15 @@ $(function(){
 
                     //数据列表
                     for (var i=0;i<data.length;i++){
-                        var button = createButtonList(data[i]['id'])
+                        var button = createButtonList(data[i]['id'] ,data[i]['active']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
+                        html +='<td>'+data[i]["id"]+'</td>';
                         html +='<td>'+data[i]["crNo"]+'</td>';
                         html +='<td>'+ data[i]['crBuildingName'] +'</td>';
                         html +='<td>'+ data[i]['crRoomNo']+'</td>';
-                        html +='<td>'+ data[i]['crNumberOfSeat']+'</td>';
+                        html +='<td>'+ data[i]['crNumberOfSeat'] +'/'+ data[i]['max_crNumberOfSeat'] +'</td>';
                         html +='<td>'+ intTostr(data[i]['active'] , 'active') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
@@ -336,8 +374,8 @@ $(function(){
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    if(condition['id'] !== oldCondition['id'] || condition['username'] !== oldCondition['username']
-                        || condition['email'] !== oldCondition['email'] || condition['phone'] !== oldCondition['phone']){
+                    if(condition['id'] !== oldCondition['id'] || condition['crNo '] !== oldCondition['crNo '] || condition['crNumberOfSeat'] !== oldCondition['crNumberOfSeat']
+                        || condition['crBuildingName '] !== oldCondition['crBuildingName '] || condition['crRoomNo'] !== oldCondition['crRoomNo']){
                         number_pages = true;
                         oldCondition = condition;
                     }
@@ -355,10 +393,10 @@ $(function(){
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-user-list tbody').empty();
-                $('#table-user-list tbody').append(html);
+                $('#table-classroom-list tbody').empty();
+                $('#table-classroom-list tbody').append(html);
                 $('.content').addClass('hide');             //圈圈影藏
-                $('.user-edit').click(function(){
+                $('.classroom-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -374,14 +412,14 @@ $(function(){
             }
         });
     }
-    userList(params);
+    classRoomList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            userList(params);
+            classRoomList(params);
         }
     });
 });

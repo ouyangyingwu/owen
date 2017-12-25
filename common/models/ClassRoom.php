@@ -8,15 +8,16 @@ use common\exception\ModelException;
  * This is the model class for table "Article".
  *
  * @property integer $id
+ * @property string $crNo
+ * @property string $crBuildingName
+ * @property string $crRoomNo
+ * @property integer $crNumberOfSeat
+ * @property integer $max_crNumberOfSeat
  * @property integer $user_id
- * @property string $title
- * @property string $describe
- * @property string $content
- * @property integer $status
- * @property integer $type
- * @property string $create_time
- * @property string $edit_time
- * @property integer $is_delete
+ * @property integer $active
+ * @property string $reason
+ * @property string $equipment
+ * @property string $maintain
  */
 class ClassRoom extends  BaseModel
 {
@@ -38,10 +39,11 @@ class ClassRoom extends  BaseModel
 
     private $_query;
 
-    const SCENARIO_SEARCH = 'list';
+    const SCENARIO_LIST = 'list';
     const SCENARIO_SEARCH_ONE = 'one';
     const SCENARIO_ADD = 'add';
     const SCENARIO_EDIT = 'edit';
+    const SCENARIO_UPDATE = 'update';
 
     /**
      * @inheritdoc
@@ -56,10 +58,11 @@ class ClassRoom extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_SEARCH => ['id', 'describe' , 'user_id' , 'title' ,'page' , 'per_page' , 'type'],
-            self::SCENARIO_SEARCH_ONE => ['id', 'describe' , 'user_id' , 'title' ,'page', 'type'],
-            self::SCENARIO_ADD => ['user_id' , 'describe' , 'title'  , 'article_url' , 'type' , 'strORurl'],
+            self::SCENARIO_LIST => ['id', 'crNo' , 'crBuildingName' , 'crRoomNo' , 'crNumberOfSeat' , 'user_id', 'page' , 'per_page'],
+            self::SCENARIO_SEARCH_ONE => ['id'],
+            self::SCENARIO_ADD => ['crNo' , 'crBuildingName' , 'crRoomNo' , 'crNumberOfSeat' , 'max_crNumberOfSeat' , 'user_id', 'active'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
+            self::SCENARIO_UPDATE => ['id' , 'reason' , 'active'],
         ];
     }
 
@@ -80,6 +83,21 @@ class ClassRoom extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if($this->crNo){
+            $this->_query->andFilterWhere(['crNo' => $this->crNo]);
+        }
+        if($this->crBuildingName){
+            $this->_query->andFilterWhere(['crBuildingName' => $this->crBuildingName]);
+        }
+        if($this->crRoomNo){
+            $this->_query->andFilterWhere(['crRoomNo' => $this->crRoomNo]);
+        }
+        if($this->crNumberOfSeat){
+            $this->_query->andFilterWhere(['crNumberOfSeat' => $this->crNumberOfSeat]);
+        }
+        if($this->user_id){
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
         }
         if(count($this->select)>0)
         {
@@ -142,7 +160,7 @@ class ClassRoom extends  BaseModel
      * 列表查询
      */
     public function getList(){
-        $this->scenario = self::SCENARIO_SEARCH;
+        $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
             $total = $this->_query->count();
@@ -166,9 +184,6 @@ class ClassRoom extends  BaseModel
             $this->createQuery();
             $this->addQueryExpand();
             $result = $this->_query->one();
-            if($result['article_url']){
-                $result['content'] = file_get_contents("../web/file/".$result['article_url']);
-            }
             return $result;
         }
     }
@@ -178,17 +193,9 @@ class ClassRoom extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $article = new Article();
+            $article = new ClassRoom();
             $article->scenario = self::SCENARIO_ADD;
             $article->setAttributes($this->safeAttributesData());
-            if($this->strORurl == 'str'){
-                $file = new File();
-                $file->content = $article->article_url;
-                $article->article_url = $file->FileCreate();
-            }
-            $article->create_time = time();
-            $article->status = 1;
-            $article->is_delete = 0;
             if($article->save())
             {
                 return $article;
@@ -200,21 +207,44 @@ class ClassRoom extends  BaseModel
         }
     }
     /**
-     * 修改数据
+     * 编辑数据
      */
     public function getEdit()
     {
         if($this->validate())
         {
-            $article = Article::find()->andFilterWhere(['id' => $this->id])->one();
-            if($article)
+            $classRoom = ClassRoom::find()->andFilterWhere(['id' => $this->id])->one();
+            if($classRoom)
             {
-                $article->scenario = self::SCENARIO_EDIT;
-                $article->setAttribute($this->edit_name, $this->edit_value);
-                $article->edit_time = time();
-                if($article->save())
+                $classRoom->scenario = self::SCENARIO_EDIT;
+                if($this->edit_name == 'maintain'){$this->edit_value = json_encode($this->edit_value);}
+                $classRoom->setAttribute($this->edit_name, $this->edit_value);
+                if($classRoom->save())
                 {
                     return [$this->edit_name => $this->edit_value];
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+    /**
+     * 修改数据
+     */
+    public function getUpdate()
+    {
+        if($this->validate())
+        {
+            $classRoom = ClassRoom::find()->andFilterWhere(['id' => $this->id])->one();
+            if($classRoom)
+            {
+                $classRoom->scenario = self::SCENARIO_UPDATE;
+                $classRoom->setAttributes($this->safeAttributesData());
+                if($classRoom->save())
+                {
+                    return true;
                 }
             }
             return null;

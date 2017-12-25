@@ -31,10 +31,10 @@
             <a href="javascript:void(0)"><i class="icon-user"></i> Class Room <span class="icon-angle-right arrow"></span></a>
             <ul class="nav nav-second-level b-color hidee">
                 <li>
-                    <a href="/#/classroom_list.html"><i class="icon-cogs"></i>Class Room List</a>
+                    <a href="/#/classroom_list.html" class="location-file"><i class="icon-cogs"></i>Class Room List</a>
                 </li>
                 <li>
-                    <a href="/#/classroom_add.html"><i class="icon-cogs"></i>Class Room Add</a>
+                    <a href="/#/classroom_add.html" class="location-file"><i class="icon-cogs"></i>Class Room Add</a>
                 </li>
             </ul>
         </li>

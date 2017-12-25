@@ -14,7 +14,7 @@ use common\exception\ModelException;
  * @property integer $type
  * @property string $username
  * @property integer $sex
- * @property integer $dirthday
+ * @property integer $birth
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
@@ -78,7 +78,7 @@ class User extends BaseModel implements IdentityInterface
     {
         return [
             self::SCENARIO_SEARCH => ['id', 'email' , 'username' , 'phone' , 'type' , 'per_page' , 'page'],
-            self::SCENARIO_ADD => ['type', 'username' , 'phone' , 'email' , 'img_url' , 'sex' , 'dirthday' ],
+            self::SCENARIO_ADD => ['type', 'username' , 'phone' , 'email' , 'img_url' , 'sex' , 'birth' ],
             self::SCENARIO_UPDATE => ['email' , 'username' , 'phone'],
             self::SCENARIO_RESET_PASSWORD => ['old_password' , 'new_password'],
             self::SCENARIO_EDIT => ['id'  , 'edit_name' , 'edit_value'],
@@ -291,7 +291,9 @@ class User extends BaseModel implements IdentityInterface
                 if(Yii::$app->security->validatePassword($this->old_password, $user->password_hash)){
                     $user->password_hash = Yii::$app->security->generatePasswordHash($this->new_password);
                     $user->updated_at = time();
+                    //var_dump($user->save());die;
                     if ($user->save()) {
+                        //var_dump($user->password_hash.'yse');die;
                         return true;
                     }
                 } else {

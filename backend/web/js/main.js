@@ -1220,6 +1220,7 @@ $(function() {
         $('#page-inner').load('views/'+html);
         $('#main-menu li a').removeClass('active-menu');
         $('#main-menu').find('a').each(function(){
+            console.log($(this).attr('href').split('#/')[1] == html , $(this).attr('href').split('#/')[1] , html);
             if($(this).attr('href').split('#/')[1] == html){
                 $(this).addClass('active-menu');
                 $(this).parent('li').parent('ul').siblings('a').addClass('active-menu');
@@ -1227,25 +1228,37 @@ $(function() {
                 var script = document.createElement("script");
                 script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
                 $('#addScript').html(script);
-                //$('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js');
             }
+            return false;
         });
+        var jsc = html.substring(0,html.indexOf('.')).split('_');
+        var script = document.createElement("script");
+        script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+        $('#addScript').html(script);
     }
     /*实现局部刷新（头部与导航不刷新）*/
-    $(function(){
-        $('a.location-file').click(function(){
-            var html = $(this).attr('href').split('#/')[1];
-            if(html) {
+    $('a.location-file').click(function(){
+        var html = $(this).attr('href').split('#/')[1];
+        if(html) {
+            console.log($(this).parent().parent().hasClass('nav'));
+            if($(this).parent().parent().hasClass('nav')){
                 $('#page-inner').load('views/'+html);
                 var jsc = html.substring(0,html.indexOf('.')).split('_');
                 var script = document.createElement("script");
                 script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
                 $('#addScript').html(script);
-                //var jsc = html.substring(0,html.indexOf('.')).split('_');
-                //$('#addScript').attr('src','/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random());
+            }else {
+                $('#main-menu li ul').slideUp();
+                $('#main-menu li a').children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
+                $('#main-menu li a').removeClass('active-menu');
+                $('#page-inner').load('views/'+html);
+                var jsc = html.substring(0,html.indexOf('.')).split('_');
+                var script = document.createElement("script");
+                script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+                $('#addScript').html(script);
             }
-        });
-    })
+        }
+    });
 
     /**
      * 左边菜单

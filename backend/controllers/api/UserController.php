@@ -26,6 +26,22 @@ class UserController extends Controller
     {
         $user = new User();
         $user->scenario = User::SCENARIO_ONE;
+        $user->id = Yii::$app->user->identity->id;
+        $user->setAttributes(Yii::$app->request->post());
+        return $user->getOne();
+    }
+    public function actionNumber()
+    {
+        $user = new User();
+        $user->scenario = User::SCENARIO_ONE;
+        $user->setAttributes(Yii::$app->request->post());
+        $user->expand = Yii::$app->request->post('expand');
+        $user->order_by = ['id'=>2];
+        return $user->getOne();
+    }
+    public function actionProfile(){
+        $user = new User();
+        $user->scenario = User::SCENARIO_ONE;
         $user->setAttributes(Yii::$app->request->post());
         $user->expand = Yii::$app->request->post('expand');
         //$user->id = Yii::$app->user->identity->id;
@@ -113,7 +129,7 @@ class UserController extends Controller
         $user->scenario = User::SCENARIO_ADD;
         $postData = Yii::$app->request->post();
         $user->setAttributes($this->SafeFilter($postData));
-        $user->dirthday = strtotime($user->dirthday);
+        $user->birth = strtotime($user->birth);
 
         //开始事务
         $transaction = Yii::$app->db->beginTransaction();

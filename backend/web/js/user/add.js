@@ -42,7 +42,7 @@ $(function(){
         if( type == 2 )  expand='teacher',last='T';
 
         $.ajax({
-            url:'api/user/one',
+            url:'api/user/number',
             data:{_csrf:token,
                 type:type,
                 expand:[expand],
@@ -146,7 +146,7 @@ $(function(){
     var validateRules = {
         "position": {required: true},
         "sex": {required: true},
-        "dirthday": {required: true},
+        "birth": {required: true},
         "username": {required: true , rangelength:[1 , 20]},
         "email": {required: true , email:true },
         "phone": {required: true , number:true , rangelength:[11,11]}
