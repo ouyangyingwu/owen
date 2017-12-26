@@ -1215,32 +1215,36 @@ $(function() {
         });
     };
 
-    var html = location.href.split('#/')[1];
+    var hrefList = [] , html = location.href.split('#/')[1];
     if(html) {
         $('#page-inner').load('views/'+html);
         $('#main-menu li a').removeClass('active-menu');
-        $('#main-menu').find('a').each(function(){
-            console.log($(this).attr('href').split('#/')[1] == html , $(this).attr('href').split('#/')[1] , html);
-            if($(this).attr('href').split('#/')[1] == html){
-                $(this).addClass('active-menu');
-                $(this).parent('li').parent('ul').siblings('a').addClass('active-menu');
-                var jsc = html.substring(0,html.indexOf('.')).split('_');
-                var script = document.createElement("script");
-                script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-                $('#addScript').html(script);
-            }
-            return false;
+        $('#main-menu a.location-file').each(function(){
+            hrefList.push($(this).attr('href').split('#/')[1]);
         });
-        var jsc = html.substring(0,html.indexOf('.')).split('_');
-        var script = document.createElement("script");
-        script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-        $('#addScript').html(script);
+        if($.inArray(html , hrefList) >= 0){
+            $('#main-menu').find('a').each(function(){
+                 if($(this).attr('href').split('#/')[1] == html){
+                     $(this).addClass('active-menu');
+                     $(this).parent('li').parent('ul').show();
+                     var jsc = html.substring(0,html.indexOf('.')).split('_');
+                     var script = document.createElement("script");
+                     script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+                     $('#addScript').html(script);
+                 }
+             });
+            //return;
+        } else {
+            var jsc = html.substring(0,html.indexOf('.')).split('_');
+            var script = document.createElement("script");
+            script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
+            $('#addScript').html(script);
+        }
     }
     /*实现局部刷新（头部与导航不刷新）*/
     $('a.location-file').click(function(){
         var html = $(this).attr('href').split('#/')[1];
         if(html) {
-            console.log($(this).parent().parent().hasClass('nav'));
             if($(this).parent().parent().hasClass('nav')){
                 $('#page-inner').load('views/'+html);
                 var jsc = html.substring(0,html.indexOf('.')).split('_');

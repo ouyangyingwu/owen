@@ -19,6 +19,7 @@ use common\exception\ModelException;
  * @property integer $leaveschool_time
  * @property integer $dropout_time
  * @property integer $class
+ * @property integer $team_id
  * @property integer $marjor_id
  * @property integer $department_id
  */
@@ -147,7 +148,7 @@ class UserStudent extends  BaseModel
      * 列表查询
      */
     public function getList(){
-        $this->scenario = self::SCENARIO_SEARCH;
+        $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
             $total = $this->_query->count();
@@ -214,6 +215,13 @@ class UserStudent extends  BaseModel
                     $userStudent->team_id = 0;
                 }elseif($this->edit_name == 'major_id'){
                     $userStudent->team_id = 0;
+                }elseif($this->edit_name == 'team_id'){
+                    $user_number = self::findAll(['team_id' => $this->edit_value]);
+                    $number_limit = Team::findOne(['id'=>$this->edit_value]);
+                    if(count($user_number) >= $number_limit['number_limit']){
+                        $errorStr = "该班级人数已满！！！";
+                        throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+                    }
                 }
                 if($userStudent->save())
                 {

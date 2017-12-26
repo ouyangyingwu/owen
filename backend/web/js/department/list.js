@@ -13,29 +13,33 @@ $(function(){
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
-        if ($('.select-crNo').val()) {
-            params["crNo"] = $('.select-crNo').val();
+        if ($('.select-user_id').val()) {
+            params["user_id"] = $('.select-user_id').val();
         }
-        if ($('.select-crBuildingName').val()) {
-            params["crBuildingName"] = $('.select-crBuildingName').val();
+        if ($('.select-depNo').val()) {
+            params["depNo"] = $('.select-depNo').val();
         }
-        if ($('.select-crRoomNo').val()) {
-            params["crRoomNo"] = $('.select-crRoomNo').val();
+        if ($('.select-depName').val()) {
+            params["depName"] = $('.select-depName').val();
         }
-        if ($('.select-crNumberOfSeat').val()) {
-            params["crNumberOfSeat"] = $('.select-crNumberOfSeat').val();
+        if ($('.select-phone').val()) {
+            params["phone"] = $('.select-phone').val();
         }
-        classRoomList(params);
+        if ($('.select-depAddress').val()) {
+            params["depAddress"] = $('.select-depAddress').val();
+        }
+        departmentList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
         $('.select-id').val('');
-        $('.select-crNo').val('');
-        $('.select-crBuildingName').val('');
-        $('.select-crRoomNo').val('');
-        $('.select-crNumberOfSeat').val('');
+        $('.select-user_id').val('');
+        $('.select-depNo').val('');
+        $('.select-depName').val('');
+        $('.select-phone').val('');
+        $('.select-depAddress').val('');
         params = {page:1 , per_page:10 , _csrf:token};
-        classRoomList(params);
+        departmentList(params);
     });
     (function(){
         $.ajax({
@@ -76,23 +80,24 @@ $(function(){
     };
     //修改、详情
     function initEditForm(data){
-        $('#maintain-records-table').find('.odd').remove();
-        if(data.maintain){
+        $('#teacher-table').find('.odd').remove();
+        if(userList){
             var html = '';
-            for(var i=0,len = data.maintain.length; i<len; i++){
-                html += '<tr class="odd" role="row">';
-                html +='<td>'+ data['maintain'][i]["start_time"] +'</td>';
-                html +='<td>'+ data['maintain'][i]['end_time'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['reason'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['money'] +'</td>';
-                html +='<td>'+ intTostr(data['maintain'][i]['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ data['maintain'][i]["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
-                html +='</tr>';
+            for(var i=0,len = userList.length; i<len; i++){
+                if(userList[i]['teacher']['department_id'] == data['id']){
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ userList[i]['teacher']['teachNo'] +'</td>';
+                    html +='<td>'+ userList[i]['username'] +'</td>';
+                    html +='<td>'+ userList[i]['teacher']['position'] +'</td>';;
+                    html +='<td>'+ userList[i]['phone'] +'</td>';
+                    html +='<td>'+ userList[i]['email'] +'</td>';
+                    html +='</tr>';
+                }
             }
-            $("#maintain-records-table tbody").append(html);
+            $("#teacher-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
-        $('#classRoom-detail').find("[name='form-edit']").each(function(){
+        $('#department-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -122,7 +127,7 @@ $(function(){
                             $(copythis).text(intTostr(data[name] , name));
                             htmlData[name] = data[name];
                             if(name == 'active') htmlData['reason'] = null;
-                            classRoomList(params);
+                            departmentList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -154,6 +159,7 @@ $(function(){
                 }
             }
             if(dataType == 'select'){
+                console.log(name);
                 displayValue = intTostr(displayValue , name);
             }
             $(this).text(displayValue).editable('destroy');
@@ -169,6 +175,7 @@ $(function(){
             }
         }
         if(type == 'user_id'){
+            console.log(value);
             for (var i=0,len=userList.length ; i<len ; i++){
                 if(value == userList[i]['id']){
                     return userList[i]['username'];
@@ -176,49 +183,53 @@ $(function(){
             }
         }
     }
+    $('#add-teacher .form-control[data-name="username"]').change(function(){
+        var teacher_id = $(this).val();
+        for (var i=0,len=userList.length ; i<len ; i++ ){
+            if(userList[i]['id'] == teacher_id){
+                $('.form-control[data-name="teachNo"]').val(userList[i]['teacher']['teachNo']);
+                $('.form-control[data-name="position"]').val(userList[i]['teacher']['position']);
+                $('.form-control[data-name="phone"]').val(userList[i]['phone']);
+                $('.form-control[data-name="email"]').val(userList[i]['email']);
+            }
+        }
+    });
     //显示添加
-    $("#maintain-records").click(function(){
-        $('#add-maintain-records').removeClass('hide');
+    $("#teacher").click(function(){
+        $('#add-teacher').removeClass('hide');
+        var html = '';
+        html += '<option value="">请选择教师</option>';
+        for (var i=0,len=userList.length ; i<len ; i++ ){
+            if(userList[i]['teacher']['department_id'] != htmlData['id']){
+                html += '<option value="'+ userList[i]['id'] +'">'+ userList[i]['username'] +'</option>';
+            }
+        }
+        $('#add-teacher .form-control[data-name="username"]').empty();
+        $('#add-teacher .form-control[data-name="username"]').append(html);
     });
     //取消添加
-    $('#cancel-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
+    $('#cancel-teacher').click(function(){
+        $('#add-teacher').addClass('hide');
     });
     //添加记录
-    $('#insert-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
-        var postData = {},value = {},edit_value = htmlData.maintain? htmlData.maintain:[];
+    $('#insert-teacher').click(function(){
+        $('#add-teacher').addClass('hide');
+        var postData = {};
         postData['_csrf'] = token;
-        postData['id'] = htmlData['id'];
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        $('#add-maintain-records .form-control').each(function(){
-            value[$(this).attr('data-name')] = $(this).val();
-        });
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        edit_value.push(value);
-        postData['edit_name'] = 'maintain';
-        postData['edit_value'] = edit_value;
+        postData['be_applicant'] = $('#add-teacher .form-control[data-name="username"]').val();
+        postData['edit_name'] = 'department_id';
+        postData['edit_value'] = htmlData.id;
         $.ajax({
-            url: 'api/class-room/edit',
+            url: 'api/information/add',
             data: postData,
             type: 'post',
             dataType: 'json',
             success:function(data){
-                var html = '';
-                html += '<tr class="odd" role="row">';
-                html +='<td>'+ value["start_time"] +'</td>';
-                html +='<td>'+ value['end_time'] +'</td>';
-                html +='<td>'+ value['reason'] +'</td>';
-                html +='<td>'+ value['money'] +'</td>';
-                html +='<td>'+ intTostr(value['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
-                html +='</tr>';
-                $("#maintain-records-table tbody").append(html);
-                htmlData.maintain = edit_value;
+                $("#dialog-confirm").modal("show").find('p').text("已通知该用户");
             }
         });
     });
-    //删除记录（detail列表内的记录）
+    /*//删除记录（detail列表内的记录）
     $('#maintain-records-table').on('click', '.delete-maintain-records' , function(){
         var id = $(this).attr('data-id');
         var postData = {};
@@ -238,7 +249,7 @@ $(function(){
             type: 'post'
         });
         return;
-    });
+    });*/
 
     //选择时间
     var preset = 'date';
@@ -254,91 +265,25 @@ $(function(){
     $('.scheduleTime').val("").scroller("destroy");
     $('.scheduleTime').scroller(options);
 
-    var validateRules = {
-        "reason": {required: true}
-    };
-    var validateMessages = {};
-    $('#edit-close').validate({
-        rules:validateRules,
-        messages: validateMessages,
-        errorClass: "help-block",
-        //错误提示的html标签
-        errorElement:'span',
-        submitHandler: function() {
-            var postData = {};
-            postData['_csrf'] = token;
-            postData['id'] = htmlData['id'];
-            postData['active'] = 0;
-            postData['reason'] = $(".form-control[name='reason']").val();
-            $.ajax({
-                url: "/api/class-room/update",
-                data: postData,
-                dataType: 'json',
-                type: 'POST',
-                success: function (data) {
-                    $("#exampleModal").modal("hide");
-                    classRoomList(params);
-                },
-                error: function (XMLHttpRequest) {
-                    alert(XMLHttpRequest.responseJSON.message + "");
-                }
-            })
-        }
-    });
-
-    $('#doConfirm').click(function () {
-        var postData = {};
-        postData['_csrf'] = token;
-        console.log(htmlData);
-        postData['id'] = htmlData['id'];
-        postData['active'] = 1;
-        postData['reason'] = null;
-        $.ajax({
-            url: "/api/class-room/update",
-            data: postData,
-            dataType: 'json',
-            type: 'POST',
-            success: function (data) {
-                $("#dialog-confirm").modal("hide");
-                classRoomList(params);
-            },
-            error: function (XMLHttpRequest) {
-                alert(XMLHttpRequest.responseJSON.message + "");
-            }
-        })
-    });
-
     resetModel = function (model) {
         switch (model){
             case 'edit':
-                $("#classRoom-detail").modal("show");
+                $("#department-detail").modal("show");
                 initEditForm(htmlData);
                 break;
-            case  'close':
-                $("#exampleModal").modal("show");
-                break;
-            case 'open':
-                $("#dialog-confirm").modal("show").find('p').text("是否开放该教室？");
-                $("#dialog-confirm").attr('data-type' , 'open');
-                break;
         }
     };
-    var createButtonList = function(row , active){
+    var createButtonList = function(row){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        if(active == 1){
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
-        }else {
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
-        }
+        buttonList.push("<a name=\"table-button-list\" class='department-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
         return buttonList;
     };
-    //classRoomList
+    //departmentList
     var  oldCondition = params;
-    function classRoomList(params){
+    function departmentList(params){
         $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
-            url:"/api/class-room/list",
+            url:"/api/department/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -355,16 +300,16 @@ $(function(){
 
                     //数据列表
                     for (var i=0;i<data.length;i++){
-                        var button = createButtonList(data[i]['id'] ,data[i]['active']);
+                        var button = createButtonList(data[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
                         html +='<td>'+data[i]["id"]+'</td>';
-                        html +='<td>'+data[i]["crNo"]+'</td>';
-                        html +='<td>'+ data[i]['crBuildingName'] +'</td>';
-                        html +='<td>'+ data[i]['crRoomNo']+'</td>';
-                        html +='<td>'+ data[i]['crNumberOfSeat'] +'/'+ data[i]['max_crNumberOfSeat'] +'</td>';
-                        html +='<td>'+ intTostr(data[i]['active'] , 'active') +'</td>';
+                        html +='<td>'+data[i]["depNo"]+'</td>';
+                        html +='<td>'+ data[i]['user']['username'] +'</td>';
+                        html +='<td>'+ data[i]['depName']+'</td>';
+                        html +='<td>'+ data[i]['depAddress'] +'</td>';
+                        html +='<td>'+ data[i]['phone'] +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -394,10 +339,10 @@ $(function(){
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-classroom-list tbody').empty();
-                $('#table-classroom-list tbody').append(html);
+                $('#table-department-list tbody').empty();
+                $('#table-department-list tbody').append(html);
                 $('.content').addClass('hide');             //圈圈影藏
-                $('.classroom-edit').click(function(){
+                $('.department-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -413,14 +358,14 @@ $(function(){
             }
         });
     }
-    classRoomList(params);
+    departmentList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            classRoomList(params);
+            departmentList(params);
         }
     });
 });

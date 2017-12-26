@@ -5,28 +5,23 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "Article".
+ * This is the model class for table "information".
  *
  * @property integer $id
- * @property string $crNo
- * @property string $crBuildingName
- * @property string $crRoomNo
- * @property integer $crNumberOfSeat
- * @property integer $max_crNumberOfSeat
- * @property integer $user_id
- * @property integer $active
- * @property string $reason
- * @property string $equipment
- * @property string $maintain
+ * @property string $admin_id
+ * @property integer $applicant
+ * @property integer $be_applicant
+ * @property integer $content
+ * @property integer $read
  */
-class ClassRoom extends  BaseModel
+class InformationRoom extends  BaseModel
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%classroom}}';
+        return '{{%information}}';
     }
 
     public $page = 1;
@@ -43,7 +38,7 @@ class ClassRoom extends  BaseModel
     const SCENARIO_SEARCH_ONE = 'one';
     const SCENARIO_ADD = 'add';
     const SCENARIO_EDIT = 'edit';
-    const SCENARIO_UPDATE = 'update';
+
 
     /**
      * @inheritdoc
@@ -58,11 +53,10 @@ class ClassRoom extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id', 'crNo' , 'crBuildingName' , 'crRoomNo' , 'crNumberOfSeat' , 'user_id', 'page' , 'per_page'],
+            self::SCENARIO_LIST => ['id', 'admin_id' , 'applicant' , 'be_applicant' , 'content' , 'read'],
             self::SCENARIO_SEARCH_ONE => ['id'],
-            self::SCENARIO_ADD => ['crNo' , 'crBuildingName' , 'crRoomNo' , 'crNumberOfSeat' , 'max_crNumberOfSeat' , 'user_id', 'active'],
+            self::SCENARIO_ADD => ['admin_id' , 'applicant' , 'be_applicant' , 'content' , 'read'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_UPDATE => ['id' , 'reason' , 'active'],
         ];
     }
 

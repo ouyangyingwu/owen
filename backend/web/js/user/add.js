@@ -12,6 +12,7 @@ $(function(){
             $(".form-control[name='teachNo']").parent().parent().hide();
             $(".form-control[name='major_id']").parent().parent().show();
             $(".form-control[name='department_id']").parent().parent().show();
+            $(".form-control[name='team_id']").parent().parent().show();
             $(".form-control[name='position']").parent().parent().hide();
             $(".form-control[name='purview']").parent().parent().hide();
         }else if(position == 2){
@@ -19,6 +20,7 @@ $(function(){
             $(".form-control[name='teachNo']").parent().parent().show();
             $(".form-control[name='major_id']").parent().parent().hide();
             $(".form-control[name='department_id']").parent().parent().show();
+            $(".form-control[name='team_id']").parent().parent().hide();
             $(".form-control[name='position']").parent().parent().show();
             $(".form-control[name='purview']").parent().parent().hide();
         }else if(position == 3){
@@ -26,6 +28,7 @@ $(function(){
             $(".form-control[name='teachNo']").parent().parent().hide();
             $(".form-control[name='major_id']").parent().parent().hide();
             $(".form-control[name='department_id']").parent().parent().hide();
+            $(".form-control[name='team_id']").parent().parent().hide();
             $(".form-control[name='position']").parent().parent().hide();
             $(".form-control[name='purview']").parent().parent().show();
         }
@@ -87,7 +90,7 @@ $(function(){
         });
     })();
     //major list
-    function marjor(department_id){
+    function major(department_id){
         var postData = {_csrf:token,department_id:department_id};
         $.ajax({
             url: 'api/major/list',
@@ -107,8 +110,32 @@ $(function(){
             }
         });
     }
+    //team list
+    function team(major_id){
+        var postData = {_csrf:token,major_id:major_id};
+        $.ajax({
+            url: 'api/team/list',
+            data: postData,
+            type: 'post',
+            dataType:'json',
+            success:function(data){
+                var html = '';
+                $(".form-control[name='team_id']").empty();
+                html+= '<option value="0">请选择</option>';
+                if(data.total > 0){
+                    for(var i=0 ; i < data.total ; i++){
+                        html+= '<option value="'+data["data"][i]['id']+'">'+data["data"][i]['teamName']+'</option>';
+                    }
+                }else {html+= '<option value="0">没有可以选择的班级</option>';}
+                $(".form-control[name='team_id']").append(html);return;
+            }
+        });
+    }
     $(".form-control[name='department_id']").change(function(){
-        marjor($(".form-control[name='department_id']").val());
+        major($(".form-control[name='department_id']").val());
+    });
+    $(".form-control[name='major_id']").change(function(){
+        team($(".form-control[name='major_id']").val());
     });
 
 

@@ -2,14 +2,11 @@
 namespace backend\controllers\api;
 
 
-use common\models\Department;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
-use common\models\UserStudent;
-use common\models\UserTeacher;
-use common\models\UserAdmin;
 use yii\web\Response;
+use common\models\Department;
 
 /**
  * Site controller
@@ -25,75 +22,47 @@ class DepartmentController extends Controller
 
     public function actionOne()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_ONE;
-        $user->setAttributes(Yii::$app->request->post());
-        $user->expand = Yii::$app->request->post('expand');
-        $user->order_by = ['id'=>2];
-        return $user->getOne();
+        $department = new Department();
+        $department->scenario = Department::SCENARIO_ONE;
+        $department->setAttributes(Yii::$app->request->post());
+        $department->expand = Yii::$app->request->post('expand');
+        $department->order_by = ['id'=>2];
+        return $department->getOne();
     }
     public function actionList()
     {
         $department = new Department();
         $department->scenario = Department::SCENARIO_LIST;
         $department->setAttributes(Yii::$app->request->post());
+        $department->expand = ['user'];
         list($total, $result) = $department->getList();
         return ['data'=>$result , 'total' => $total];
     }
     public function actionEdit()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_EDIT;
+        $department = new Department();
+        $department->scenario = Department::SCENARIO_EDIT;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        return $user->getEdit();
+        $department->setAttributes($this->SafeFilter($postData));
+        return $department->getEdit();
     }
     public function actionUpdate()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_UPDATE;
+        $department = new User();
+        $department->scenario = User::SCENARIO_UPDATE;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        $user->id = Yii::$app->user->identity->id;
-        return $user->getUpdate();
+        $department->setAttributes($this->SafeFilter($postData));
+        $department->id = Yii::$app->user->identity->id;
+        return $department->getUpdate();
     }
-    public function actionResetPassword()
-    {
-        $user = new User();
-        $user->scenario = User::SCENARIO_RESET_PASSWORD;
-        $user->setAttributes(Yii::$app->request->post());
-        $user->id = Yii::$app->user->identity->id;
-        return $user->getResetPassword();
-    }
+
     public function actionAdd()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_ADD;
+        $department = new Department();
+        $department->scenario = Department::SCENARIO_ADD;
         $postData = $this->SafeFilter(Yii::$app->request->post());
-        $user->setAttributes($postData);
-        $user->dirthday = time($user->dirthday);
-        $user = $user->getAdd();
-        if($user->type == 1){
-            $userStudent = new UserStudent();
-            $userStudent->user_id = $user->id;
-            $userStudent->credit = 0;
-            $userStudent->status = 1;
-            $userStudent->create_time = time();
-            $userStudent->setAttributes(Yii::$app->request->post());
-            $userStudent->getAdd();
-        }elseif($user->type == 2){
-            $userTeacher = new UserTeacher();
-            $userTeacher->user_id = $user->id;
-            $userTeacher->create_time = time();
-            $userTeacher->setAttributes(Yii::$app->request->post());
-            $userTeacher->getAdd();
-        }elseif($user->type == 3){
-            $userAdmin = new UserAdmin();
-            $userAdmin->user_id = $user->id;
-            $userAdmin->create_time = time();
-            $userAdmin->setAttributes(Yii::$app->request->post());
-            $userAdmin->getAdd();
-        }
-        return true;
+        $department->setAttributes($postData);
+        $department->dirthday = time($department->dirthday);
+        return $department->getAdd();
     }
 }

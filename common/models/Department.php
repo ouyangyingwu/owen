@@ -5,7 +5,7 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * User model
+ * department model
  *
  * @property integer $id
  * @property integer $user_id
@@ -53,7 +53,7 @@ class Department extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','depNo','depName','depAddress'],
+            self::SCENARIO_LIST => ['id','user_id','depNo','depName','depAddress','phone'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','stuNo','department_id','marjor_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -77,6 +77,21 @@ class Department extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if($this->user_id){
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
+        }
+        if($this->depNo){
+            $this->_query->andFilterWhere(['like' , 'depNo' , $this->depNo]);
+        }
+        if($this->depName){
+            $this->_query->andFilterWhere(['like' , 'depName' , $this->depName]);
+        }
+        if($this->phone){
+            $this->_query->andFilterWhere(['like' , 'phone' , $this->phone]);
+        }
+        if($this->depAddress){
+            $this->_query->andFilterWhere(['like' , 'depAddress' , $this->depAddress]);
         }
         if(count($this->select)>0)
         {
@@ -172,12 +187,12 @@ class Department extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userStudent = new UserStudent();
-            $userStudent->scenario = self::SCENARIO_ADD;
-            $userStudent->setAttributes($this->safeAttributesData());
-            if($userStudent->save())
+            $department = new Department();
+            $department->scenario = self::SCENARIO_ADD;
+            $department->setAttributes($this->safeAttributesData());
+            if($department->save())
             {
-                return $userStudent;
+                return $department;
             }
             return null;
         } else {
@@ -192,13 +207,13 @@ class Department extends  BaseModel
     {
         if($this->validate())
         {
-            $userStudent = UserStudent::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userStudent)
+            $department = Department::find()->andFilterWhere(['id' => $this->id])->one();
+            if($department)
             {
-                $userStudent->scenario = self::SCENARIO_EDIT;
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
-                $userStudent->edit_time = time();
-                if($userStudent->save())
+                $department->scenario = self::SCENARIO_EDIT;
+                $department->setAttribute($this->edit_name, $this->edit_value);
+                $department->edit_time = time();
+                if($department->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

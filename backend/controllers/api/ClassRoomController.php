@@ -6,6 +6,7 @@ use Yii;
 use yii\web\Controller;
 use common\models\ClassRoom;
 use yii\web\Response;
+use common\models\User;
 
 /**
  * Site controller
@@ -21,18 +22,34 @@ class ClassRoomController extends Controller
 
     public function actionOne()
     {
-        $user = new ClassRoom();
-        $user->scenario = ClassRoom::SCENARIO_ADD;
-        $user->id = Yii::$app->request->post('id');
-        return $user->getOne();
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_ADD;
+        $classRoom->id = Yii::$app->request->post('id');
+        return $classRoom->getOne();
+    }
+    public function actionData()
+    {
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_ADD;
+        $classRoom->order_by = ['id'=>2];
+        $classRoom =  $classRoom->getOne();
+
+        $user = new User();
+        $user->expand = ['teacher'];
+        $user->type = 2;
+        list($total, $user) = $user->getList();
+        return [
+            'number' => $classRoom,
+            'user' => $user
+        ];
     }
     public function actionList()
     {
-        $room = new ClassRoom();
-        $room->scenario = ClassRoom::SCENARIO_LIST;
-        $room->setAttributes(Yii::$app->request->post());
-        $room->expand = ['user'];
-        list($total, $result) = $room->getList();
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_LIST;
+        $classRoom->setAttributes(Yii::$app->request->post());
+        $classRoom->expand = ['user'];
+        list($total, $result) = $classRoom->getList();
         foreach($result as &$item){
             if($item['maintain']){
                 $item['maintain'] = json_decode($item['maintain']);
@@ -42,26 +59,26 @@ class ClassRoomController extends Controller
     }
     public function actionEdit()
     {
-        $user = new ClassRoom();
-        $user->scenario = ClassRoom::SCENARIO_EDIT;
-        $user->setAttributes(Yii::$app->request->post());
-        return $user->getEdit();
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_EDIT;
+        $classRoom->setAttributes(Yii::$app->request->post());
+        return $classRoom->getEdit();
     }
     public function actionUpdate()
     {
-        $user = new ClassRoom();
-        $user->scenario = ClassRoom::SCENARIO_UPDATE;
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_UPDATE;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        return $user->getUpdate();
+        $classRoom->setAttributes($this->SafeFilter($postData));
+        return $classRoom->getUpdate();
     }
     public function actionAdd()
     {
-        $user = new ClassRoom();
-        $user->scenario = ClassRoom::SCENARIO_ADD;
+        $classRoom = new ClassRoom();
+        $classRoom->scenario = ClassRoom::SCENARIO_ADD;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        return $user->getAdd();
+        $classRoom->setAttributes($this->SafeFilter($postData));
+        return $classRoom->getAdd();
 
     }
 }

@@ -28,7 +28,7 @@
             <a href="/#/empty.html"><i class="icon-bar-chart"></i> Charts</a>
         </li>
         <li>
-            <a href="javascript:void(0)"><i class="icon-user"></i> Class Room <span class="icon-angle-right arrow"></span></a>
+            <a href="javascript:void(0)"><i class="icon-building"></i> Class Room <span class="icon-angle-right arrow"></span></a>
             <ul class="nav nav-second-level b-color hidee">
                 <li>
                     <a href="/#/classroom_list.html" class="location-file"><i class="icon-cogs"></i>Class Room List</a>
@@ -38,10 +38,18 @@
                 </li>
             </ul>
         </li>
-
         <li>
-            <a href="/#/empty.html"><i class="icon-table"></i> Responsive Tables</a>
+            <a href="javascript:void(0)"><i class="icon-table"></i> Department <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/department_list.html" class="location-file"><i class="icon-cogs"></i>Department List</a>
+                </li>
+                <li>
+                    <a href="/#/department_add.html" class="location-file"><i class="icon-cogs"></i>Department Add</a>
+                </li>
+            </ul>
         </li>
+
         <li>
             <a href="/#/empty.html"><i class="icon-edit"></i> Forms </a>
         </li>

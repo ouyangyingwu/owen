@@ -37,6 +37,8 @@ class AppAsset extends AssetBundle
         'assets/bootstrap-editable/js/bootstrap-editable.min.js',
         //数据验证插件
         'js/public/jquery.validate.min.js',
+        //数据验证插件中文提示信息
+        'js/public/message_zh.js',
         //时间插件
         'assets/mobile/mobiscroll.min.js',
         //公共特效

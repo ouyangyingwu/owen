@@ -2,6 +2,9 @@
 namespace backend\controllers\api;
 
 
+use common\models\Department;
+use common\models\Major;
+use common\models\Team;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
@@ -39,14 +42,22 @@ class UserController extends Controller
         $user->order_by = ['id'=>2];
         return $user->getOne();
     }
-    public function actionProfile(){
-        $user = new User();
-        $user->scenario = User::SCENARIO_ONE;
-        $user->setAttributes(Yii::$app->request->post());
-        $user->expand = Yii::$app->request->post('expand');
-        //$user->id = Yii::$app->user->identity->id;
-        $user->order_by = ['id'=>2];
-        return $user->getOne();
+    public function actionListData()
+    {
+        $department = new Department();
+        list($total , $department) = $department->getList();
+
+        $major = new Major();
+        list($total , $major) = $major->getList();
+
+        $team = new Team();
+        list($total , $team) = $team->getList();
+
+        return[
+            'team' => $team,
+            'major' => $major,
+            'department' => $department,
+        ];
     }
     public function actionList()
     {

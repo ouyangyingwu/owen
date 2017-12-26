@@ -9,51 +9,21 @@ $(function(){
     var params = {_csrf:token , per_page:10};
 
     var department , major , team;
-    function departmentList(){
+    (function(){
         var postDate = {};
         postDate['_csrf'] = token;
-        postDate['per_page'] = 'all';
         $.ajax({
-            url:'api/department/list',
-            data:postDate,
-            type:'post',
-            dataType:'json',
+            url: 'api/user/list-data',
+            data: postDate,
+            type: 'post',
+            dataType: 'json',
             success:function(data){
-                department = data.data;
+                department = data.department;
+                major = data.major;
+                team = data.team;
             }
-        });
-    }
-    function majorList(department_id){
-        var postDate = {};
-        postDate['_csrf'] = token;
-        postDate['department_id'] = department_id;
-        postDate['per_page'] = 'all';
-        $.ajax({
-            url:'api/major/list',
-            data:postDate,
-            type:'post',
-            dataType:'json',
-            success:function(data){
-                major = data.data;
-            }
-        });
-    }
-    function teamList(major_id){
-        var postDate = {};
-        postDate['_csrf'] = token;
-        postDate['major_id'] = major_id;
-        postDate['per_page'] = 'all';
-        $.ajax({
-            url:'api/team/list',
-            data:postDate,
-            type:'post',
-            dataType:'json',
-            success:function(data){
-                team = data.data;
-            }
-        });
-    }
-    departmentList();majorList();teamList();
+        })
+    })();
 
     //按条件筛选数据
     $('#searchResult').on('click' , function  () {
