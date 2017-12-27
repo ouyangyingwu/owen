@@ -2,6 +2,7 @@
 namespace backend\controllers\api;
 
 
+use common\models\Major;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
@@ -23,11 +24,51 @@ class DepartmentController extends Controller
     public function actionOne()
     {
         $department = new Department();
-        $department->scenario = Department::SCENARIO_ONE;
+        $department->scenario = Department::SCENARIO_SEARCH_ONE;
         $department->setAttributes(Yii::$app->request->post());
         $department->expand = Yii::$app->request->post('expand');
         $department->order_by = ['id'=>2];
         return $department->getOne();
+    }
+    public function actionData()
+    {
+        $department = new Department();
+        $department->scenario = Department::SCENARIO_SEARCH_ONE;
+        $department->order_by = ['id'=>2];
+        $department = $department->getOne();
+
+        $user = new User();
+        $user->scenario = User::SCENARIO_SEARCH;
+        $user->expand = ['teacher'];
+        $user->type = 2;
+        $user->per_page = '';
+        list($total, $user) = $user->getList();
+        return[
+            'number' => $department['depNo'],
+            'user' => $user,
+        ];
+    }
+    public function actionListData()
+    {
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_ADD;
+        $major->order_by = ['id'=>2];
+        $major =  $major->getOne();
+
+        $majorList = new Major();
+        list($total , $majorList) = $majorList->getList();
+
+        $user = new User();
+        $user->scenario = User::SCENARIO_SEARCH;
+        $user->expand = ['teacher'];
+        $user->type = 2;
+        $user->per_page = '';
+        list($total, $user) = $user->getList();
+        return [
+            'major'=>$majorList ,
+            'numbe'=>$major ,
+            'user' => $user
+        ];
     }
     public function actionList()
     {
@@ -46,23 +87,12 @@ class DepartmentController extends Controller
         $department->setAttributes($this->SafeFilter($postData));
         return $department->getEdit();
     }
-    public function actionUpdate()
-    {
-        $department = new User();
-        $department->scenario = User::SCENARIO_UPDATE;
-        $postData = Yii::$app->request->post();
-        $department->setAttributes($this->SafeFilter($postData));
-        $department->id = Yii::$app->user->identity->id;
-        return $department->getUpdate();
-    }
 
     public function actionAdd()
     {
         $department = new Department();
         $department->scenario = Department::SCENARIO_ADD;
-        $postData = $this->SafeFilter(Yii::$app->request->post());
-        $department->setAttributes($postData);
-        $department->dirthday = time($department->dirthday);
+        $department->setAttributes(Yii::$app->request->post());
         return $department->getAdd();
     }
 }

@@ -2,7 +2,7 @@
  * Created by admin on 2017/9/27.
  */
 $(function(){
-    var htmlData,userList;
+    var htmlData,userList,majorList,majorNo;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
@@ -43,12 +43,14 @@ $(function(){
     });
     (function(){
         $.ajax({
-            url: 'api/user/list',
-            data: {_csrf:token,type:2},
+            url: 'api/department/list-data',
+            data: {_csrf:token},
             type: 'post',
             dataTye: 'json',
             success:function(data){
-                userList = data.data;
+                userList = data.user;
+                majorList = data.major;
+                majorNo = data.numbe.majorNo;
                 var html = '';
                 html += '<option value="">请选择负责人</option>';
                 for(var i= 0,len =userList.length; i<len; i++){
@@ -81,6 +83,7 @@ $(function(){
     //修改、详情
     function initEditForm(data){
         $('#teacher-table').find('.odd').remove();
+        $('#major-table').find('.odd').remove();
         if(userList){
             var html = '';
             for(var i=0,len = userList.length; i<len; i++){
@@ -91,10 +94,26 @@ $(function(){
                     html +='<td>'+ userList[i]['teacher']['position'] +'</td>';;
                     html +='<td>'+ userList[i]['phone'] +'</td>';
                     html +='<td>'+ userList[i]['email'] +'</td>';
+                    html +='<td></td>';
                     html +='</tr>';
                 }
             }
             $("#teacher-table tbody").append(html);
+        }
+        if(majorList){
+            var html = '';
+            for(var i=0,len = majorList.length; i<len; i++){
+                if(majorList[i]['department_id'] == data['id']){
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ majorList[i]['majorNo'] +'</td>';
+                    html +='<td>'+ majorList[i]['majorName'] +'</td>';
+                    html +='<td>'+ intTostr(majorList[i]['user_id'] , 'user_id') +'</td>';
+                    html +='<td>'+ majorList[i]['majorCred'] +'</td>';
+                    html +='<td></td>';
+                    html +='</tr>';
+                }
+            }
+            $("#major-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
         $('#department-detail').find("[name='form-edit']").each(function(){
@@ -147,19 +166,8 @@ $(function(){
             };
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
-            //为data-name为describe的项做数据验证
-            if (name == 'crNumberOfSeat' || name == 'reason'){
-                options["validate"] = function(value){
-                    if(name == 'crNumberOfSeat' && value > data['max_crNumberOfSeat']){
-                        return '座位数不能超出上限值'+data['max_crNumberOfSeat'];
-                    }
-                    if(name == 'reason' && htmlData['active'] == 1 && value != ''){
-                        return '只有关闭该教室后才能填写!';
-                    }
-                }
-            }
+            if(name == 'create_time'){displayValue = CommonTool.formatTime(displayValue , 'Y年m月d日')}
             if(dataType == 'select'){
-                console.log(name);
                 displayValue = intTostr(displayValue , name);
             }
             $(this).text(displayValue).editable('destroy');
@@ -175,7 +183,6 @@ $(function(){
             }
         }
         if(type == 'user_id'){
-            console.log(value);
             for (var i=0,len=userList.length ; i<len ; i++){
                 if(value == userList[i]['id']){
                     return userList[i]['username'];
@@ -207,49 +214,97 @@ $(function(){
         $('#add-teacher .form-control[data-name="username"]').empty();
         $('#add-teacher .form-control[data-name="username"]').append(html);
     });
+    $("#major").click(function(){
+        $('#add-major').removeClass('hide');
+        var html = '';
+        html += '<option value="">请选择负责人</option>';
+        for (var i=0,len=userList.length ; i<len ; i++ ){
+            if(userList[i]['teacher']['department_id'] == htmlData['id']){
+                html += '<option value="'+ userList[i]['id'] +'">'+ userList[i]['username'] +'</option>';
+            }
+        }
+        $('#add-major .form-control[data-name="user_id"]').empty();
+        $('#add-major .form-control[data-name="user_id"]').append(html);
+        var numbe;
+        if(majorNo){
+            numbe = Number(majorNo.substr(1 , 4))+1;
+            if(String(numbe).length == 1) numbe = '000'+numbe;
+            if(String(numbe).length == 2) numbe = '00'+numbe;
+            if(String(numbe).length == 3) numbe = '0'+numbe;
+        }else {
+            numbe = '0001';
+        }
+        $('#add-major .form-control[data-name="majorNo"]').val('M'+numbe);
+    });
     //取消添加
     $('#cancel-teacher').click(function(){
         $('#add-teacher').addClass('hide');
     });
+    $('#cancel-major').click(function(){
+        $('#add-major').addClass('hide');
+    });
     //添加记录
     $('#insert-teacher').click(function(){
         $('#add-teacher').addClass('hide');
+    });
+    $('#insert-major').click(function(){
         var postData = {};
         postData['_csrf'] = token;
-        postData['be_applicant'] = $('#add-teacher .form-control[data-name="username"]').val();
-        postData['edit_name'] = 'department_id';
-        postData['edit_value'] = htmlData.id;
+        $("#add-major .form-control").each(function(){
+            postData[$(this).attr('data-name')] = $(this).val();
+        });
+        postData['department_id'] = htmlData.id;
         $.ajax({
-            url: 'api/information/add',
+            url: 'api/major/add',
             data: postData,
             type: 'post',
             dataType: 'json',
             success:function(data){
-                $("#dialog-confirm").modal("show").find('p').text("已通知该用户");
+                majorNo = postData['majorNo'];
+                $('#add-major').addClass('hide');
+                $("#dialog-prompt").modal("show").find('p').text("添加成功");
+                var html = '';
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ postData['majorNo'] +'</td>';
+                html +='<td>'+ postData['majorName'] +'</td>';
+                html +='<td>'+ intTostr(postData['user_id'] , 'user_id') +'</td>';
+                html +='<td>'+ postData['majorCred'] +'</td>';
+                html +='<td></td>';
+                html +='</tr>';
+                $("#major-table tbody").append(html);
             }
-        });
+        })
     });
-    /*//删除记录（detail列表内的记录）
-    $('#maintain-records-table').on('click', '.delete-maintain-records' , function(){
-        var id = $(this).attr('data-id');
-        var postData = {};
-        for(var i = 0,len = htmlData.maintain.length ; i<len ; i++){
-            if($(this).attr('data-id') == htmlData['maintain'][i]['dataTime']){
-                htmlData.maintain.splice(i , 1);
-            }
+    var validateRules = {
+        "reason": {required: true},
+        "content": {required: true}
+    };
+    var validateMessages = {};
+    $("#create-message").validate({
+        rules:validateRules,
+        messages: validateMessages,
+        errorClass: "text-red",
+        //错误提示的html标签
+        errorElement:'span',
+        focusCleanup:true,
+        submitHandler: function() {
+            var postData = {};
+            postData['_csrf'] = token;
+            postData['be_applicant'] = $('#add-teacher .form-control[data-name="username"]').val();
+            postData['reason'] = $('#recipient-name').val();
+            postData['content'] = $('#message-text').val();
+            $.ajax({
+                url: 'api/information/add',
+                data: postData,
+                type: 'post',
+                dataType: 'json',
+                success:function(data){
+                    $("#exampleModal").modal("hide");
+                    $("#dialog-prompt").modal("show").find('p').text("已通知该用户");
+                }
+            });
         }
-        postData['_csrf'] = token;
-        postData['id'] = htmlData['id'];
-        postData['edit_name'] = 'maintain';
-        postData['edit_value'] = htmlData.maintain;
-        $(this).parents('.odd').remove();
-        $.ajax({
-            url: 'api/class-room/edit',
-            data: postData,
-            type: 'post'
-        });
-        return;
-    });*/
+    });
 
     //选择时间
     var preset = 'date';

@@ -1,15 +1,13 @@
 <?php
 namespace backend\controllers\api;
 
-
 use common\models\Department;
-use common\models\Major;
+use common\models\Team;
+use common\models\UserStudent;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
-use common\models\UserStudent;
-use common\models\UserTeacher;
-use common\models\UserAdmin;
+use common\models\Major;
 use yii\web\Response;
 
 /**
@@ -26,12 +24,12 @@ class MajorController extends Controller
 
     public function actionOne()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_ONE;
-        $user->setAttributes(Yii::$app->request->post());
-        $user->expand = Yii::$app->request->post('expand');
-        $user->order_by = ['id'=>2];
-        return $user->getOne();
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_ONE;
+        $major->setAttributes(Yii::$app->request->post());
+        $major->expand = Yii::$app->request->post('expand');
+        $major->order_by = ['id'=>2];
+        return $major->getOne();
     }
     public function actionList()
     {
@@ -41,60 +39,49 @@ class MajorController extends Controller
         list($total, $result) = $major->getList();
         return ['data'=>$result , 'total' => $total];
     }
+    public function actionListData()
+    {
+        $department = new Department();
+        list($total , $department) = $department->getList();
+
+        $userList = new User();
+        $userList->type = 2;
+        $userList->expand = ['teacher'];
+        list($total , $userList) = $userList->getList();
+
+        $team = new Team();
+        list($total , $team) = $team->getList();
+        foreach($team as &$item){
+            $item['people'] = UserStudent::find()->where(['major_id'=>$item['id']])->count();
+        }
+        return[
+            'department' => $department,
+            'teacher' => $userList,
+            'team' => $team,
+        ];
+    }
     public function actionEdit()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_EDIT;
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_EDIT;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        return $user->getEdit();
+        $major->setAttributes($this->SafeFilter($postData));
+        return $major->getEdit();
     }
     public function actionUpdate()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_UPDATE;
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_UPDATE;
         $postData = Yii::$app->request->post();
-        $user->setAttributes($this->SafeFilter($postData));
-        $user->id = Yii::$app->user->identity->id;
-        return $user->getUpdate();
-    }
-    public function actionResetPassword()
-    {
-        $user = new User();
-        $user->scenario = User::SCENARIO_RESET_PASSWORD;
-        $user->setAttributes(Yii::$app->request->post());
-        $user->id = Yii::$app->user->identity->id;
-        return $user->getResetPassword();
+        $major->setAttributes($this->SafeFilter($postData));
+        $major->id = Yii::$app->user->identity->id;
+        return $major->getUpdate();
     }
     public function actionAdd()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_ADD;
-        $postData = $this->SafeFilter(Yii::$app->request->post());
-        $user->setAttributes($postData);
-        $user->dirthday = time($user->dirthday);
-        $user = $user->getAdd();
-        if($user->type == 1){
-            $userStudent = new UserStudent();
-            $userStudent->user_id = $user->id;
-            $userStudent->credit = 0;
-            $userStudent->status = 1;
-            $userStudent->create_time = time();
-            $userStudent->setAttributes(Yii::$app->request->post());
-            $userStudent->getAdd();
-        }elseif($user->type == 2){
-            $userTeacher = new UserTeacher();
-            $userTeacher->user_id = $user->id;
-            $userTeacher->create_time = time();
-            $userTeacher->setAttributes(Yii::$app->request->post());
-            $userTeacher->getAdd();
-        }elseif($user->type == 3){
-            $userAdmin = new UserAdmin();
-            $userAdmin->user_id = $user->id;
-            $userAdmin->create_time = time();
-            $userAdmin->setAttributes(Yii::$app->request->post());
-            $userAdmin->getAdd();
-        }
-        return true;
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_ADD;
+        $major->setAttributes(Yii::$app->request->post());
+        return $major->getAdd();
     }
 }

@@ -8,13 +8,17 @@ use common\exception\ModelException;
  * This is the model class for table "information".
  *
  * @property integer $id
- * @property string $admin_id
+ * @property integer $admin_id
  * @property integer $applicant
  * @property integer $be_applicant
- * @property integer $content
+ * @property string $cause
+ * @property string $content
  * @property integer $read
+ * @property integer $create_time
+ * @property integer $read_time
+ * @property integer $end_time
  */
-class InformationRoom extends  BaseModel
+class Information extends  BaseModel
 {
     /**
      * @inheritdoc
@@ -53,7 +57,7 @@ class InformationRoom extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id', 'admin_id' , 'applicant' , 'be_applicant' , 'content' , 'read'],
+            self::SCENARIO_LIST => ['id', 'admin_id' , 'applicant' , 'be_applicant' , 'cause' , 'content' , 'read'],
             self::SCENARIO_SEARCH_ONE => ['id'],
             self::SCENARIO_ADD => ['admin_id' , 'applicant' , 'be_applicant' , 'content' , 'read'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -188,12 +192,22 @@ class InformationRoom extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $article = new ClassRoom();
-            $article->scenario = self::SCENARIO_ADD;
-            $article->setAttributes($this->safeAttributesData());
-            if($article->save())
+            $information = new Information();
+            $information->scenario = self::SCENARIO_ADD;
+            $information->setAttributes($this->safeAttributesData());
+            if(Yii::$app->user->identity->type == 1){
+                $errorMsg = '你没有申请权限';
+                throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorMsg);
+            }
+            if(Yii::$app->user->identity->type == 2){
+                $information->applicant = Yii::$app->user->identity->id;
+            }
+            if(Yii::$app->user->identity->type == 3){
+                $information->admin_id = Yii::$app->user->identity->id;
+            }
+            if($information->save())
             {
-                return $article;
+                return true;
             }
             return null;
         } else {

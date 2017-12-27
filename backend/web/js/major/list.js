@@ -2,7 +2,7 @@
  * Created by admin on 2017/9/27.
  */
 $(function(){
-    var htmlData,userList;
+    var htmlData,userList,departmentList,teamList;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
@@ -13,38 +13,44 @@ $(function(){
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
-        if ($('.select-crNo').val()) {
-            params["crNo"] = $('.select-crNo').val();
+        if ($('.select-user_id').val()) {
+            params["user_id"] = $('.select-user_id').val();
         }
-        if ($('.select-crBuildingName').val()) {
-            params["crBuildingName"] = $('.select-crBuildingName').val();
+        if ($('.select-majorNo').val()) {
+            params["majorNo"] = $('.select-majorNo').val();
         }
-        if ($('.select-crRoomNo').val()) {
-            params["crRoomNo"] = $('.select-crRoomNo').val();
+        if ($('.select-majorName').val()) {
+            params["majorName"] = $('.select-majorName').val();
         }
-        if ($('.select-crNumberOfSeat').val()) {
-            params["crNumberOfSeat"] = $('.select-crNumberOfSeat').val();
+        if ($('.select-majorCred').val()) {
+            params["majorCred"] = $('.select-majorCred').val();
         }
-        classRoomList(params);
+        if ($('.select-department_id').val()) {
+            params["department_id"] = $('.select-department_id').val();
+        }
+        MajorList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
         $('.select-id').val('');
-        $('.select-crNo').val('');
-        $('.select-crBuildingName').val('');
-        $('.select-crRoomNo').val('');
-        $('.select-crNumberOfSeat').val('');
+        $('.select-user_id').val('');
+        $('.select-majorNo').val('');
+        $('.select-majorName').val('');
+        $('.select-majorCred').val('');
+        $('.select-department_id').val('');
         params = {page:1 , per_page:10 , _csrf:token};
-        classRoomList(params);
+        MajorList(params);
     });
     (function(){
         $.ajax({
-            url: 'api/user/list',
-            data: {_csrf:token,type:2},
+            url: 'api/major/list-data',
+            data: {_csrf:token},
             type: 'post',
             dataTye: 'json',
             success:function(data){
-                userList = data.data;
+                userList = data.teacher;
+                departmentList = data.department;
+                teamList = data.team;
                 var html = '';
                 html += '<option value="">请选择负责人</option>';
                 for(var i= 0,len =userList.length; i<len; i++){
@@ -52,6 +58,7 @@ $(function(){
                 }
                 $('.select-user_id').append(html);
                 $('#add-maintain-records [data-name="username"]').append(html);
+                MajorList(params);
             }
         })
     })();
@@ -67,32 +74,42 @@ $(function(){
             case 'user_id':
                 var user = [];
                 for (var i=0,len=userList.length ; i<len ; i++){
-                    user.push({value:userList[i]['id'] , text:userList[i]['username']});
+                    if(userList[i]['teacher']['department_id'] == htmlData['department_id']){
+                        user.push({value:userList[i]['id'] , text:userList[i]['username']});
+                    }
                 }
                 return user;
+            case 'department_id':
+                var department = [];
+                for (var i=0,len=departmentList.length ; i<len ; i++){
+                    department.push({value:departmentList[i]['id'] , text:departmentList[i]['depName']});
+                }
+                return department;
             default:
                 return null;
         }
     };
     //修改、详情
     function initEditForm(data){
-        $('#maintain-records-table').find('.odd').remove();
-        if(data.maintain){
+        $('#team-table').find('.odd').remove();
+        if(teamList){
             var html = '';
-            for(var i=0,len = data.maintain.length; i<len; i++){
-                html += '<tr class="odd" role="row">';
-                html +='<td>'+ data['maintain'][i]["start_time"] +'</td>';
-                html +='<td>'+ data['maintain'][i]['end_time'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['reason'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['money'] +'</td>';
-                html +='<td>'+ intTostr(data['maintain'][i]['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ data['maintain'][i]["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
-                html +='</tr>';
+            for(var i=0,len = teamList.length; i<len; i++){
+                if(teamList[i]['major_id'] == data.id){
+                    html += '<tr class="odd" role="row">';
+                    html +='<td>'+ teamList[i]["teamName"] +'</td>';
+                    html +='<td>'+ intTostr(teamList[i]['user_id'] , 'user_id') +'</td>';
+                    html +='<td>'+ teamList[i]['period'] +'</td>';
+                    html +='<td>'+ data.majorName +'</td>';
+                    html +='<td>'+ teamList[i]['people']+'/'+teamList[i]['number_limit'] +'</td>';
+                    html +='<td></td>';
+                    html +='</tr>';
+                }
             }
-            $("#maintain-records-table tbody").append(html);
+            $("#team-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
-        $('#classRoom-detail').find("[name='form-edit']").each(function(){
+        $('#major-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -114,7 +131,7 @@ $(function(){
                     postData["edit_value"] = param["value"];
                     postData["id"] = data.id;
                     $.ajax({
-                        url:"/api/class-room/edit",
+                        url:"/api/major/edit",
                         data:postData,
                         dataType:'json',
                         type:'POST',
@@ -122,7 +139,7 @@ $(function(){
                             $(copythis).text(intTostr(data[name] , name));
                             htmlData[name] = data[name];
                             if(name == 'active') htmlData['reason'] = null;
-                            classRoomList(params);
+                            MajorList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -142,20 +159,11 @@ $(function(){
             };
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
-            //为data-name为describe的项做数据验证
-            if (name == 'crNumberOfSeat' || name == 'reason'){
-                options["validate"] = function(value){
-                    if(name == 'crNumberOfSeat' && value > data['max_crNumberOfSeat']){
-                        return '座位数不能超出上限值'+data['max_crNumberOfSeat'];
-                    }
-                    if(name == 'reason' && htmlData['active'] == 1 && value != ''){
-                        return '只有关闭该教室后才能填写!';
-                    }
-                }
-            }
+            if(name == 'create_time'){displayValue = CommonTool.formatTime(displayValue , 'Y年m月d日')}
             if(dataType == 'select'){
                 displayValue = intTostr(displayValue , name);
             }
+            if(!displayValue){displayValue="Empty";}
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
@@ -169,9 +177,16 @@ $(function(){
             }
         }
         if(type == 'user_id'){
-            for (var i=0,len=userList.length ; i<len ; i++){
+            for (var i=0 , len=userList.length ; i<len ; i++){
                 if(value == userList[i]['id']){
                     return userList[i]['username'];
+                }
+            }
+        }
+        if(type == 'department_id'){
+            for (var i=0 , len=departmentList.length ; i<len ; i++){
+                if(value == departmentList[i]['id']){
+                    return departmentList[i]['depName'];
                 }
             }
         }
@@ -199,7 +214,7 @@ $(function(){
         postData['edit_name'] = 'maintain';
         postData['edit_value'] = edit_value;
         $.ajax({
-            url: 'api/class-room/edit',
+            url: 'api/major/edit',
             data: postData,
             type: 'post',
             dataType: 'json',
@@ -233,7 +248,7 @@ $(function(){
         postData['edit_value'] = htmlData.maintain;
         $(this).parents('.odd').remove();
         $.ajax({
-            url: 'api/class-room/edit',
+            url: 'api/major/edit',
             data: postData,
             type: 'post'
         });
@@ -271,13 +286,13 @@ $(function(){
             postData['active'] = 0;
             postData['reason'] = $(".form-control[name='reason']").val();
             $.ajax({
-                url: "/api/class-room/update",
+                url: "/api/major/update",
                 data: postData,
                 dataType: 'json',
                 type: 'POST',
                 success: function (data) {
                     $("#exampleModal").modal("hide");
-                    classRoomList(params);
+                    MajorList(params);
                 },
                 error: function (XMLHttpRequest) {
                     alert(XMLHttpRequest.responseJSON.message + "");
@@ -294,13 +309,13 @@ $(function(){
         postData['active'] = 1;
         postData['reason'] = null;
         $.ajax({
-            url: "/api/class-room/update",
+            url: "/api/major/update",
             data: postData,
             dataType: 'json',
             type: 'POST',
             success: function (data) {
                 $("#dialog-confirm").modal("hide");
-                classRoomList(params);
+                MajorList(params);
             },
             error: function (XMLHttpRequest) {
                 alert(XMLHttpRequest.responseJSON.message + "");
@@ -311,34 +326,21 @@ $(function(){
     resetModel = function (model) {
         switch (model){
             case 'edit':
-                $("#classRoom-detail").modal("show");
+                $("#major-detail").modal("show");
                 initEditForm(htmlData);
                 break;
-            case  'close':
-                $("#exampleModal").modal("show");
-                break;
-            case 'open':
-                $("#dialog-confirm").modal("show").find('p').text("是否开放该教室？");
-                $("#dialog-confirm").attr('data-type' , 'open');
-                break;
         }
     };
-    var createButtonList = function(row , active){
+    var createButtonList = function(row){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        if(active == 1){
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
-        }else {
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
-        }
+        buttonList.push("<a name=\"table-button-list\" class='major-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
         return buttonList;
     };
-    //classRoomList
+    //MajorList
     var  oldCondition = params;
-    function classRoomList(params){
-        $('.content').removeClass('hide');  //圈圈显示
+    function MajorList(params){
         $.ajax({
-            url:"/api/class-room/list",
+            url:"/api/major/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -355,16 +357,16 @@ $(function(){
 
                     //数据列表
                     for (var i=0;i<data.length;i++){
-                        var button = createButtonList(data[i]['id'] ,data[i]['active']);
+                        var button = createButtonList(data[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
                         html +='<td>'+data[i]["id"]+'</td>';
-                        html +='<td>'+data[i]["crNo"]+'</td>';
-                        html +='<td>'+ data[i]['crBuildingName'] +'</td>';
-                        html +='<td>'+ data[i]['crRoomNo']+'</td>';
-                        html +='<td>'+ data[i]['crNumberOfSeat'] +'/'+ data[i]['max_crNumberOfSeat'] +'</td>';
-                        html +='<td>'+ intTostr(data[i]['active'] , 'active') +'</td>';
+                        html +='<td>'+data[i]["majorNo"]+'</td>';
+                        html +='<td>'+ intTostr(data[i]['user_id'] , 'user_id') +'</td>';
+                        html +='<td>'+ data[i]['majorName']+'</td>';
+                        html +='<td>'+ data[i]['majorCred'] +'</td>';
+                        html +='<td>'+ intTostr(data[i]['department_id'] , 'department_id') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -394,10 +396,9 @@ $(function(){
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-classroom-list tbody').empty();
-                $('#table-classroom-list tbody').append(html);
-                $('.content').addClass('hide');             //圈圈影藏
-                $('.classroom-edit').click(function(){
+                $('#table-major-list tbody').empty();
+                $('#table-major-list tbody').append(html);
+                $('.major-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -413,14 +414,13 @@ $(function(){
             }
         });
     }
-    classRoomList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            classRoomList(params);
+            MajorList(params);
         }
     });
 });

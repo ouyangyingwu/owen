@@ -49,6 +49,17 @@
                 </li>
             </ul>
         </li>
+        <li>
+            <a href="javascript:void(0)"><i class="icon-sitemap"></i> Major <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/major_list.html" class="location-file"><i class="icon-cogs"></i>Major List</a>
+                </li>
+                <li>
+                    <a href="/#/major_add.html" class="location-file"><i class="icon-cogs"></i>Major Add</a>
+                </li>
+            </ul>
+        </li>
 
         <li>
             <a href="/#/empty.html"><i class="icon-edit"></i> Forms </a>

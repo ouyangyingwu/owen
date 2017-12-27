@@ -54,8 +54,8 @@ class Department extends  BaseModel
     {
         return [
             self::SCENARIO_LIST => ['id','user_id','depNo','depName','depAddress','phone'],
-            self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','department_id','marjor_id'],
+            self::SCENARIO_SEARCH_ONE => ['id', 'depNo'],
+            self::SCENARIO_ADD => ['user_id','depNo','depName','phone','depAddress'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -177,6 +177,7 @@ class Department extends  BaseModel
         if($this->validate()){
             $this->createQuery();
             $this->addQueryExpand();
+            $this->addOrderBy();
             $result = $this->_query->one();
             return $result;
         }
@@ -190,6 +191,7 @@ class Department extends  BaseModel
             $department = new Department();
             $department->scenario = self::SCENARIO_ADD;
             $department->setAttributes($this->safeAttributesData());
+            $department->create_time = time();
             if($department->save())
             {
                 return $department;
@@ -212,7 +214,6 @@ class Department extends  BaseModel
             {
                 $department->scenario = self::SCENARIO_EDIT;
                 $department->setAttribute($this->edit_name, $this->edit_value);
-                $department->edit_time = time();
                 if($department->save())
                 {
                     return [$this->edit_name => $this->edit_value];

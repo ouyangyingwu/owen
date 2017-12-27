@@ -53,9 +53,9 @@ class Major extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','depNo','depName','department_id'],
+            self::SCENARIO_LIST => ['id','user_id','depNo','depName','department_id','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','stuNo','department_id'],
+            self::SCENARIO_ADD => ['user_id','majorNo','majorName','majorCred','department_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -166,6 +166,7 @@ class Major extends  BaseModel
         if($this->validate()){
             $this->createQuery();
             $this->addQueryExpand();
+            $this->addOrderBy();
             $result = $this->_query->one();
             return $result;
         }
@@ -176,12 +177,13 @@ class Major extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userStudent = new UserStudent();
-            $userStudent->scenario = self::SCENARIO_ADD;
-            $userStudent->setAttributes($this->safeAttributesData());
-            if($userStudent->save())
+            $major = new Major();
+            $major->scenario = self::SCENARIO_ADD;
+            $major->setAttributes($this->safeAttributesData());
+            $major->create_time = time();
+            if($major->save())
             {
-                return $userStudent;
+                return $major;
             }
             return null;
         } else {
