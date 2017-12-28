@@ -25,7 +25,7 @@ $(function(){
         if ($('.select-crNumberOfSeat').val()) {
             params["crNumberOfSeat"] = $('.select-crNumberOfSeat').val();
         }
-        classRoomList(params);
+        teamList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
@@ -35,7 +35,7 @@ $(function(){
         $('.select-crRoomNo').val('');
         $('.select-crNumberOfSeat').val('');
         params = {page:1 , per_page:10 , _csrf:token};
-        classRoomList(params);
+        teamList(params);
     });
     (function(){
         $.ajax({
@@ -92,7 +92,7 @@ $(function(){
             $("#maintain-records-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
-        $('#classRoom-detail').find("[name='form-edit']").each(function(){
+        $('#team-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -114,7 +114,7 @@ $(function(){
                     postData["edit_value"] = param["value"];
                     postData["id"] = data.id;
                     $.ajax({
-                        url:"/api/class-room/edit",
+                        url:"/api/team/edit",
                         data:postData,
                         dataType:'json',
                         type:'POST',
@@ -122,7 +122,7 @@ $(function(){
                             $(copythis).text(intTostr(data[name] , name));
                             htmlData[name] = data[name];
                             if(name == 'active') htmlData['reason'] = null;
-                            classRoomList(params);
+                            teamList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -199,7 +199,7 @@ $(function(){
         postData['edit_name'] = 'maintain';
         postData['edit_value'] = edit_value;
         $.ajax({
-            url: 'api/class-room/edit',
+            url: 'api/team/edit',
             data: postData,
             type: 'post',
             dataType: 'json',
@@ -233,7 +233,7 @@ $(function(){
         postData['edit_value'] = htmlData.maintain;
         $(this).parents('.odd').remove();
         $.ajax({
-            url: 'api/class-room/edit',
+            url: 'api/team/edit',
             data: postData,
             type: 'post'
         });
@@ -271,13 +271,13 @@ $(function(){
             postData['active'] = 0;
             postData['reason'] = $(".form-control[name='reason']").val();
             $.ajax({
-                url: "/api/class-room/update",
+                url: "/api/team/update",
                 data: postData,
                 dataType: 'json',
                 type: 'POST',
                 success: function (data) {
                     $("#exampleModal").modal("hide");
-                    classRoomList(params);
+                    teamList(params);
                 },
                 error: function (XMLHttpRequest) {
                     alert(XMLHttpRequest.responseJSON.message + "");
@@ -294,13 +294,13 @@ $(function(){
         postData['active'] = 1;
         postData['reason'] = null;
         $.ajax({
-            url: "/api/class-room/update",
+            url: "/api/team/update",
             data: postData,
             dataType: 'json',
             type: 'POST',
             success: function (data) {
                 $("#dialog-confirm").modal("hide");
-                classRoomList(params);
+                teamList(params);
             },
             error: function (XMLHttpRequest) {
                 alert(XMLHttpRequest.responseJSON.message + "");
@@ -311,7 +311,7 @@ $(function(){
     resetModel = function (model) {
         switch (model){
             case 'edit':
-                $("#classRoom-detail").modal("show");
+                $("#team-detail").modal("show");
                 initEditForm(htmlData);
                 break;
             case  'close':
@@ -325,20 +325,20 @@ $(function(){
     };
     var createButtonList = function(row , active){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        buttonList.push("<a name=\"table-button-list\" class='team-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
         if(active == 1){
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
+            buttonList.push("<a name=\"table-button-list\" class='team-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
         }else {
-            buttonList.push("<a name=\"table-button-list\" class='classroom-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
+            buttonList.push("<a name=\"table-button-list\" class='team-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
         }
         return buttonList;
     };
-    //classRoomList
+    //teamList
     var  oldCondition = params;
-    function classRoomList(params){
+    function teamList(params){
         $('.content').removeClass('hide');  //圈圈显示
         $.ajax({
-            url:"/api/class-room/list",
+            url:"/api/team/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -360,11 +360,11 @@ $(function(){
 
                         html += '<tr class="odd" role="row">';
                         html +='<td>'+data[i]["id"]+'</td>';
-                        html +='<td>'+data[i]["crNo"]+'</td>';
-                        html +='<td>'+ data[i]['crBuildingName'] +'</td>';
-                        html +='<td>'+ data[i]['crRoomNo']+'</td>';
-                        html +='<td>'+ data[i]['crNumberOfSeat'] +'/'+ data[i]['max_crNumberOfSeat'] +'</td>';
-                        html +='<td>'+ intTostr(data[i]['active'] , 'active') +'</td>';
+                        html +='<td>'+data[i]["teamName"]+'</td>';
+                        html +='<td>'+ data[i]['period'] +'</td>';
+                        html +='<td>'+ data[i]['major_id']+'</td>';
+                        html +='<td>'+ data[i]['people'] +'/'+ data[i]['number_limit'] +'</td>';
+                        html +='<td>'+ intTostr(data[i]['user_id'] , 'user_id') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -394,10 +394,10 @@ $(function(){
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-classroom-list tbody').empty();
-                $('#table-classroom-list tbody').append(html);
+                $('#table-team-list tbody').empty();
+                $('#table-team-list tbody').append(html);
                 $('.content').addClass('hide');             //圈圈影藏
-                $('.classroom-edit').click(function(){
+                $('.team-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -413,14 +413,14 @@ $(function(){
             }
         });
     }
-    classRoomList(params);
+    teamList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            classRoomList(params);
+            teamList(params);
         }
     });
 });

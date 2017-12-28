@@ -25,11 +25,30 @@ class MajorController extends Controller
     public function actionOne()
     {
         $major = new Major();
-        $major->scenario = Major::SCENARIO_ONE;
+        $major->scenario = Major::SCENARIO_SEARCH_ONE;
         $major->setAttributes(Yii::$app->request->post());
-        $major->expand = Yii::$app->request->post('expand');
-        $major->order_by = ['id'=>2];
+        $major->id = Yii::$app->request->post('id');
         return $major->getOne();
+    }
+    public function actionData(){
+        $major = new Major();
+        $major->scenario = Major::SCENARIO_SEARCH_ONE;
+        $major->order_by = ['id'=>2];
+        $major = $major->getOne();
+
+        $userTeacher = new User();
+        $userTeacher->expand = ['teacher'];
+        $userTeacher->type = 2;
+        list($totle , $user) = $userTeacher->getList();
+
+        $department = new Department;
+        list($totle , $department) = $department->getList();
+
+        return[
+            'majorNo' => $major['majorNo'],
+            'user' => $user,
+            'department' => $department,
+        ];
     }
     public function actionList()
     {
@@ -42,14 +61,17 @@ class MajorController extends Controller
     public function actionListData()
     {
         $department = new Department();
+        $department->per_page = '';
         list($total , $department) = $department->getList();
 
         $userList = new User();
         $userList->type = 2;
         $userList->expand = ['teacher'];
+        $userList->per_page = '';
         list($total , $userList) = $userList->getList();
 
         $team = new Team();
+        $team->per_page = '';
         list($total , $team) = $team->getList();
         foreach($team as &$item){
             $item['people'] = UserStudent::find()->where(['major_id'=>$item['id']])->count();
@@ -67,15 +89,6 @@ class MajorController extends Controller
         $postData = Yii::$app->request->post();
         $major->setAttributes($this->SafeFilter($postData));
         return $major->getEdit();
-    }
-    public function actionUpdate()
-    {
-        $major = new Major();
-        $major->scenario = Major::SCENARIO_UPDATE;
-        $postData = Yii::$app->request->post();
-        $major->setAttributes($this->SafeFilter($postData));
-        $major->id = Yii::$app->user->identity->id;
-        return $major->getUpdate();
     }
     public function actionAdd()
     {

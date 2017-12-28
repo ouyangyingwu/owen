@@ -46,7 +46,6 @@ class Team extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','className','number_limit','major_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
@@ -55,6 +54,7 @@ class Team extends  BaseModel
         return [
             self::SCENARIO_LIST => ['id','user_id','className','period','major_id','per_page'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
+            self::SCENARIO_ADD => ['major_id','teamName','user_id','period','number_limit']
         ];
     }
 
@@ -174,13 +174,12 @@ class Team extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userTeacher = new UserTeacher();
-            $userTeacher->scenario = self::SCENARIO_ADD;
-            $userTeacher->setAttributes($this->safeAttributesData());
-            $userTeacher->create_time = time();
-            if($userTeacher->save())
+            $team = new Team();
+            $team->scenario = self::SCENARIO_ADD;
+            $team->setAttributes($this->safeAttributesData());
+            if($team->save())
             {
-                return $userTeacher;
+                return $team;
             }
             return null;
         } else {
@@ -195,12 +194,12 @@ class Team extends  BaseModel
     {
         if($this->validate())
         {
-            $userTeacher = UserTeacher::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userTeacher)
+            $team = Team::find()->andFilterWhere(['id' => $this->id])->one();
+            if($team)
             {
-                $userTeacher->scenario = self::SCENARIO_EDIT;
-                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
-                if($userTeacher->save())
+                $team->scenario = self::SCENARIO_EDIT;
+                $team->setAttribute($this->edit_name, json_encode($this->edit_value));
+                if($team->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

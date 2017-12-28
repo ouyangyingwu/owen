@@ -27,7 +27,8 @@
                             <input type="text" class="form-control select-majorCred" placeholder="majorCred #">
                         </div>
                         <div class="col-sm-4 col-md-4 col-lg-2 margin-bottom-10">
-                            <input type="text" class="form-control select-department_id" placeholder="department_id #">
+                            <select class="form-control select-department_id">
+                            </select>
                         </div>
                         <div class="col-sm-6 col-md-4 col-lg-2 margin-bottom-10">
                             <div class="search-group">
@@ -132,7 +133,7 @@
                                     <span>所在系:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a class="" name="form-edit" data-name="department_id" data-type="select"></a>
+                                    <a class="notEdit" name="form-edit" data-name="department_id" data-type="select"></a>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
@@ -168,24 +169,20 @@
                                     <tbody>
                                     <tr id="add-team" class="hide">
                                         <td>
-                                            <input class="form-control scheduleTime" type="text" data-name="teamName"/>
+                                            <input class="form-control" type="text" data-name="teamName" disabled/>
                                         </td>
                                         <td>
                                             <select class="form-control" data-name="user_id">
                                             </select>
                                         </td>
                                         <td>
-                                            <input class="form-control" type="text" data-name="period"/>
+                                            <input class="form-control" type="text" data-name="period" disabled/>
                                         </td>
                                         <td>
-                                            <input class="form-control" type="text" data-name="period"/>
+                                            <input class="form-control" type="text" data-name="major_id" disabled/>
                                         </td>
                                         <td>
-                                            <input class="form-control" type="text" data-name="number_limit"/>
-                                        </td>
-                                        <td>
-                                            <select class="form-control" data-name="username">
-                                            </select>
+                                            <input class="form-control" type="number" data-name="number_limit"/>
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-xs btn-group-solid">

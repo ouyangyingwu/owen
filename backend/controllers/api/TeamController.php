@@ -3,6 +3,7 @@ namespace backend\controllers\api;
 
 use common\models\Major;
 use common\models\Team;
+use common\models\UserStudent;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
@@ -35,6 +36,9 @@ class TeamController extends Controller
         $team->scenario = Team::SCENARIO_LIST;
         $team->setAttributes(Yii::$app->request->post());
         list($total, $result) = $team->getList();
+        foreach($result as &$value){
+            $value['people'] = UserStudent::find()->where(['team_id'=>$value['id']])->count();
+        }
         return ['data'=>$result , 'total' => $total];
     }
     public function actionEdit()
@@ -47,12 +51,9 @@ class TeamController extends Controller
     }
     public function actionAdd()
     {
-        $user = new User();
-        $user->scenario = User::SCENARIO_ADD;
-        $postData = $this->SafeFilter(Yii::$app->request->post());
-        $user->setAttributes($postData);
-        $user->dirthday = time($user->dirthday);
-        $user = $user->getAdd();
-        return true;
+        $team = new Team();
+        $team->scenario = Team::SCENARIO_ADD;
+        $team->setAttributes(Yii::$app->request->post());
+        return $team->getAdd();
     }
 }

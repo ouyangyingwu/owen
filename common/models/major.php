@@ -9,10 +9,11 @@ use common\exception\ModelException;
  *
  * @property integer $id
  * @property integer $user_id
- * @property string $depNo
- * @property string $depName
- * @property integer $phone
- * @property string $depAddress
+ * @property string $majorNo
+ * @property string $majorName
+ * @property integer $majorCred
+ * @property integer $number
+ * @property integer $department_id
  * @property integer $create_time
  */
 class Major extends  BaseModel
@@ -53,8 +54,8 @@ class Major extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','depNo','depName','department_id','per_page','page'],
-            self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
+            self::SCENARIO_LIST => ['id','user_id','majorNo','majorName','department_id','per_page','page'],
+            self::SCENARIO_SEARCH_ONE => ['id', 'majorNo'],
             self::SCENARIO_ADD => ['user_id','majorNo','majorName','majorCred','department_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
@@ -77,6 +78,18 @@ class Major extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if($this->user_id)
+        {
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
+        }
+        if($this->majorNo)
+        {
+            $this->_query->andFilterWhere(['like' , 'majorNo' , $this->majorNo]);
+        }
+        if($this->majorName)
+        {
+            $this->_query->andFilterWhere(['like' , 'majorName' , $this->majorName]);
         }
         if($this->department_id)
         {
@@ -198,13 +211,12 @@ class Major extends  BaseModel
     {
         if($this->validate())
         {
-            $userStudent = UserStudent::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userStudent)
+            $major = Major::find()->andFilterWhere(['id' => $this->id])->one();
+            if($major)
             {
-                $userStudent->scenario = self::SCENARIO_EDIT;
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
-                $userStudent->edit_time = time();
-                if($userStudent->save())
+                $major->scenario = self::SCENARIO_EDIT;
+                $major->setAttribute($this->edit_name, $this->edit_value);
+                if($major->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

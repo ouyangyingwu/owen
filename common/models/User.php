@@ -157,9 +157,6 @@ class User extends BaseModel implements IdentityInterface
         if (count($this->expand)>0){
             if(in_array('student' , $this->expand)){
                 $this->_query->with('student');              //查询UserStudent的所有字段
-                if($this->major_id){
-
-                }
                 /*$this->_query->with([                   //查询UserStudent的指定字段
                     'user' => function($query) {
                         $query->select(['id', 'user_id']);

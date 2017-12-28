@@ -60,7 +60,17 @@
                 </li>
             </ul>
         </li>
-
+        <li>
+            <a href="javascript:void(0)"><i class="icon-sitemap"></i> Team <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/team_list.html" class="location-file"><i class="icon-cogs"></i>Team List</a>
+                </li>
+                <li>
+                    <a href="/#/team_add.html" class="location-file"><i class="icon-cogs"></i>Team Add</a>
+                </li>
+            </ul>
+        </li>
         <li>
             <a href="/#/empty.html"><i class="icon-edit"></i> Forms </a>
         </li>

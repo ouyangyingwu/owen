@@ -14,6 +14,7 @@ $(function(){
             params["id"] = $('.select-id').val();
         }
         if ($('.select-user_id').val()) {
+            console.log($('.select-user_id').val());
             params["user_id"] = $('.select-user_id').val();
         }
         if ($('.select-majorNo').val()) {
@@ -28,6 +29,7 @@ $(function(){
         if ($('.select-department_id').val()) {
             params["department_id"] = $('.select-department_id').val();
         }
+        console.log(params);
         MajorList(params);
     });
     //清除所有筛选条件
@@ -51,13 +53,22 @@ $(function(){
                 userList = data.teacher;
                 departmentList = data.department;
                 teamList = data.team;
-                var html = '';
-                html += '<option value="">请选择负责人</option>';
-                for(var i= 0,len =userList.length; i<len; i++){
-                    html += '<option value="'+userList[i]['id']+'">'+userList[i]['username']+'</option>';
+                if(userList){
+                    var html = '';
+                    html += '<option value="">请选择负责人</option>';
+                    for(var i= 0,len =userList.length; i<len; i++){
+                        html += '<option value="'+userList[i]['id']+'">'+userList[i]['username']+'</option>';
+                    }
+                    $('.select-user_id').append(html);
                 }
-                $('.select-user_id').append(html);
-                $('#add-maintain-records [data-name="username"]').append(html);
+                if(departmentList){
+                    var html = '';
+                    html += '<option value="">请选择系</option>';
+                    for(var i= 0,len =departmentList.length; i<len; i++){
+                        html += '<option value="'+departmentList[i]['id']+'">'+departmentList[i]['depName']+'</option>';
+                    }
+                    $('.select-department_id').append(html);
+                }
                 MajorList(params);
             }
         })
@@ -66,11 +77,6 @@ $(function(){
     //init edit form
     var getEditSource = function(name){
         switch(name){
-            case 'active':
-                return [
-                    {value: 1, text: '是'},
-                    {value: 0, text: '否'}
-                ];
             case 'user_id':
                 var user = [];
                 for (var i=0,len=userList.length ; i<len ; i++){
@@ -169,13 +175,6 @@ $(function(){
         });
     }
     function intTostr(value , type){
-        if(type == 'active') {
-            if (value == 1) {
-                return '是';
-            } else if (value == 0) {
-                return '否';
-            }
-        }
         if(type == 'user_id'){
             for (var i=0 , len=userList.length ; i<len ; i++){
                 if(value == userList[i]['id']){
@@ -191,50 +190,67 @@ $(function(){
             }
         }
     }
+    function addTeam(){
+        var teamName,timestamp ,number = [],html='', date = new Date();
+        timestamp  = (date.getMonth()+1) < 9 ? date.getFullYear() : date.getFullYear()+1;
+        for (var i=0 , len=teamList.length ; i<len ; i++){
+            if(teamList[i]['major_id'] == htmlData.id && teamList[i]['period'] == timestamp ){
+                number.push(CommonTool.ChineseToNumber(teamList[i]['teamName'].substr(2,1)));
+            }
+        }
+        teamName = htmlData.majorName + CommonTool.NumberToChinese(number.length+1) +'班';
+        for (var i=0 , len=userList.length ; i<len ; i++){
+            if(userList[i]['teacher']['department_id'] == htmlData.department_id){
+                html += '<option value="'+ userList[i]['id'] +'">'+ userList[i]['username'] +'</option>';
+            }
+        }
+        $('#add-team [data-name="major_id"]').val(htmlData.majorName);
+        $('#add-team [data-name="teamName"]').val(teamName);
+        $('#add-team [data-name="user_id"]').append(html);
+        $('#add-team [data-name="period"]').val(timestamp );
+    }
     //显示添加
-    $("#maintain-records").click(function(){
-        $('#add-maintain-records').removeClass('hide');
+    $("#team").click(function(){
+        $('#add-team').removeClass('hide');
+        addTeam();
     });
     //取消添加
-    $('#cancel-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
+    $('#cancel-team').click(function(){
+        $('#add-team').addClass('hide');
     });
     //添加记录
-    $('#insert-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
-        var postData = {},value = {},edit_value = htmlData.maintain? htmlData.maintain:[];
+    $('#insert-team').click(function(){
+        $('#add-team').addClass('hide');
+        var postData = {};
         postData['_csrf'] = token;
-        postData['id'] = htmlData['id'];
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        $('#add-maintain-records .form-control').each(function(){
-            value[$(this).attr('data-name')] = $(this).val();
+        postData['major_id'] = htmlData['id'];
+        $('#add-team .form-control').each(function(){
+            postData[$(this).attr('data-name')] = $(this).val();
         });
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        edit_value.push(value);
-        postData['edit_name'] = 'maintain';
-        postData['edit_value'] = edit_value;
+        postData['major_id'] = htmlData.id;
         $.ajax({
-            url: 'api/major/edit',
+            url: 'api/team/add',
             data: postData,
             type: 'post',
             dataType: 'json',
             success:function(data){
                 var html = '';
+                data.people = 0;
                 html += '<tr class="odd" role="row">';
-                html +='<td>'+ value["start_time"] +'</td>';
-                html +='<td>'+ value['end_time'] +'</td>';
-                html +='<td>'+ value['reason'] +'</td>';
-                html +='<td>'+ value['money'] +'</td>';
-                html +='<td>'+ intTostr(value['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                html +='<td>'+ data["teamName"] +'</td>';
+                html +='<td>'+ intTostr(data['user_id'] , 'user_id') +'</td>';
+                html +='<td>'+ data['period'] +'</td>';
+                html +='<td>'+ htmlData.majorName +'</td>';
+                html +='<td>'+ data['people']+'/'+data['number_limit'] +'</td>';
+                html +='<td></td>';
                 html +='</tr>';
-                $("#maintain-records-table tbody").append(html);
-                htmlData.maintain = edit_value;
+                $("#team-table tbody").append(html);
+                teamList.push(data);
             }
         });
     });
     //删除记录（detail列表内的记录）
-    $('#maintain-records-table').on('click', '.delete-maintain-records' , function(){
+    $('#major-table').on('click', '.delete-major' , function(){
         var id = $(this).attr('data-id');
         var postData = {};
         for(var i = 0,len = htmlData.maintain.length ; i<len ; i++){
@@ -253,74 +269,6 @@ $(function(){
             type: 'post'
         });
         return;
-    });
-
-    //选择时间
-    var preset = 'date';
-    var options = {
-        preset : preset,
-        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
-        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
-        theme: "android-ics light",
-        mode: "scroller",
-        dateFormat: 'yyyy-mm-dd',
-        display: "modal"
-    };
-    $('.scheduleTime').val("").scroller("destroy");
-    $('.scheduleTime').scroller(options);
-
-    var validateRules = {
-        "reason": {required: true}
-    };
-    var validateMessages = {};
-    $('#edit-close').validate({
-        rules:validateRules,
-        messages: validateMessages,
-        errorClass: "help-block",
-        //错误提示的html标签
-        errorElement:'span',
-        submitHandler: function() {
-            var postData = {};
-            postData['_csrf'] = token;
-            postData['id'] = htmlData['id'];
-            postData['active'] = 0;
-            postData['reason'] = $(".form-control[name='reason']").val();
-            $.ajax({
-                url: "/api/major/update",
-                data: postData,
-                dataType: 'json',
-                type: 'POST',
-                success: function (data) {
-                    $("#exampleModal").modal("hide");
-                    MajorList(params);
-                },
-                error: function (XMLHttpRequest) {
-                    alert(XMLHttpRequest.responseJSON.message + "");
-                }
-            })
-        }
-    });
-
-    $('#doConfirm').click(function () {
-        var postData = {};
-        postData['_csrf'] = token;
-        console.log(htmlData);
-        postData['id'] = htmlData['id'];
-        postData['active'] = 1;
-        postData['reason'] = null;
-        $.ajax({
-            url: "/api/major/update",
-            data: postData,
-            dataType: 'json',
-            type: 'POST',
-            success: function (data) {
-                $("#dialog-confirm").modal("hide");
-                MajorList(params);
-            },
-            error: function (XMLHttpRequest) {
-                alert(XMLHttpRequest.responseJSON.message + "");
-            }
-        })
     });
 
     resetModel = function (model) {
@@ -356,7 +304,7 @@ $(function(){
                     }
 
                     //数据列表
-                    for (var i=0;i<data.length;i++){
+                    for (var i=0,len =data.length ; i<len ; i++){
                         var button = createButtonList(data[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
