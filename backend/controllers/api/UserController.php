@@ -89,6 +89,24 @@ class UserController extends Controller
         }
         return ['data'=>$result , 'total' => $total];
     }
+    public function actionListStudent()
+    {
+        $user = new UserStudent();
+        $user->scenario = UserStudent::SCENARIO_SEARCH;
+        $user->setAttributes(Yii::$app->request->post());
+        $user->expand = ['user'];
+        list($total, $result) = $user->getList();
+        foreach($result as &$item){
+            if($item['reward']){
+                $item['reward'] = json_decode($item['reward']);
+            }
+            if( $item['punish']){
+                $item['punish'] = json_decode($item['punish']);
+            }
+
+        }
+        return ['data'=>$result , 'total' => $total];
+    }
     public function actionEdit()
     {
         if(!Yii::$app->request->post('type')){

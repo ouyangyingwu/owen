@@ -2,7 +2,7 @@
  * Created by admin on 2017/9/27.
  */
 $(function(){
-    var htmlData,userList;
+    var htmlData,teacherList,studentList,majorList,depList;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
@@ -13,45 +13,57 @@ $(function(){
         if ($('.select-id').val()) {
             params["id"] = $('.select-id').val();
         }
-        if ($('.select-crNo').val()) {
-            params["crNo"] = $('.select-crNo').val();
+        if ($('.select-period').val()) {
+            params["period"] = $('.select-period').val();
         }
-        if ($('.select-crBuildingName').val()) {
-            params["crBuildingName"] = $('.select-crBuildingName').val();
+        if ($('.select-teamName').val()) {
+            params["teamName"] = $('.select-teamName').val();
         }
-        if ($('.select-crRoomNo').val()) {
-            params["crRoomNo"] = $('.select-crRoomNo').val();
+        if ($('.select-major_id').val()) {
+            params["major_id"] = $('.select-major_id').val();
         }
-        if ($('.select-crNumberOfSeat').val()) {
-            params["crNumberOfSeat"] = $('.select-crNumberOfSeat').val();
+        if ($('.select-user_id').val()) {
+            params["user_id"] = $('.select-user_id').val();
         }
         teamList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
         $('.select-id').val('');
-        $('.select-crNo').val('');
-        $('.select-crBuildingName').val('');
-        $('.select-crRoomNo').val('');
-        $('.select-crNumberOfSeat').val('');
+        $('.select-teamName').val('');
+        $('.select-period').val('');
+        $('.select-major_id').val('');
+        $('.select-user_id').val('');
         params = {page:1 , per_page:10 , _csrf:token};
         teamList(params);
     });
     (function(){
         $.ajax({
-            url: 'api/user/list',
-            data: {_csrf:token,type:2},
+            url: 'api/team/list-data',
+            data: {_csrf:token},
             type: 'post',
             dataTye: 'json',
             success:function(data){
-                userList = data.data;
-                var html = '';
-                html += '<option value="">请选择负责人</option>';
-                for(var i= 0,len =userList.length; i<len; i++){
-                    html += '<option value="'+userList[i]['id']+'">'+userList[i]['username']+'</option>';
+                studentList = data.student;
+                teacherList = data.teacher;
+                majorList = data.major;
+                depList = data.department;
+                if(teacherList){
+                    var html = '';
+                    html += '<option value="">请选择负责人</option>';
+                    for(var i= 0,len =teacherList.length; i<len; i++){
+                        html += '<option value="'+teacherList[i]['id']+'">'+teacherList[i]['username']+'</option>';
+                    }
+                    $('.select-user_id').append(html);
                 }
-                $('.select-user_id').append(html);
-                $('#add-maintain-records [data-name="username"]').append(html);
+                if(majorList){
+                    var html = '';
+                    html += '<option value="">请选择专业</option>';
+                    for(var i= 0,len =majorList.length; i<len; i++){
+                        html += '<option value="'+majorList[i]['id']+'">'+majorList[i]['majorName']+'</option>';
+                    }
+                    $('.select-major_id').append(html);
+                }
             }
         })
     })();
@@ -59,15 +71,12 @@ $(function(){
     //init edit form
     var getEditSource = function(name){
         switch(name){
-            case 'active':
-                return [
-                    {value: 1, text: '是'},
-                    {value: 0, text: '否'}
-                ];
             case 'user_id':
                 var user = [];
-                for (var i=0,len=userList.length ; i<len ; i++){
-                    user.push({value:userList[i]['id'] , text:userList[i]['username']});
+                for (var i=0,len=teacherList.length ; i<len ; i++){
+                    if(teacherList[i]['teacher']['department_id'] == htmlData.department_id){
+                        user.push({value:teacherList[i]['id'] , text:teacherList[i]['username']});
+                    }
                 }
                 return user;
             default:
@@ -76,20 +85,20 @@ $(function(){
     };
     //修改、详情
     function initEditForm(data){
-        $('#maintain-records-table').find('.odd').remove();
-        if(data.maintain){
+        $('#honor-table').find('.odd').remove();
+        if(data.honor){
             var html = '';
-            for(var i=0,len = data.maintain.length; i<len; i++){
+            for(var i=0,len = data.honor.length; i<len; i++){
                 html += '<tr class="odd" role="row">';
-                html +='<td>'+ data['maintain'][i]["start_time"] +'</td>';
-                html +='<td>'+ data['maintain'][i]['end_time'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['reason'] +'</td>';
-                html +='<td>'+ data['maintain'][i]['money'] +'</td>';
-                html +='<td>'+ intTostr(data['maintain'][i]['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ data['maintain'][i]["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                html +='<td>'+ data['honor'][i]["start_time"] +'</td>';
+                html +='<td>'+ data['honor'][i]['type'] +'</td>';
+                html +='<td>'+ data['honor'][i]['reason'] +'</td>';
+                html +='<td>'+ intTostr(data['honor'][i]['level'] , 'honor.level') +'</td>';
+                html +='<td>'+ intTostr(data['honor'][i]['user_id'] , 'user_id') +'</td>';
+                html +='<td class="delete-honor" data-id="'+ data['honor'][i]["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
                 html +='</tr>';
             }
-            $("#maintain-records-table tbody").append(html);
+            $("#honor-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
         $('#team-detail').find("[name='form-edit']").each(function(){
@@ -142,206 +151,53 @@ $(function(){
             };
             //启用下拉框中的下拉选项
             if(editSource){options["source"] = editSource;}
-            //为data-name为describe的项做数据验证
-            if (name == 'crNumberOfSeat' || name == 'reason'){
-                options["validate"] = function(value){
-                    if(name == 'crNumberOfSeat' && value > data['max_crNumberOfSeat']){
-                        return '座位数不能超出上限值'+data['max_crNumberOfSeat'];
-                    }
-                    if(name == 'reason' && htmlData['active'] == 1 && value != ''){
-                        return '只有关闭该教室后才能填写!';
-                    }
-                }
-            }
             if(dataType == 'select'){
                 displayValue = intTostr(displayValue , name);
             }
+            if(!displayValue){displayValue="Empty";}
             $(this).text(displayValue).editable('destroy');
             $(this).editable(options);
         });
     }
     function intTostr(value , type){
-        if(type == 'active') {
-            if (value == 1) {
-                return '是';
-            } else if (value == 0) {
-                return '否';
-            }
-        }
         if(type == 'user_id'){
-            for (var i=0,len=userList.length ; i<len ; i++){
-                if(value == userList[i]['id']){
-                    return userList[i]['username'];
+            for (var i=0,len=teacherList.length ; i<len ; i++){
+                if(value == teacherList[i]['id']){
+                    return teacherList[i]['username'];
                 }
             }
+        }
+        if(type == 'major_id'){
+            for (var i=0,len=majorList.length ; i<len ; i++){
+                if(value == majorList[i]['id']){
+                    return majorList[i]['majorName'];
+                }
+            }
+        }
+        if(type == 'department_id'){
+            for (var i=0,len=depList.length ; i<len ; i++){
+                if(value == depList[i]['id']){
+                    return depList[i]['depName'];
+                }
+            }
+        }
+        if(type == 'honor.level'){
+            if(value == 1) return '专业级';
+            if(value == 2) return '系级';
+            if(value == 3) return '院级';
+            if(value == 4) return '校级';
+            if(value == 5) return '多校级';
         }
     }
-    //显示添加
-    $("#maintain-records").click(function(){
-        $('#add-maintain-records').removeClass('hide');
-    });
-    //取消添加
-    $('#cancel-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
-    });
-    //添加记录
-    $('#insert-maintain-records').click(function(){
-        $('#add-maintain-records').addClass('hide');
-        var postData = {},value = {},edit_value = htmlData.maintain? htmlData.maintain:[];
-        postData['_csrf'] = token;
-        postData['id'] = htmlData['id'];
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        $('#add-maintain-records .form-control').each(function(){
-            value[$(this).attr('data-name')] = $(this).val();
-        });
-        value['dataTime'] = Math.round((new Date().getTime())/1000);
-        edit_value.push(value);
-        postData['edit_name'] = 'maintain';
-        postData['edit_value'] = edit_value;
-        $.ajax({
-            url: 'api/team/edit',
+    //显示本班学生
+    function student(team){
+        var postData = {};
+        postData["_csrf"] = token;
+        $.({
+            url: 'api/user/list-student',
             data: postData,
             type: 'post',
-            dataType: 'json',
-            success:function(data){
-                var html = '';
-                html += '<tr class="odd" role="row">';
-                html +='<td>'+ value["start_time"] +'</td>';
-                html +='<td>'+ value['end_time'] +'</td>';
-                html +='<td>'+ value['reason'] +'</td>';
-                html +='<td>'+ value['money'] +'</td>';
-                html +='<td>'+ intTostr(value['username'] , 'user_id') +'</td>';
-                html +='<td class="delete-maintain-records" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
-                html +='</tr>';
-                $("#maintain-records-table tbody").append(html);
-                htmlData.maintain = edit_value;
-            }
-        });
-    });
-    //删除记录（detail列表内的记录）
-    $('#maintain-records-table').on('click', '.delete-maintain-records' , function(){
-        var id = $(this).attr('data-id');
-        var postData = {};
-        for(var i = 0,len = htmlData.maintain.length ; i<len ; i++){
-            if($(this).attr('data-id') == htmlData['maintain'][i]['dataTime']){
-                htmlData.maintain.splice(i , 1);
-            }
-        }
-        postData['_csrf'] = token;
-        postData['id'] = htmlData['id'];
-        postData['edit_name'] = 'maintain';
-        postData['edit_value'] = htmlData.maintain;
-        $(this).parents('.odd').remove();
-        $.ajax({
-            url: 'api/team/edit',
-            data: postData,
-            type: 'post'
-        });
-        return;
-    });
-
-    //选择时间
-    var preset = 'date';
-    var options = {
-        preset : preset,
-        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
-        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
-        theme: "android-ics light",
-        mode: "scroller",
-        dateFormat: 'yyyy-mm-dd',
-        display: "modal"
-    };
-    $('.scheduleTime').val("").scroller("destroy");
-    $('.scheduleTime').scroller(options);
-
-    var validateRules = {
-        "reason": {required: true}
-    };
-    var validateMessages = {};
-    $('#edit-close').validate({
-        rules:validateRules,
-        messages: validateMessages,
-        errorClass: "help-block",
-        //错误提示的html标签
-        errorElement:'span',
-        submitHandler: function() {
-            var postData = {};
-            postData['_csrf'] = token;
-            postData['id'] = htmlData['id'];
-            postData['active'] = 0;
-            postData['reason'] = $(".form-control[name='reason']").val();
-            $.ajax({
-                url: "/api/team/update",
-                data: postData,
-                dataType: 'json',
-                type: 'POST',
-                success: function (data) {
-                    $("#exampleModal").modal("hide");
-                    teamList(params);
-                },
-                error: function (XMLHttpRequest) {
-                    alert(XMLHttpRequest.responseJSON.message + "");
-                }
-            })
-        }
-    });
-
-    $('#doConfirm').click(function () {
-        var postData = {};
-        postData['_csrf'] = token;
-        console.log(htmlData);
-        postData['id'] = htmlData['id'];
-        postData['active'] = 1;
-        postData['reason'] = null;
-        $.ajax({
-            url: "/api/team/update",
-            data: postData,
-            dataType: 'json',
-            type: 'POST',
-            success: function (data) {
-                $("#dialog-confirm").modal("hide");
-                teamList(params);
-            },
-            error: function (XMLHttpRequest) {
-                alert(XMLHttpRequest.responseJSON.message + "");
-            }
-        })
-    });
-
-    resetModel = function (model) {
-        switch (model){
-            case 'edit':
-                $("#team-detail").modal("show");
-                initEditForm(htmlData);
-                break;
-            case  'close':
-                $("#exampleModal").modal("show");
-                break;
-            case 'open':
-                $("#dialog-confirm").modal("show").find('p').text("是否开放该教室？");
-                $("#dialog-confirm").attr('data-type' , 'open');
-                break;
-        }
-    };
-    var createButtonList = function(row , active){
-        var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='team-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        if(active == 1){
-            buttonList.push("<a name=\"table-button-list\" class='team-edit' type='close' data-id='"+row+"' ><i class=\"icon-eye-close\"></i> Close</a>");
-        }else {
-            buttonList.push("<a name=\"table-button-list\" class='team-edit' type='open' data-id='"+row+"' ><i class=\" icon-eye-open\"></i> Open</a>");
-        }
-        return buttonList;
-    };
-    //teamList
-    var  oldCondition = params;
-    function teamList(params){
-        $('.content').removeClass('hide');  //圈圈显示
-        $.ajax({
-            url:"/api/team/list",
-            data:params,
-            dataType:'json',
-            type:'POST',
+            typeData: 'json',
             success:function(data){
                 var total = data.total;
                 var data = data.data;
@@ -352,19 +208,19 @@ $(function(){
                     }else {
                         total = 1;
                     }
-
                     //数据列表
                     for (var i=0;i<data.length;i++){
-                        var button = createButtonList(data[i]['id'] ,data[i]['active']);
+                        var button = createButtonList(data[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
                         html +='<td>'+data[i]["id"]+'</td>';
                         html +='<td>'+data[i]["teamName"]+'</td>';
                         html +='<td>'+ data[i]['period'] +'</td>';
-                        html +='<td>'+ data[i]['major_id']+'</td>';
+                        html +='<td>'+ data[i]['major']['majorName'] +'</td>';
+                        html +='<td>'+ data[i]['department']['depName'] +'</td>';
                         html +='<td>'+ data[i]['people'] +'/'+ data[i]['number_limit'] +'</td>';
-                        html +='<td>'+ intTostr(data[i]['user_id'] , 'user_id') +'</td>';
+                        html +='<td>'+ data[i]['user']['username'] +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -396,7 +252,166 @@ $(function(){
                 if(title = 0) $('#visible-pages').empty();
                 $('#table-team-list tbody').empty();
                 $('#table-team-list tbody').append(html);
-                $('.content').addClass('hide');             //圈圈影藏
+            }
+        })
+    }
+    //显示添加
+    $("#honor").click(function(){
+        $('#add-honor').removeClass('hide');
+        $('#add-honor [data-name="user_id"]').val(intTostr(htmlData.user_id , 'user_id'));
+    });
+    //取消添加
+    $('#cancel-honor').click(function(){
+        $('#add-honor').addClass('hide');
+    });
+    //添加记录
+    $('#insert-honor').click(function(){
+        $('#add-honor').addClass('hide');
+        var postData = {},value = {},edit_value = htmlData.honor? htmlData.honor:[];
+        postData['_csrf'] = token;
+        postData['id'] = htmlData['id'];
+        $('#add-honor .form-control').each(function(){
+            value[$(this).attr('data-name')] = $(this).val();
+        });
+        value['dataTime'] = Math.round((new Date().getTime())/1000);
+        value['user_id'] = htmlData.user_id;
+        edit_value.push(value);
+        postData['edit_name'] = 'honor';
+        postData['edit_value'] = edit_value;
+        //console.log(postData);return;
+        $.ajax({
+            url: 'api/team/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                var html = '';
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ value["start_time"] +'</td>';
+                html +='<td>'+ value['type'] +'</td>';
+                html +='<td>'+ value['reason'] +'</td>';
+                html +='<td>'+ value['level'] +'</td>';
+                html +='<td>'+ intTostr(value['user_id'] , 'user_id') +'</td>';
+                html +='<td class="delete-honor" data-id="'+ value["dataTime"] +'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+                $("#honor-table tbody").append(html);
+                htmlData.honor = edit_value;
+            }
+        });
+    });
+    //删除记录（detail列表内的记录）
+    $('#honor-table').on('click', '.delete-honor' , function(){
+        var id = $(this).attr('data-id');
+        var postData = {};
+        for(var i = 0,len = htmlData.honor.length ; i<len ; i++){
+            if($(this).attr('data-id') == htmlData['honor'][i]['dataTime']){
+                htmlData.honor.splice(i , 1);
+            }
+        }
+        postData['_csrf'] = token;
+        postData['id'] = htmlData['id'];
+        postData['edit_name'] = 'honor';
+        postData['edit_value'] = htmlData.honor;
+        $(this).parents('.odd').remove();
+        $.ajax({
+            url: 'api/team/edit',
+            data: postData,
+            type: 'post'
+        });
+        return;
+    });
+
+    //选择时间
+    var preset = 'date';
+    var options = {
+        preset : preset,
+        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
+        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
+        theme: "android-ics light",
+        mode: "scroller",
+        dateFormat: 'yyyy-mm-dd',
+        display: "modal"
+    };
+    $('.scheduleTime').val("").scroller("destroy");
+    $('.scheduleTime').scroller(options);
+
+    resetModel = function (model) {
+        switch (model){
+            case 'edit':
+                $("#team-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+        }
+    };
+    var createButtonList = function(row){
+        var buttonList = [];
+        buttonList.push("<a name=\"table-button-list\" class='team-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        return buttonList;
+    };
+    //teamList
+    var  oldCondition = params;
+    function teamList(params){
+        $('.content').removeClass('hide');  //圈圈显示
+        $.ajax({
+            url:"/api/team/list",
+            data:params,
+            dataType:'json',
+            type:'POST',
+            success:function(data){
+                var total = data.total;
+                var data = data.data;
+                var html = '';
+                if(data){
+                    if(data.length < total){
+                        total = Math.ceil(total/10);
+                    }else {
+                        total = 1;
+                    }
+
+                    //数据列表
+                    for (var i=0;i<data.length;i++){
+                        var button = createButtonList(data[i]['id']);
+                        button = CommonTool.renderActionButtons(button);
+
+                        html += '<tr class="odd" role="row">';
+                        html +='<td>'+data[i]["id"]+'</td>';
+                        html +='<td>'+data[i]["teamName"]+'</td>';
+                        html +='<td>'+ data[i]['period'] +'</td>';
+                        html +='<td>'+ data[i]['major']['majorName'] +'</td>';
+                        html +='<td>'+ data[i]['department']['depName'] +'</td>';
+                        html +='<td>'+ data[i]['people'] +'/'+ data[i]['number_limit'] +'</td>';
+                        html +='<td>'+ data[i]['user']['username'] +'</td>';
+                        html +='<td>'+ button +'</td>';
+                        html +='</tr>';
+                    }
+                    //分页代码
+                    var condition = params;
+                    var per_page = 5;
+                    var number_pages = false;
+                    //当页码总数少于要显示的页码数时，显示页码总数
+                    if(total < 5){ per_page = total;}
+                    //判断筛选条件是否发生了变化
+                    if(condition['id'] !== oldCondition['id'] || condition['crNo '] !== oldCondition['crNo '] || condition['crNumberOfSeat'] !== oldCondition['crNumberOfSeat']
+                        || condition['crBuildingName '] !== oldCondition['crBuildingName '] || condition['crRoomNo'] !== oldCondition['crRoomNo']){
+                        number_pages = true;
+                        oldCondition = condition;
+                    }
+                    $('#visible-pages').twbsPagination({
+                        //总页数
+                        totalPages: total,
+                        //显示页码数
+                        visiblePages: per_page,
+                        //是否刷新页码
+                        page: number_pages,
+                        version: '1.1'
+                    });
+                } else {
+                    html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
+                    $('#visible-pages').empty();
+                }
+                if(title = 0) $('#visible-pages').empty();
+                $('#table-team-list tbody').empty();
+                $('#table-team-list tbody').append(html);
                 $('.team-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
