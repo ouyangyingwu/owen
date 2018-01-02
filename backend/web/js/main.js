@@ -426,7 +426,6 @@ var CommonTool = {
 
         return result;
     },
-    //阿拉伯数字转换为中文数字
     SectionToChinese: function (section){
         var strIns = '', chnStr = '';
         var unitPos = 0;
@@ -449,6 +448,7 @@ var CommonTool = {
         }
         return chnStr;
     },
+    //阿拉伯数字转换为中文数字
     NumberToChinese: function (num){
         var unitPos = 0;
         var strIns = '', chnStr = '';

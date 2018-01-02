@@ -5,17 +5,21 @@ use Yii;
 use common\exception\ModelException;
 
 /**
- * This is the model class for table "user_teacher".
+ * This is the model class for table "course".
  *
  * @property integer $id
+ * @property string $couNo
+ * @property string $courseName
+ * @property integer $credit
+ * @property string $class_time
+ * @property integer $start_time
+ * @property integer $end_time
  * @property integer $user_id
- * @property string $teachNo
- * @property string $position
- * @property integer $course
  * @property integer $department_id
- * @property string $reward
- * @property string $punish
- * @property integer $create_time
+ * @property integer $major_id
+ * @property integer $classroom_id
+ * @property integer $number
+ * @property integer $type
  */
 class Course extends  BaseModel
 {
@@ -49,16 +53,15 @@ class Course extends  BaseModel
     {
         return [
             [['id'],'required','on'=>[self::SCENARIO_EDIT]],     //分情景模式验证，修改的时候需要这条规则
-            [['user_id','teachNo','position','department_id'],'required','on'=>[self::SCENARIO_ADD]],     //分情景模式验证，修改的时候需要这条规则
         ];
     }
 
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','teachNo','position','department_id'],
+            self::SCENARIO_LIST => ['id','user_id','team_id','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
-            self::SCENARIO_ADD => ['user_id','teachNo','position','department_id'],
+            self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
         ];
     }
@@ -80,6 +83,18 @@ class Course extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if ($this->couNo)
+        {
+            $this->_query->andFilterWhere(['couNo' => $this->couNo]);
+        }
+        if ($this->courseName)
+        {
+            $this->_query->andFilterWhere(['courseName' => $this->courseName]);
+        }
+        if ($this->user_id)
+        {
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
         }
         if(count($this->select)>0)
         {
@@ -107,7 +122,7 @@ class Course extends  BaseModel
                 //$this->_query->with('user');              //查询User的所有字段
                 $this->_query->with([
                     'user' => function($query) {
-                        $query->select(['id', 'username','email','phone']);
+                        $query->select(['id', 'username','email','phone','birth','sex']);
                     }
                 ]);
             }
@@ -142,7 +157,7 @@ class Course extends  BaseModel
      * 列表查询
      */
     public function getList(){
-        $this->scenario = self::SCENARIO_SEARCH;
+        $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
             $total = $this->_query->count();
@@ -175,13 +190,15 @@ class Course extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $userTeacher = new UserTeacher();
-            $userTeacher->scenario = self::SCENARIO_ADD;
-            $userTeacher->setAttributes($this->safeAttributesData());
-            $userTeacher->create_time = time();
-            if($userTeacher->save())
+            $course = new Course();
+            $course->scenario = self::SCENARIO_ADD;
+            $course->setAttributes($this->safeAttributesData());
+            $course->credit = 0;
+            $course->status = 1;
+            $course->create_time = time();
+            if($course->save())
             {
-                return $userTeacher;
+                return $course;
             }
             return null;
         } else {
@@ -196,12 +213,26 @@ class Course extends  BaseModel
     {
         if($this->validate())
         {
-            $userTeacher = UserTeacher::find()->andFilterWhere(['id' => $this->id])->one();
-            if($userTeacher)
+            $course = Course::find()->andFilterWhere(['id' => $this->id])->one();
+            if($course)
             {
-                $userTeacher->scenario = self::SCENARIO_EDIT;
-                $userTeacher->setAttribute($this->edit_name, json_encode($this->edit_value));
-                if($userTeacher->save())
+                $course->scenario = self::SCENARIO_EDIT;
+                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
+                $course->setAttribute($this->edit_name, $this->edit_value);
+                if($this->edit_name == 'department_id'){
+                    $course->major_id = 0;
+                    $course->team_id = 0;
+                }elseif($this->edit_name == 'major_id'){
+                    $course->team_id = 0;
+                }elseif($this->edit_name == 'team_id'){
+                    $user_number = self::findAll(['team_id' => $this->edit_value]);
+                    $number_limit = Team::findOne(['id'=>$this->edit_value]);
+                    if(count($user_number) >= $number_limit['number_limit']){
+                        $errorStr = "该班级人数已满！！！";
+                        throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+                    }
+                }
+                if($course->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

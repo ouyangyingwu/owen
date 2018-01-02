@@ -25,7 +25,15 @@
             </ul>
         </li>
         <li>
-            <a href="/#/empty.html"><i class="icon-bar-chart"></i> Charts</a>
+            <a href="javascript:void(0)"><i class="icon-file-alt"></i> Course <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/course_list.html" class="location-file"><i class="icon-cogs"></i>Course List</a>
+                </li>
+                <li>
+                    <a href="/#/course_add.html" class="location-file"><i class="icon-cogs"></i>Course Add</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="javascript:void(0)"><i class="icon-building"></i> Class Room <span class="icon-angle-right arrow"></span></a>

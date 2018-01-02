@@ -62,7 +62,7 @@ class UserStudent extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','stuNo','credit','department_id','major_id'],
+            self::SCENARIO_LIST => ['id','user_id','team_id','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -86,6 +86,14 @@ class UserStudent extends  BaseModel
             $this->_query->andFilterWhere(['in', 'id', $this->id]);
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
+        }
+        if ($this->team_id)
+        {
+            if(is_array($this->team_id)){
+                $this->_query->andFilterWhere(['in', 'team_id', $this->team_id]);
+            }else{
+                $this->_query->andFilterWhere(['team_id' => $this->team_id]);
+            }
         }
         if(count($this->select)>0)
         {
@@ -113,7 +121,7 @@ class UserStudent extends  BaseModel
                 //$this->_query->with('user');              //查询User的所有字段
                 $this->_query->with([
                     'user' => function($query) {
-                        $query->select(['id', 'username','email','phone']);
+                        $query->select(['id', 'username','email','phone','birth','sex']);
                     }
                 ]);
             }

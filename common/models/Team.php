@@ -56,7 +56,7 @@ class Team extends  BaseModel
         return [
             self::SCENARIO_LIST => ['id','user_id','className','period','major_id','per_page','page'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_ADD => ['major_id','teamName','user_id','period','number_limit']
+            self::SCENARIO_ADD => ['department_id','major_id','teamName','user_id','period','number_limit']
         ];
     }
 

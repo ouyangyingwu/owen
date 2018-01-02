@@ -16,8 +16,8 @@ $(function(){
         if ($('.select-period').val()) {
             params["period"] = $('.select-period').val();
         }
-        if ($('.select-teamName').val()) {
-            params["teamName"] = $('.select-teamName').val();
+        if ($('.select-courseName').val()) {
+            params["courseName"] = $('.select-courseName').val();
         }
         if ($('.select-major_id').val()) {
             params["major_id"] = $('.select-major_id').val();
@@ -25,21 +25,21 @@ $(function(){
         if ($('.select-user_id').val()) {
             params["user_id"] = $('.select-user_id').val();
         }
-        teamList(params);
+        courseList(params);
     });
     //清除所有筛选条件
     $('#resetValue').on('click' , function  () {
         $('.select-id').val('');
-        $('.select-teamName').val('');
+        $('.select-courseName').val('');
         $('.select-period').val('');
         $('.select-major_id').val('');
         $('.select-user_id').val('');
         params = {page:1 , per_page:10 , _csrf:token};
-        teamList(params);
+        courseList(params);
     });
     (function(){
         $.ajax({
-            url: 'api/team/list-data',
+            url: 'api/course/list-data',
             data: {_csrf:token},
             type: 'post',
             dataTye: 'json',
@@ -79,6 +79,11 @@ $(function(){
                     }
                 }
                 return user;
+            case 'type':
+                return [
+                    {value:0 , text:'选修'},
+                    {value:1 , text:'必修'},
+                ];
             default:
                 return null;
         }
@@ -101,7 +106,7 @@ $(function(){
             $("#honor-table tbody").append(html);
         }
         $.fn.editable.defaults.mode = 'inline';
-        $('#team-detail').find("[name='form-edit']").each(function(){
+        $('#course-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
             var dataType = $(this).attr("data-type");
             var copythis = this;
@@ -123,7 +128,7 @@ $(function(){
                     postData["edit_value"] = param["value"];
                     postData["id"] = data.id;
                     $.ajax({
-                        url:"/api/team/edit",
+                        url:"/api/course/edit",
                         data:postData,
                         dataType:'json',
                         type:'POST',
@@ -131,7 +136,7 @@ $(function(){
                             $(copythis).text(intTostr(data[name] , name));
                             htmlData[name] = data[name];
                             if(name == 'active') htmlData['reason'] = null;
-                            teamList(params);
+                            courseList(params);
                         },
                         error:function(XMLHttpRequest){
                             alert(XMLHttpRequest.responseJSON.message+"");
@@ -160,6 +165,10 @@ $(function(){
         });
     }
     function intTostr(value , type){
+        if(type == 'type') {
+            if (value == 0)return '选修';
+            if (value == 1)return '必修';
+        }
         if(type == 'user_id'){
             for (var i=0,len=teacherList.length ; i<len ; i++){
                 if(value == teacherList[i]['id']){
@@ -180,13 +189,6 @@ $(function(){
                     return depList[i]['depName'];
                 }
             }
-        }
-        if(type == 'honor.level'){
-            if(value == 1) return '专业级';
-            if(value == 2) return '系级';
-            if(value == 3) return '院级';
-            if(value == 4) return '校级';
-            if(value == 5) return '多校级';
         }
         if(type == 'sex') {
             if (value == 1)return '男';
@@ -240,7 +242,7 @@ $(function(){
                         version: '1.1'
                     });
                 } else {
-                    html = '<tr rowspan="4" class="odd"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
+                    html = '<tr rowspan="4" class="odd"><td style="text-align: center" colspan="10">No matching records found</td></tr>';
                     $('#student-pages').empty();
                 }
                 //if(title = 0) $('#student-pages').empty();
@@ -274,7 +276,7 @@ $(function(){
         postData['edit_value'] = edit_value;
         //console.log(postData);return;
         $.ajax({
-            url: 'api/team/edit',
+            url: 'api/course/edit',
             data: postData,
             type: 'post',
             dataType: 'json',
@@ -308,7 +310,7 @@ $(function(){
         postData['edit_value'] = htmlData.honor;
         $(this).parents('.odd').remove();
         $.ajax({
-            url: 'api/team/edit',
+            url: 'api/course/edit',
             data: postData,
             type: 'post'
         });
@@ -332,27 +334,26 @@ $(function(){
     resetModel = function (model) {
         switch (model){
             case 'edit':
-                $("#team-detail").modal("show");
-                studentData['_csrf'] = token;
+                $("#course-detail").modal("show");
+                /*studentData['_csrf'] = token;
                 studentData['per_page'] = 2;
-                studentData['team_id'] = htmlData.id;
+                studentData['course_id'] = htmlData.id;
                 studentData['page'] = 1;
-                student(true);
+                student(true);*/
                 initEditForm(htmlData);
                 break;
         }
     };
     var createButtonList = function(row){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='team-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+        buttonList.push("<a name=\"table-button-list\" class='course-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
         return buttonList;
     };
-    //teamList
+    //courseList
     var  oldCondition = params;
-    function teamList(params){
-        $('.content').removeClass('hide');  //圈圈显示
+    function courseList(params){
         $.ajax({
-            url:"/api/team/list",
+            url:"/api/course/list",
             data:params,
             dataType:'json',
             type:'POST',
@@ -368,18 +369,20 @@ $(function(){
                     }
 
                     //数据列表
-                    for (var i=0;i<data.length;i++){
+                    for (var i=0,len=data.length ; i<len ; i++){
                         var button = createButtonList(data[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
                         html +='<td>'+data[i]["id"]+'</td>';
-                        html +='<td>'+data[i]["teamName"]+'</td>';
-                        html +='<td>'+ data[i]['period'] +'</td>';
-                        html +='<td>'+ data[i]['major']['majorName'] +'</td>';
-                        html +='<td>'+ data[i]['department']['depName'] +'</td>';
-                        html +='<td>'+ data[i]['people'] +'/'+ data[i]['number_limit'] +'</td>';
+                        html +='<td>'+data[i]["couNo"]+'</td>';
+                        html +='<td>'+data[i]["courseName"]+'</td>';
+                        html +='<td>'+ data[i]['credit'] +'</td>';
+                        html +='<td>'+ CommonTool.formatTime(data[i]['start_time'] , 'Y年m月d日') +'</td>';
+                        html +='<td>'+  CommonTool.formatTime(data[i]['end_time'] , 'Y年m月d日') +'</td>';
+                        html +='<td>'+ data[i]['people'] +'/'+ data[i]['number'] +'</td>';
                         html +='<td>'+ data[i]['user']['username'] +'</td>';
+                        html +='<td>'+ intTostr(data[i]['type'] , 'type') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -405,13 +408,13 @@ $(function(){
                         version: '1.1'
                     });
                 } else {
-                    html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
+                    html = '<tr rowspan="4"><td style="text-align: center" colspan="10">No matching records found</td></tr>';
                     $('#visible-pages').empty();
                 }
                 if(title = 0) $('#visible-pages').empty();
-                $('#table-team-list tbody').empty();
-                $('#table-team-list tbody').append(html);
-                $('.team-edit').click(function(){
+                $('#table-course-list tbody').empty();
+                $('#table-course-list tbody').append(html);
+                $('.course-edit').click(function(){
                     var dataid = $(this).attr('data-id');
                     for (var i=0 ; i<data.length ; i++){
                         if(dataid == data[i]['id']){
@@ -427,14 +430,14 @@ $(function(){
             }
         });
     }
-    teamList(params);
+    courseList(params);
 
     var page = 1;
     $('#visible-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             params['page'] = page = dataPage;
-            teamList(params);
+            courseList(params);
         }
     });
     var studentPage = 1;

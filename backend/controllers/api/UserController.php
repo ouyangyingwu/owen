@@ -92,18 +92,20 @@ class UserController extends Controller
     public function actionListStudent()
     {
         $user = new UserStudent();
-        $user->scenario = UserStudent::SCENARIO_SEARCH;
+        $user->scenario = UserStudent::SCENARIO_LIST;
         $user->setAttributes(Yii::$app->request->post());
         $user->expand = ['user'];
         list($total, $result) = $user->getList();
-        foreach($result as &$item){
-            if($item['reward']){
-                $item['reward'] = json_decode($item['reward']);
-            }
-            if( $item['punish']){
-                $item['punish'] = json_decode($item['punish']);
-            }
+        if($result){
+            foreach($result as &$item){
+                if($item['reward']){
+                    $item['reward'] = json_decode($item['reward']);
+                }
+                if( $item['punish']){
+                    $item['punish'] = json_decode($item['punish']);
+                }
 
+            }
         }
         return ['data'=>$result , 'total' => $total];
     }

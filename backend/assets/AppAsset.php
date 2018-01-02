@@ -21,6 +21,8 @@ class AppAsset extends AssetBundle
         'assets/bootstrap-editable/css/bootstrap-editable.css',
         //时间插件
         'assets/mobile/mobiscroll.min.css',
+        //select2
+        'assets/select2/css/select2.min.css',
         //公共样式
         'css/custom-styles.css',
     ];
@@ -41,6 +43,8 @@ class AppAsset extends AssetBundle
         'js/public/message_zh.js',
         //时间插件
         'assets/mobile/mobiscroll.min.js',
+        //select2
+        'assets/select2/js/select2.min.js',
         //公共特效
         'js/main.js',
     ];

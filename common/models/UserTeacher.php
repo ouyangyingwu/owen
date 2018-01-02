@@ -81,6 +81,14 @@ class UserTeacher extends  BaseModel
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
         }
+        if ($this->department_id)
+        {
+            $this->_query->andFilterWhere(['department_id'=> $this->department_id]);
+        }
+        if (is_array($this->user_id))
+        {
+            $this->_query->andFilterWhere(['user_id'=> $this->user_id]);
+        }
         if(count($this->select)>0)
         {
             $this->_query->select($this->select);
@@ -142,7 +150,7 @@ class UserTeacher extends  BaseModel
      * 列表查询
      */
     public function getList(){
-        $this->scenario = self::SCENARIO_SEARCH;
+        $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
             $total = $this->_query->count();

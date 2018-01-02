@@ -1,20 +1,20 @@
 <?php
 namespace backend\controllers\api;
 
-use common\models\UserTeacher;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
 use yii\web\Response;
 use common\models\Department;
 use common\models\Major;
-use common\models\Team;
+use common\models\Course;
+use common\models\UserTeacher;
 use common\models\UserStudent;
 
 /**
  * Site controller
  */
-class TeamController extends Controller
+class CourseController extends Controller
 {
 
     public function init()
@@ -41,15 +41,14 @@ class TeamController extends Controller
     }
     public function actionList()
     {
-        $team = new Team();
-        $team->scenario = Team::SCENARIO_LIST;
-        $team->setAttributes(Yii::$app->request->post());
-        $team->expand = ['user' , 'major' , 'department'];
-        list($total, $result) = $team->getList();
+        $course = new Course();
+        $course->scenario = Course::SCENARIO_LIST;
+        $course->setAttributes(Yii::$app->request->post());
+        $course->expand = ['user' , 'major' , 'department','classRoom'];
+        list($total, $result) = $course->getList();
         if($result){
             foreach($result as &$value){
-                $value['people'] = UserStudent::find()->where(['team_id'=>$value['id']])->count();
-                $value['honor'] = json_decode($value['honor']);
+                $value['people'] = 0;//UserStudent::find()->where(['team_id'=>$value['id']])->count();
             }
         }
         return ['data'=>$result , 'total' => $total];
@@ -85,16 +84,16 @@ class TeamController extends Controller
     }
     public function actionEdit()
     {
-        $team = new Team();
-        $team->scenario = Team::SCENARIO_EDIT;
-        $team->setAttributes(Yii::$app->request->post());
-        return $team->getEdit();
+        $course = new Course();
+        $course->scenario = Course::SCENARIO_EDIT;
+        $course->setAttributes(Yii::$app->request->post());
+        return $course->getEdit();
     }
     public function actionAdd()
     {
-        $team = new Team();
-        $team->scenario = Team::SCENARIO_ADD;
-        $team->setAttributes(Yii::$app->request->post());
-        return $team->getAdd();
+        $course = new Course();
+        $course->scenario = Course::SCENARIO_ADD;
+        $course->setAttributes(Yii::$app->request->post());
+        return $course->getAdd();
     }
 }
