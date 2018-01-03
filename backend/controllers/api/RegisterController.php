@@ -1,7 +1,6 @@
 <?php
 namespace backend\controllers\api;
 
-use common\models\Register;
 use Yii;
 use yii\web\Controller;
 use common\models\User;
@@ -10,11 +9,12 @@ use common\models\Major;
 use common\models\Course;
 use common\models\UserTeacher;
 use common\models\ClassRoom;
+use common\models\Register;
 
 /**
  * Site controller
  */
-class CourseController extends Controller
+class RegisterController extends Controller
 {
 
     public function init()
@@ -39,27 +39,20 @@ class CourseController extends Controller
         $course = new Course();
         $course->order_by = ['id' => 2];
         $course = $course->getOne();
-
-        $classRoom = new ClassRoom();
-        $classRoom->per_page = '';
-        list($total , $classRoom) = $classRoom->getList();
         return[
-            'major' => $major,
             'user' => $user,
-            'number' => $course['couNo'],
-            'classRoom' => $classRoom,
         ];
     }
     public function actionList()
     {
-        $course = new Course();
-        $course->scenario = Course::SCENARIO_LIST;
-        $course->setAttributes(Yii::$app->request->post());
-        $course->expand = ['user' , 'major' , 'department','classRoom'];
-        list($total, $result) = $course->getList();
+        $register = new Register();
+        $register->scenario = Register::SCENARIO_LIST;
+        $register->setAttributes(Yii::$app->request->post());
+        $register->expand = ['user' , 'course'];
+        list($total, $result) = $register->getList();
         if($result){
             foreach($result as &$value){
-                $value['people'] = Register::find()->where(['id'=>$course->id])->count();
+                $value['people'] = 0;
                 $value['class_time'] = json_decode($value['class_time']);
             }
         }
@@ -89,19 +82,16 @@ class CourseController extends Controller
     }
     public function actionEdit()
     {
-        $course = new Course();
-        $course->scenario = Course::SCENARIO_EDIT;
-        $course->setAttributes(Yii::$app->request->post());
-        return $course->getEdit();
+        $register = new Course();
+        $register->scenario = Course::SCENARIO_EDIT;
+        $register->setAttributes(Yii::$app->request->post());
+        return $register->getEdit();
     }
     public function actionAdd()
     {
-        $course = new Course();
-        $course->scenario = Course::SCENARIO_ADD;
-        $course->setAttributes(Yii::$app->request->post());
-        $course->class_time = json_encode($course->class_time);
-        $course->end_time = strtotime($course->end_time);
-        $course->start_time = strtotime($course->start_time);
-        return $course->getAdd();
+        $register = new Course();
+        $register->scenario = Course::SCENARIO_ADD;
+        $register->setAttributes(Yii::$app->request->post());
+        return $register->getAdd();
     }
 }

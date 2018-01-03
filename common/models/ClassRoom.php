@@ -94,7 +94,7 @@ class ClassRoom extends  BaseModel
             $this->_query->andFilterWhere(['crRoomNo' => $this->crRoomNo]);
         }
         if($this->crNumberOfSeat){
-            $this->_query->andFilterWhere(['crNumberOfSeat' => $this->crNumberOfSeat]);
+            $this->_query->andFilterWhere(['>=' , 'crNumberOfSeat' , $this->crNumberOfSeat]);
         }
         if($this->user_id){
             $this->_query->andFilterWhere(['user_id' => $this->user_id]);

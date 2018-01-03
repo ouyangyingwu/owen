@@ -5,11 +5,11 @@
             <div class="portlet-title clearfix border-b">
                 <div class="caption font-red-sunglo">
                     <i class=" icon-asterisk"></i>
-                    <span class="caption-subject font-dark sbold"> Add Team </span>
+                    <span class="caption-subject font-dark sbold"> Add Course </span>
                 </div>
             </div>
-            <div class="portlet-body form" id="form-add-team">
-                <form id="add-team" method="post" action="" >
+            <div class="portlet-body form" id="form-add-course">
+                <form id="add-course" method="post" action="" >
                     <div class="form-horizontal">
                         <div class="form-body">
                             <div class="form-group ">
@@ -35,7 +35,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-md-4 control-label">
-                                    辅导员:
+                                    讲师:
                                     <span class="required"> * </span>
                                 </label>
                                 <div class="col-md-5">
@@ -44,29 +44,186 @@
                             </div>
                             <div class="form-group ">
                                 <label class="col-md-4 control-label">
-                                    班级名称:
+                                    课程编号:
                                     <span class="required"> * </span>
                                 </label>
                                 <div class="col-md-5">
-                                    <input type="text" class="form-control" name="teamName" disabled>
+                                    <input type="text" class="form-control" name="couNo" disabled>
                                 </div>
                             </div>
                             <div class="form-group ">
                                 <label class="col-md-4 control-label">
-                                    届:
+                                    课程名称:
                                     <span class="required"> * </span>
                                 </label>
                                 <div class="col-md-5">
-                                    <input type="text" class="form-control" name="period" disabled>
+                                    <input type="text" class="form-control" name="courseName">
                                 </div>
                             </div>
                             <div class="form-group ">
                                 <label class="col-md-4 control-label">
-                                    班级预定人数:
+                                    课程类型:
                                     <span class="required"> * </span>
                                 </label>
                                 <div class="col-md-5">
-                                    <input type="number" class="form-control" name="number_limit">
+                                    <select class="form-control" name="type">
+                                        <option value="0">选修</option>
+                                        <option value="1">必修</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    课程学分:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" name="credit">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    听课人数:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="number" class="form-control" name="number">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    开课时间:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control scheduleTime" name="start_time">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    结课时间:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control scheduleTime" name="end_time">
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    上课时间:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5 class_time">
+                                    <div class="Mon">
+                                        <label class="checkbox-inline" style="padding-left: 0">
+                                            星期一:
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="08:00-09:40"> 08:00-09:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="10:00-11:40"> 10:00-11:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="14:00-15:40"> 14:00-15:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="16:00-17:40"> 16:00-17:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="19:00-20:40"> 19:00-20:40
+                                        </label>
+                                    </div>
+                                    <div class="Tue">
+                                        <label class="checkbox-inline" style="padding-left: 0">
+                                            星期二:
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="08:00-09:40"> 08:00-09:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="10:00-11:40"> 10:00-11:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="14:00-15:40"> 14:00-15:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="16:00-17:40"> 16:00-17:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="19:00-20:40"> 19:00-20:40
+                                        </label>
+                                    </div>
+                                    <div class="Wed">
+                                        <label class="checkbox-inline" style="padding-left: 0">
+                                            星期三:
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="08:00-09:40"> 08:00-09:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="10:00-11:40"> 10:00-11:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="14:00-15:40"> 14:00-15:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="16:00-17:40"> 16:00-17:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="19:00-20:40"> 19:00-20:40
+                                        </label>
+                                    </div>
+                                    <div class="Thu">
+                                        <label class="checkbox-inline" style="padding-left: 0">
+                                            星期四:
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="08:00-09:40"> 08:00-09:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="10:00-11:40"> 10:00-11:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="14:00-15:40"> 14:00-15:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="16:00-17:40"> 16:00-17:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="19:00-20:40"> 19:00-20:40
+                                        </label>
+                                    </div>
+                                    <div class="Fri">
+                                        <label class="checkbox-inline" style="padding-left: 0">
+                                            星期五:
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="08:00-09:40"> 08:00-09:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="10:00-11:40"> 10:00-11:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="14:00-15:40"> 14:00-15:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="16:00-17:40"> 16:00-17:40
+                                        </label>
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" value="19:00-20:40"> 19:00-20:40
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="col-md-4 control-label">
+                                    上课地址:
+                                    <span class="required"> * </span>
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control" name="classroom_id">
+                                    </select>
                                 </div>
                             </div>
                         </div>

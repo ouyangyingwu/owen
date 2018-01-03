@@ -3,7 +3,7 @@
  */
 $(function(){
     var token = $('meta[name=csrf-token]').attr('content');
-    var department=[],major,date = new Date();
+    var department=[] , classRoomList=[] , major,date = new Date();
 
     (function (){
         $.ajax({
@@ -13,15 +13,6 @@ $(function(){
             type:'post',
             success:function(data){
                 var departmentList = data.data;
-                /*if(department){
-                    var html = '';
-                    html += '<option value="">请选择所属的系</option>';
-                    for(var i= 0,len=department.length ; i<len ; i++ ){
-                        html += '<option value="'+department[i]['id']+'">'+department[i]['depName']+'</option>';
-                    }
-                    $(".form-control[name='department_id']").append(html);
-                    $(".form-control[name='period']").val(date.getFullYear());
-                }*/
                 for (var i=0,len=departmentList.length ; i<len ; i++){
                     department.push({id:departmentList[i]['id'] , text:departmentList[i]['depName']});
                 }
@@ -33,36 +24,26 @@ $(function(){
                 if($(".form-control[name='department_id']").val()){
                     placeData($(".form-control[name='department_id']").val());
                 }
+
             }
         });
     })();
     $(".form-control[name='department_id']").change(function(){
         placeData($(this).val());
     });
-    $(".form-control[name='major_id']").change(function(){
-        var postData = {}, major_id = $(this).val();
-        postData['_csrf'] = token;
-        postData['major_id'] = major_id;
-        postData['period'] = date.getFullYear();
-        if(major_id){
-            $.ajax({
-                url: 'api/team/list',
-                data: postData,
-                type: 'post',
-                dataType: 'json',
-                success:function(data){
-                    var nuber = data.total ? parseInt(data.total)+1 : 1;
-                    var majorName ;
-                    for(var i= 0,len=major.length ; i<len ; i++){
-                        if(major[i]['id'] == major_id){
-                            majorName = major[i]['majorName']
-                        }
-                    }
-                    var teamName = majorName + CommonTool.NumberToChinese(nuber) +'班';
-                    $(".form-control[name='teamName']").val(teamName);
-                    $(".form-control[name='period']").val((date.getMonth()+1) < 10 ? date.getFullYear() : date.getFullYear()+1);
+    $(".form-control[name='number']").change(function(){
+        if(classRoomList){
+            var classRoom = [];
+            for (var i=0,len=classRoomList.length ; i<len ; i++){
+                if(parseInt(classRoomList[i]['crNumberOfSeat']) >= $(".form-control[name='number']").val()){
+                    classRoom.push({id:classRoomList[i]['id'] , text:classRoomList[i]['crBuildingName']+classRoomList[i]['crRoomNo']});
                 }
-            })
+            }
+            $(".form-control[name='classroom_id']").select2({
+                data: classRoom,
+                placeholder:'请选择上课地点',
+                allowClear:true
+            });
         }
     });
 
@@ -71,12 +52,17 @@ $(function(){
         postData['_csrf'] = token;
         postData['department_id'] = department_id;
         $.ajax({
-            url: 'api/team/data',
+            url: 'api/course/data',
             data: postData,
             type: 'post',
             dataType: 'json',
             success:function(data){
-                var teacher=data.user; major=data.major;
+                var teacher=data.user; major=data.major ; classRoomList=data.classRoom;
+                var couNo , date=new Date(), numbe = data.number ? (data.number.substr(1 , 4)==date.getFullYear()?parseInt(data.number.substr(5 , 4))+1:'1') : '1';
+                if(String(numbe).length == 1) numbe = '000'+numbe;
+                if(String(numbe).length == 2) numbe = '00'+numbe;
+                if(String(numbe).length == 3) numbe = '0'+numbe;
+                $(".form-control[name='couNo']").val('C'+ date.getFullYear() + numbe);
                 if(major){
                     var html = '';
                     html += '<option value="">请选择所属的专业</option>';
@@ -105,15 +91,35 @@ $(function(){
         })
     }
 
+    //选择时间
+    var preset = 'date';
+    var options = {
+        preset : preset,
+        minDate: new Date(new Date().setYear(new Date().getFullYear() - 5)),
+        maxDate: new Date(new Date().setYear(new Date().getFullYear() + 5)),
+        theme: "android-ics light",
+        mode: "scroller",
+        dateFormat: 'yyyy-mm-dd',
+        display: "modal"
+    };
+    $('.scheduleTime').val("").scroller("destroy");
+    $('.scheduleTime').scroller(options);
+
     //init validate
     var validateTag = false;
     var validateRules = {
         "department_id": {required: true},
         "major_id": {required: true},
-        "number_limit": {required: true , max:40 , min:10},
+        "user_id": {required: true},
+        "courseName": {required: true},
+        "credit": {required: true , max:10 , min:1},
+        "number": {required: true , max:240 , min:10},
+        "start_time": {required: true},
+        "end_time": {required: true},
+        "classroom_id": {required: true}
     };
     var validateMessages = {};
-    $('#add-team').validate({
+    $('#add-course').validate({
         rules:validateRules,
         messages: validateMessages,
         errorClass: "text-red",
@@ -121,13 +127,25 @@ $(function(){
         errorElement:'span',
         focusCleanup:true,
         submitHandler: function() {
-            var postData = {};
+            var postData = {} , class_time={};
             postData['_csrf'] = token;
             $(".form-control").each(function(){
                 postData[$(this).attr('name')] = $(this).val();
             });
+            $('.class_time div').each(function(){
+                var time = {},i=0;
+                $(this).find('input').each(function(){
+                    if($(this).is(':checked')){
+                        time[i] = $(this).val();
+                        i++
+                    }
+                });
+                class_time[$(this).attr('class')] = time;
+            });
+            postData['class_time'] = class_time;
+            //console.log(postData);return;
             $.ajax({
-                url: "/api/team/add",
+                url: "/api/course/add",
                 data: postData,
                 dataType: 'json',
                 type: 'POST',

@@ -8,27 +8,20 @@ use common\exception\ModelException;
  * This is the model class for table "course".
  *
  * @property integer $id
- * @property string $couNo
- * @property string $courseName
- * @property integer $credit
- * @property string $class_time
- * @property integer $start_time
- * @property integer $end_time
  * @property integer $user_id
- * @property integer $department_id
- * @property integer $major_id
- * @property integer $classroom_id
- * @property integer $number
- * @property integer $type
+ * @property integer $course_id
+ * @property integer $score
+ * @property integer $lack_class
+ * @property integer $be_late
  */
-class Course extends  BaseModel
+class Register extends  BaseModel
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%course}}';
+        return '{{%register}}';
     }
 
     public $page = 1;
@@ -84,21 +77,13 @@ class Course extends  BaseModel
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
         }
-        if ($this->couNo)
+        if ($this->course_id)
         {
-            $this->_query->andFilterWhere(['couNo' => $this->couNo]);
+            $this->_query->andFilterWhere(['course_id' => $this->course_id]);
         }
-        if ($this->courseName)
+        if ($this->user_id)
         {
-            $this->_query->andFilterWhere(['courseName' => $this->courseName]);
-        }
-        if ($this->type)
-        {
-            $this->_query->andFilterWhere(['type' => $this->type]);
-        }
-        if ($this->major_id)
-        {
-            $this->_query->andFilterWhere(['major_id' => $this->major_id]);
+            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
         }
         if(count($this->select)>0)
         {
@@ -115,17 +100,9 @@ class Course extends  BaseModel
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
     }
-    public function getMajor()
+    public function getCourse()
     {
-        return $this->hasOne(Major::className(),['id'=>'major_id']);
-    }
-    public function getDepartment()
-    {
-        return $this->hasOne(Department::className(),['id'=>'department_id']);
-    }
-    public function getClassRoom()
-    {
-        return $this->hasOne(ClassRoom::className(),['id'=>'classroom_id']);
+        return $this->hasOne(Course::className(),['id'=>'course_id']);
     }
     /**
      * add expand query
@@ -142,26 +119,13 @@ class Course extends  BaseModel
                     }
                 ]);
             }
-            if(in_array('major' , $this->expand)){
-                $this->_query->with([
-                    'major' => function($query) {
+            if(in_array('course' , $this->expand)){
+                $this->_query->with('course');
+                /*$this->_query->with([
+                    'course' => function($query) {
                         $query->select(['id', 'majorNo','majorName']);
                     }
-                ]);
-            }
-            if(in_array('department' , $this->expand)){
-                $this->_query->with([
-                    'department' => function($query) {
-                        $query->select(['id', 'depNo','depName']);
-                    }
-                ]);
-            }
-            if(in_array('classRoom' , $this->expand)){
-                $this->_query->with([
-                    'classRoom' => function($query) {
-                        $query->select(['id', 'crBuildingName','crRoomNo','crNo']);
-                    }
-                ]);
+                ]);*/
             }
         }
     }
@@ -228,12 +192,12 @@ class Course extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $course = new Course();
-            $course->scenario = self::SCENARIO_ADD;
-            $course->setAttributes($this->safeAttributesData());
-            if($course->save())
+            $register = new Register();
+            $register->scenario = self::SCENARIO_ADD;
+            $register->setAttributes($this->safeAttributesData());
+            if($register->save())
             {
-                return $course;
+                return $register;
             }
             return null;
         } else {
@@ -248,26 +212,12 @@ class Course extends  BaseModel
     {
         if($this->validate())
         {
-            $course = Course::find()->andFilterWhere(['id' => $this->id])->one();
-            if($course)
+            $register = Register::find()->andFilterWhere(['id' => $this->id])->one();
+            if($register)
             {
-                $course->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
-                $course->setAttribute($this->edit_name, $this->edit_value);
-                if($this->edit_name == 'department_id'){
-                    $course->major_id = 0;
-                    $course->team_id = 0;
-                }elseif($this->edit_name == 'major_id'){
-                    $course->team_id = 0;
-                }elseif($this->edit_name == 'team_id'){
-                    $user_number = self::findAll(['team_id' => $this->edit_value]);
-                    $number_limit = Team::findOne(['id'=>$this->edit_value]);
-                    if(count($user_number) >= $number_limit['number_limit']){
-                        $errorStr = "该班级人数已满！！！";
-                        throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
-                    }
-                }
-                if($course->save())
+                $register->scenario = self::SCENARIO_EDIT;
+                $register->setAttribute($this->edit_name, $this->edit_value);
+                if($register->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }
