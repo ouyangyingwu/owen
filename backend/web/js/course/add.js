@@ -105,6 +105,21 @@ $(function(){
     $('.scheduleTime').val("").scroller("destroy");
     $('.scheduleTime').scroller(options);
 
+    $('.class_time input[type=checkbox]').click(function(){
+        $("input[type=checkbox]").attr('disabled', true);
+        $('.class_time div').each(function(){
+           // $(this).find('input').attr('disabled', true);
+            if ($(this).find("input[type='checkbox']:checked").length >= 2) {
+                $(this).find("input[type='checkbox']:checked").attr('disabled', false);
+            } else {
+                $(this).find('input').attr('disabled', false);
+            }
+        });
+        if ($("input[type=checkbox]:checked").length >= 7) {
+            $("input[type=checkbox]").not(":checked").attr('disabled', true);
+        }
+    });
+
     //init validate
     var validateTag = false;
     var validateRules = {
@@ -143,7 +158,6 @@ $(function(){
                 class_time[$(this).attr('class')] = time;
             });
             postData['class_time'] = class_time;
-            //console.log(postData);return;
             $.ajax({
                 url: "/api/course/add",
                 data: postData,

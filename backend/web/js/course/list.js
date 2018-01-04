@@ -144,7 +144,7 @@ $(function(){
             if(editSource){options["source"] = editSource;}
             displayValue = intTostr(displayValue , name);
             if(!displayValue){displayValue="Empty";}
-            $(this).text(displayValue).editable('destroy');
+            $(this).empty().append(displayValue).editable('destroy');
             $(this).editable(options);
         });
     }
@@ -165,7 +165,22 @@ $(function(){
         if(type == 'classroom_id'){
             return htmlData.classRoom.crBuildingName+htmlData.classRoom.crRoomNo;
         }
-        if(type == 'end_time' || type == 'start_time') {return CommonTool.formatTime(value , 'Y年m月d日');}
+        if(type == 'end_time' || type == 'start_time') {
+            return CommonTool.formatTime(value , 'Y年m月d日');
+        }
+        if(type == 'class_time') {
+            var html = '';
+            for( var key in value ){
+                var time = '';
+                for(var j= 0,len=value[key].length ; j<len ; j++){
+                    if(len > 0){
+                        time += '<span style="display: inline-block;margin-right: 10px;">'+value[key][j]+'</span>';
+                    }
+                }
+                html += '<span><b style="width:40px;display: inline-block;text-align: right;margin-right: 10px;">'+key+':</b>'+time+'</span><br>';
+            }
+            return html;
+        }
         return value;
     }
 
