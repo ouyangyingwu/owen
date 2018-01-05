@@ -91,6 +91,9 @@ $(function(){
     };
     //修改、详情
     function initEditForm(data){
+        $('[data-name=class_time]').show();
+        $('.class_time').hide();
+
         $.fn.editable.defaults.mode = 'inline';
         $('#course-detail').find("[name='form-edit']").each(function(){
             var name = $(this).attr("data-name");
@@ -183,6 +186,74 @@ $(function(){
         }
         return value;
     }
+    //对上课时间进行调整
+    $('[data-name=class_time]').click(function(){
+        $(this).hide();
+        $('.class_time').show();
+        //修改前的上课时间选中
+        $('.class_time div').each(function(){
+            var time = $(this).attr('class');
+            $(this).find("input[type='checkbox']").each(function(){
+               if($.inArray($(this).val() , htmlData['class_time'][time]) >= 0){
+                   $(this).attr('checked' , true);
+               }
+            });
+        });
+        //限制每周上课的次数
+        duration(htmlData.type);
+    });
+    $('.class_time_submit').click(function(){
+        var postData = {} , class_time = {};
+        $('.class_time div').each(function(){
+            var time = {},i=0;
+            $(this).find('input').each(function(){
+                if($(this).is(':checked')){
+                    time[i] = $(this).val();
+                    i++
+                }
+            });
+            class_time[$(this).attr('class')] = time;
+        });
+        postData['edit_value'] = class_time;
+        postData['edit_name'] = 'class_time';
+        postData['_csrf'] = token;
+        postData['id'] = htmlData.id;
+        $.ajax({
+            url: 'api/course/edit',
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                htmlData['class_time'] = data['class_time'];
+                initEditForm(htmlData);
+            }
+        });
+        $('[data-name=class_time]').show();
+        $('.class_time').hide();
+    });
+    $('.class_time_hide').click(function(){
+        $('[data-name=class_time]').show();
+        $('.class_time').hide();
+    });
+
+    $('.class_time input[type=checkbox]').click(function(){
+        duration(htmlData.type);
+    });
+    //限制上课次数必修课每周最多7节，选修课每周最多2节
+    function duration(type){
+        var max = type == 1 ? 7 : 2;
+        $("input[type=checkbox]").attr('disabled', true);
+        $('.class_time div').each(function(){
+            if ($(this).find("input[type='checkbox']:checked").length >= 2) {
+                $(this).find("input[type='checkbox']:checked").attr('disabled', false);
+            } else {
+                $(this).find('input').attr('disabled', false);
+            }
+        });
+        if ($(".class_time input[type=checkbox]:checked").length >= max) {
+            $(".class_time input[type=checkbox]").not(":checked").attr('disabled', true);
+        }
+    }
 
     resetModel = function (model) {
         switch (model){
@@ -241,7 +312,7 @@ $(function(){
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
                     if(condition['id'] !== oldCondition['id'] || condition['couNo '] !== oldCondition['couNo '] || condition['courseName'] !== oldCondition['courseName']
-                        || condition['type '] !== oldCondition['type '] || condition['major_id'] !== oldCondition['major_id']){
+                        || condition['type'] !== oldCondition['type'] || condition['major_id'] !== oldCondition['major_id']){
                         number_pages = true;
                         oldCondition = condition;
                     }

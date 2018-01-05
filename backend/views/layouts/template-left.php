@@ -11,7 +11,12 @@
 <div class="sidebar-collapse">
     <ul class="nav" id="main-menu">
         <li>
-            <a href="javascript:void(0)" class="active-menu"><i class="icon-dashboard"></i> Dashboard</a>
+            <a href="javascript:void(0)" class="active-menu"><i class="icon-dashboard"></i> Dashboard <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/dashboard_toDoList.html" class="location-file"><i class="icon-cogs"></i>Concierge Dashboard</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="javascript:void(0)"><i class="icon-user"></i> User <span class="icon-angle-right arrow"></span></a>

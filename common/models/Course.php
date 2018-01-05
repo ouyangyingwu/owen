@@ -252,23 +252,11 @@ class Course extends  BaseModel
             if($course)
             {
                 $course->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
+                if($this->edit_name == 'class_time')$this->edit_value = json_encode($this->edit_value);
                 $course->setAttribute($this->edit_name, $this->edit_value);
-                if($this->edit_name == 'department_id'){
-                    $course->major_id = 0;
-                    $course->team_id = 0;
-                }elseif($this->edit_name == 'major_id'){
-                    $course->team_id = 0;
-                }elseif($this->edit_name == 'team_id'){
-                    $user_number = self::findAll(['team_id' => $this->edit_value]);
-                    $number_limit = Team::findOne(['id'=>$this->edit_value]);
-                    if(count($user_number) >= $number_limit['number_limit']){
-                        $errorStr = "该班级人数已满！！！";
-                        throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
-                    }
-                }
                 if($course->save())
                 {
+                    if($this->edit_name == 'class_time')$this->edit_value = json_decode($this->edit_value);
                     return [$this->edit_name => $this->edit_value];
                 }
             }
