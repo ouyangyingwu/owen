@@ -1,9 +1,9 @@
-﻿<script src="/assets/summaryGraph/morris/jquery.metisMenu.js"></script>
+﻿<!--轻量级的绘制图表js库（morris库文件，raphael来生成各种时序图）-->
 <script src="/assets/summaryGraph/morris/morris.js"></script>
 <script src="/assets/summaryGraph/morris/raphael-2.1.0.min.js"></script>
 <!--一款新型的饼图数据统计Jquery插件-->
 <script src="/assets/summaryGraph/easypiechart/easypiechart.js"></script>
-<script src="/assets/summaryGraph/Lightweight-Chart/jquery.chart.js"></script>
+
 <div class="row">
     <div class="col-md-12">
         <h1 class="page-header">
@@ -17,11 +17,116 @@
     </div>
 </div>
 
+<div class="portlet-body">
+    <div class="row">
+        <div class="col-md-3 col-sm-3">
+            <div class="goals">
+                <div class="goals-title"># of Users Served</div>
+                <div class="col-md-12 goals-content">
+                    <div class="col-md-4 paddingr-0">
+                        <span ng-bind="serviceInfo.complete_people ? serviceInfo.complete_people : 0"></span></br>
+                        <small>Current</small>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="goals-vertical-line"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <span ng-bind="serviceInfo.locationInfo && serviceInfo.locationInfo.people ? serviceInfo.locationInfo.people : 0"></span></br>
+                        <small>Goal</small>
+                    </div>
+                </div>
+                <div class="col-md-12 progress-info margint-10">
+                    <div class="progress">
+                                <span style="width: 50%;" class="progress-bar">
+                                    <span class="sr-only"></span>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-3">
+            <div class="goals">
+                <div class="goals-title"># of Completed Activities</div>
+                <div class="col-md-12 goals-content">
+                    <div class="col-md-4 paddingr-0">
+                        <span>0</span></br>
+                        <small>Current</small>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="goals-vertical-line"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <span>0</span></br>
+                        <small>Goal</small>
+                    </div>
+                </div>
+                <div class="col-md-12 progress-info margint-10">
+                    <div class="progress">
+                                <span style="width:50%;" class="progress-bar progress-bar-yellow noShadow">
+                                    <span class="sr-only"></span>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-3">
+            <div class="goals">
+                <div class="goals-title">Hours Saved</div>
+                <div class="col-md-12 goals-content">
+                    <div class="col-md-4 paddingr-0">
+                        <span ng-bind="timeSavedData.current ? timeSavedData.current : 0"></span></br>
+                        <small>Current</small>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="goals-vertical-line"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <span ng-bind="serviceInfo.locationInfo && serviceInfo.locationInfo.hours_saved ? serviceInfo.locationInfo.hours_saved : 0"></span></br>
+                        <small>Goal</small>
+                    </div>
+                </div>
+                <div class="col-md-12 progress-info margint-10">
+                    <div class="progress">
+                                <span style="width: {{serviceInfo.locationInfo ? timeSavedData.current*100/serviceInfo.locationInfo.hours_saved : 0}}%;" class="progress-bar progress-bar-yellow noShadow">
+                                    <span class="sr-only"></span>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-3">
+            <div class="goals">
+                <div class="goals-title">Revenue</div>
+                <div class="col-md-12 goals-content">
+                    <div class="col-md-6 paddingr-0">
+                        <a><span ng-click="revenue()" ng-bind="serviceInfo.revenue ? serviceInfo.revenue : 0 | currency"></span></a><br>
+                        <samll style="font-size:10px">Current</samll>
+                    </div>
+                    <div class="col-md-1">
+                        <span class="goals-vertical-line"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <span ng-bind="serviceInfo.locationInfo && serviceInfo.locationInfo.revenue ? serviceInfo.locationInfo.revenue : '$0'"></span></br>
+                        <small>Goal</small>
+                    </div>
+                </div>
+                <div class="col-md-12 progress-info margint-10">
+                    <div class="progress">
+                                <span style="width: {{serviceInfo.locationInfo ? serviceInfo.revenue*100/serviceInfo.locationInfo.revenue : 0}}%;" class="progress-bar progress-bar-yellow noShadow">
+                                    <span class="sr-only"></span>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="panel panel-primary text-center no-boder bg-color-green green">
             <div class="panel-left pull-left green">
-                <i class="fa fa-eye fa-5x"></i>
+                <i class="icon-eye-open fa-5x"></i>
 
             </div>
             <div class="panel-right">
@@ -33,7 +138,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="panel panel-primary text-center no-boder bg-color-blue">
             <div class="panel-left pull-left blue">
-                <i class="fa fa-shopping-cart fa-5x"></i>
+                <i class="icon-shopping-cart fa-5x"></i>
             </div>
 
             <div class="panel-right">
@@ -46,7 +151,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="panel panel-primary text-center no-boder bg-color-red">
             <div class="panel-left pull-left red">
-                <i class="fa fa fa-comments fa-5x"></i>
+                <i class="icon-comments fa-5x"></i>
 
             </div>
             <div class="panel-right">
@@ -59,7 +164,7 @@
     <div class="col-md-3 col-sm-12 col-xs-12">
         <div class="panel panel-primary text-center no-boder bg-color-brown">
             <div class="panel-left pull-left brown">
-                <i class="fa fa-users fa-5x"></i>
+                <i class="icon-group fa-5x"></i>
 
             </div>
             <div class="panel-right">
@@ -157,12 +262,6 @@
         </div>
     </div>
 
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-
-    </div>
 </div>
 
 <div class="row">
@@ -273,6 +372,227 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<!--列表总览-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="portlet light padding0">
+            <div class="portlet-title marginb-0">
+                <div class="caption float-none">
+                    <span class="bold">列表总览</span>
+                </div>
+            </div>
+            <div class="portlet-body padding0 overView">
+                <div class="row">
+                    <div class="col-md-3 padingr-0">
+                        <div class="todolist" data-name="studentList">
+                            <div class="active">
+                                <p>0</p>
+                                <div>在校学生</div>
+                                <div class="arrow-down"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 padingRL-0">
+                        <div class="todolist" data-name="teacherList">
+                            <div class="">
+                                <p>0</p>
+                                <div>教职工列表</div>
+                                <div class="arrow-down"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 padingRL-0">
+                        <div class="todolist">
+                            <div class="">
+                                <p>0</p>
+                                <div>开设系列表</div>
+                                <div class="arrow-down"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 padingl-0">
+                        <div class="todolist">
+                            <div class="">
+                                <p>0</p>
+                                <div>杰出校友列表</div>
+                                <div class="arrow-down"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--列表细分-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="caption">
+            <span class="caption-subject bold uppercase">TO DO LIST</span>
+        </div>
+    </div>
+    <div class="">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="panel panel-primary text-center no-boder bg-color-green green">
+                <div class="panel-left pull-left green">
+                    <i class="icon-eye-open fa-5x"></i>
+
+                </div>
+                <div class="panel-right">
+                    <h3>8,457</h3>
+                    <strong> Daily Visits</strong>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="panel panel-primary text-center no-boder bg-color-blue">
+                <div class="panel-left pull-left blue">
+                    <i class="icon-shopping-cart fa-5x"></i>
+                </div>
+
+                <div class="panel-right">
+                    <h3>52,160 </h3>
+                    <strong> Sales</strong>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="panel panel-primary text-center no-boder bg-color-red">
+                <div class="panel-left pull-left red">
+                    <i class="icon-comments fa-5x"></i>
+
+                </div>
+                <div class="panel-right">
+                    <h3>15,823 </h3>
+                    <strong> Comments </strong>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="panel panel-primary text-center no-boder bg-color-brown">
+                <div class="panel-left pull-left brown">
+                    <i class="icon-group fa-5x"></i>
+
+                </div>
+                <div class="panel-right">
+                    <h3>36,752 </h3>
+                    <strong>No. of Visits</strong>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-list">
+    <!--学生列表-->
+    <div class="row hidee" id="studentList">
+        <div class="col-md-12 panel-body panel">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover" id="table-student-list">
+                    <thead>
+                    <tr class="heading">
+                        <th>ID #</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Sex</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div class="text-center">
+                <ul id="visible-pages" class="margin-0"></ul>
+            </div>
+        </div>
+    </div>
+    <!--教师列表-->
+    <div class="row hidee" id="teacherList">
+        <div class="col-md-12 panel-body panel">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover" id="table-teacher-list">
+                    <thead>
+                    <tr class="heading">
+                        <th>ID #</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Sex</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div class="text-center">
+                <ul id="visible-pages" class="margin-0"></ul>
+            </div>
+        </div>
+    </div>
+    <!--系列表-->
+    <div class="row hidee" id="departmentList">
+        <div class="col-md-12 panel-body panel">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover" id="table-teacher-list">
+                    <thead>
+                    <tr class="heading">
+                        <th>ID #</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Sex</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div class="text-center">
+                <ul id="visible-pages" class="margin-0"></ul>
+            </div>
+        </div>
+    </div>
+    <!--杰出校友列表-->
+    <div class="row hidee" id="alumnaList">
+        <div class="col-md-12 panel-body panel">
+            <div class="col-md-12">
+                <table class="table table-striped table-bordered table-hover" id="table-teacher-list">
+                    <thead>
+                    <tr class="heading">
+                        <th>ID #</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Sex</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div class="text-center">
+                <ul id="visible-pages" class="margin-0"></ul>
+            </div>
+        </div>
     </div>
 </div>
 

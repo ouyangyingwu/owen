@@ -145,24 +145,26 @@ border-radius: 0;
    DASHBOARD STYLES    
 ------------------------------------------------*/
 .page-header {
-padding-bottom: 9px;
-margin: 10px 0 20px;
-border-bottom: 1px solid transparent;
-text-align: left;}
+    padding-bottom: 9px;
+    margin: 10px 0 20px;
+    border-bottom: 1px solid transparent;
+    text-align: left;
+}
 .panel-left{  
-width: 100px;
-height: 100px;
-background: #32D088;
-border: 2px solid white;
-border-radius: 100%;
-overflow: hidden;
-
-margin: 12px;}
+    width: 100px;
+    height: 100px;
+    background: #32D088;
+    border: 2px solid white;
+    border-radius: 100%;
+    overflow: hidden;
+    margin: 12px;
+}
 .panel-left .fa-5x {
-font-size: 3em;
-color: rgba(255, 255, 255, 0.69);
-padding: 29px 0;
-margin-bottom:30px;
+    font-size: 3em;
+    color: rgba(255, 255, 255, 0.69);
+    padding: 29px 0;
+    margin-bottom:30px;
+    display: inline-block;
 }
 .panel-right{  
 height: 124px;
@@ -755,4 +757,48 @@ font-size: 19px;
 }
 .profile-content {
     overflow: hidden;
+}
+.float-none{
+    float: none;
+}
+.todolist {
+    height: 150px;
+    border: 1px solid #e4e4e4;
+    border-top: none;
+    background: #fff;
+    cursor: pointer;
+}
+.padding0 {
+    padding: 0px !important;
+}
+.todolist div {
+    font-size: 16px;
+    text-align: center;
+    color: #697882;
+}
+.todolist p {
+    text-align: center;
+    font-size: 50px;
+    color: #00B9D7;
+    padding: 35px 0 25px 0;
+}
+.todolist .active{
+    height: 150px;
+    background: #00B9D7;
+    color: #fff;
+}
+.todolist .active p{
+    color: #fff;
+}
+.todolist .active div{
+    color: #fff;
+}
+
+.todolist .active .arrow-down {
+    margin: 30px auto;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 18px solid #00B9D7;
 }

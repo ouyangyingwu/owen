@@ -23,8 +23,6 @@ class AppAsset extends AssetBundle
         'assets/mobile/mobiscroll.min.css',
         //select2
         'assets/select2/css/select2.min.css',
-        //轻量级测试图,折线图（点线相连）
-        '/assets/summaryGraph/Lightweight-Chart/cssCharts.css',
         //绘制图表库样式
         '/assets/summaryGraph/morris/morris-0.4.3.min.css',
         //公共样式
