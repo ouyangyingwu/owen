@@ -16,7 +16,7 @@ use common\exception\ModelException;
  * @property string $reward
  * @property string $punish
  * @property integer $create_time
- * @property integer $status
+ * @property integer $division_id
  */
 class UserTeacher extends  BaseModel
 {
@@ -57,7 +57,7 @@ class UserTeacher extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','teachNo','position','department_id'],
+            self::SCENARIO_LIST => ['id','user_id','teachNo','position','department_id','division_id','page','per_page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','teachNo','position','department_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -86,9 +86,21 @@ class UserTeacher extends  BaseModel
         {
             $this->_query->andFilterWhere(['department_id'=> $this->department_id]);
         }
-        if (is_array($this->user_id))
+        if ($this->user_id){
+            if (is_array($this->user_id))
+            {
+                $this->_query->andFilterWhere(['user_id'=> $this->user_id]);
+            }else{
+                $this->_query->andFilterWhere(['user_id'=> $this->user_id]);
+            }
+        }
+        if ($this->division_id)
         {
-            $this->_query->andFilterWhere(['user_id'=> $this->user_id]);
+            if (is_array($this->division_id)){
+                $this->_query->andFilterWhere(['in' , 'division_id' , $this->division_id]);
+            }else{
+                $this->_query->andFilterWhere(['division_id'=> $this->division_id]);
+            }
         }
         if(count($this->select)>0)
         {
@@ -116,7 +128,7 @@ class UserTeacher extends  BaseModel
                 //$this->_query->with('user');              //查询User的所有字段
                 $this->_query->with([
                     'user' => function($query) {
-                        $query->select(['id', 'username','email','phone']);
+                        $query->select(['id', 'username','email','phone','sex']);
                     }
                 ]);
             }

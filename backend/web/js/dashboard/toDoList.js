@@ -4,7 +4,7 @@
 $(function() {
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token , per_page:10},page = 1,stuStatua_old,stuStatua = 1,teaStatua = 1;
+    var params = {_csrf:token , per_page:10},page = 1,stuStatua_old,stuStatua = 1,teaStatua_old,teaStatua = 1;
     (function(){
         $.ajax({
             url: 'api/dashboard/todo',
@@ -34,6 +34,30 @@ $(function() {
                         if(data.teaStatus[dataName]){
                             $(this).find('.small').text(data.teaStatus[dataName]);
                         }
+                    });
+                }
+                if(data.course){
+                    $('.round .easypiechart').each(function(){
+                        var dataName = $(this).attr('data-name');
+                        if(data.course[dataName]){
+                            $(this).attr('data-percent',data.course[dataName]).children().children().text(data.course[dataName]);
+                        }
+                    });
+                    $('#teal').easyPieChart({
+                        scaleColor: false,
+                        barColor: '#1ebfae'
+                    });
+                    $('#orange').easyPieChart({
+                        scaleColor: false,
+                        barColor: '#ffb53e'
+                    });
+                    $('#red').easyPieChart({
+                        scaleColor: false,
+                        barColor: '#f9243f'
+                    });
+                    $('#blue').easyPieChart({
+                        scaleColor: false,
+                        barColor: '#30a5ff'
                     });
                 }
             }
@@ -172,26 +196,6 @@ $(function() {
                 lineColors:['gray','#24C2CE']
 
             });
-
-            $('#easypiechart-teal').easyPieChart({
-                scaleColor: false,
-                barColor: '#1ebfae'
-            });
-
-            $('#easypiechart-orange').easyPieChart({
-                scaleColor: false,
-                barColor: '#ffb53e'
-            });
-
-            $('#easypiechart-red').easyPieChart({
-                scaleColor: false,
-                barColor: '#f9243f'
-            });
-
-            $('#easypiechart-blue').easyPieChart({
-                scaleColor: false,
-                barColor: '#30a5ff'
-            });
         }
     };
     mainApp.initFunction();
@@ -261,7 +265,6 @@ $(function() {
         postData['status'] = stuStatua;
         postData['per_page'] = 5;
         postData['_csrf'] = token;
-        postData['type'] = 1;
         $.ajax({
             url:"/api/user/list-student",
             data:postData,
@@ -344,7 +347,7 @@ $(function() {
         postData['page'] = page;
         postData['per_page'] = 5;
         postData['_csrf'] = token;
-        postData['type'] = 2;
+        postData['division_id'] = teaStatua;
         $.ajax({
             url:"/api/user/list-teacher",
             data:postData,
@@ -362,17 +365,22 @@ $(function() {
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td>'+teacher[i]["id"]+'</td>';
-                        html +='<td>'+ teacher[i]['username'] +'</td>';
-                        html +='<td>'+ teacher[i]['email']+'</td>';
-                        html +='<td>'+ teacher[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['sex'] , 'sex') +'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['status'] , 'status') +'</td>';
+                        html +='<td>'+teacher[i]["teachNo"]+'</td>';
+                        html +='<td>'+ teacher[i]['user']['username'] +'</td>';
+                        html +='<td>'+ teacher[i]['user']['email']+'</td>';
+                        html +='<td>'+ teacher[i]['user']['phone']+'</td>';
+                        html +='<td>'+ intTostr(teacher[i]['user']['sex'] , 'sex') +'</td>';
+                        html +='<td>'+ teacher[i]['position']   +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
                     //分页代码
-
+                    var refresh = false;
+                    console.log(teaStatua_old != teaStatua);
+                    if(teaStatua_old != teaStatua){
+                        teaStatua_old = teaStatua;
+                        refresh = true;
+                    }
                     var per_page = 5;
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
@@ -383,7 +391,7 @@ $(function() {
                         //显示页码数
                         visiblePages: per_page,
                         //是否刷新页码
-                        page: false,
+                        page: refresh,
                         version: '1.1'
                     });
                 } else {

@@ -773,6 +773,9 @@ font-size: 19px;
 .paddingt-25{
     padding-top: 25px;
 }
+.paddingt-50{
+    padding-top: 50px;
+}
 .paddingb-25{
      padding-bottom: 25px;
 }
@@ -815,6 +818,9 @@ font-size: 19px;
 }
 .padding0 {
     padding: 0px !important;
+}
+.marginb-0{
+    margin-bottom: 0px !important;
 }
 .todolist div {
     font-size: 16px;

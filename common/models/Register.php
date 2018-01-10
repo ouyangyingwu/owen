@@ -8,7 +8,7 @@ use common\exception\ModelException;
  * This is the model class for table "course".
  *
  * @property integer $id
- * @property integer $user_id
+ * @property integer $student_id
  * @property integer $course_id
  * @property integer $score
  * @property integer $lack_class
@@ -31,6 +31,8 @@ class Register extends  BaseModel
     public $expand = [];
     public $edit_name;
     public $edit_value;
+    public $max_score;
+    public $min_score;
 
     private $_query;
 
@@ -52,7 +54,7 @@ class Register extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','major_id','type','couNo','courseName','per_page','page'],
+            self::SCENARIO_LIST => ['id','student_id','major_id','type','couNo','courseName','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','couNo','courseName','department_id','classroom_id','major_id','credit','number','start_time','end_time','class_time','type'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -81,9 +83,17 @@ class Register extends  BaseModel
         {
             $this->_query->andFilterWhere(['course_id' => $this->course_id]);
         }
-        if ($this->user_id)
+        if ($this->student_id)
         {
-            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
+            $this->_query->andFilterWhere(['student_id' => $this->student_id]);
+        }
+        if ($this->max_score)
+        {
+            $this->_query->andFilterWhere(['<' , 'score' , $this->max_score]);
+        }
+        if ($this->min_score)
+        {
+            $this->_query->andFilterWhere(['>=' , 'score' => $this->min_score]);
         }
         if(count($this->select)>0)
         {
@@ -96,9 +106,9 @@ class Register extends  BaseModel
      * 一对一用hasOne来执行连接
      * 一对多用hasMany
      */
-    public function getUser()
+    public function getStudent()
     {
-        return $this->hasOne(User::className(),['id'=>'user_id']);
+        return $this->hasOne(UserStudent::className(),['id'=>'student_id']);
     }
     public function getCourse()
     {
@@ -111,11 +121,21 @@ class Register extends  BaseModel
     private function addQueryExpand()
     {
         if (count($this->expand)>0){
-            if(in_array('user' , $this->expand)){
-                //$this->_query->with('user');              //查询User的所有字段
+            if(in_array('student' , $this->expand)){
+                $this->_query->with('student');
+            }
+            if(in_array('student.user' , $this->expand)){
+                /*$this->_query->with(['student.user'=>function($q){
+                    //只能对最后一个关联表的字段进行筛选
+                  $q->select(['id','username','phone','email','sex']);
+                }]);*/
                 $this->_query->with([
-                    'user' => function($query) {
-                        $query->select(['id', 'username','email','phone','birth','sex']);
+                    'student' => function($query){
+                        $query->select(['id','user_id','stuNo'])->with([
+                            'user'=>function($query){
+                                $query->select(['id','username','phone','email','sex']);
+                            }
+                        ]);
                     }
                 ]);
             }

@@ -3,12 +3,8 @@ namespace backend\controllers\api;
 
 use Yii;
 use yii\web\Controller;
-use common\models\User;
 use yii\web\Response;
-use common\models\Major;
-use common\models\Course;
 use common\models\UserTeacher;
-use common\models\ClassRoom;
 use common\models\Alumna;
 use common\models\Department;
 use common\models\Register;
@@ -42,53 +38,59 @@ class DashboardController extends Controller
         $overCount['departmentList'] = $depTotal;
         $overCount['alumnaList'] = $aiuTotal;
         $stuStatus = [];$teaStatus = [];
-        foreach($student as $value){
-            $stuStatus[$value['status']] = isset($stuStatus[$value['status']]) ? $stuStatus[$value['status']]+= 1 : 1;
+        $newStudent=[];
+        $newStudent[date('Y')] = 0;
+        $newStudent[date('Y')-1] = 0;
+        $newStudent[date('Y')-2] = 0;
+        $newStudent[date('Y')-3] = 0;
+        if($student){
+            foreach($student as $value){
+                $stuStatus[$value['status']] = isset($stuStatus[$value['status']]) ? $stuStatus[$value['status']]+= 1 : 1;
+                if(date('Y' , $value['create_time']) == date('Y')){
+                    $newStudent[date('Y')] = ++$newStudent[date('Y')];
+                }
+                if(date('Y' , $value['create_time']) == (date('Y')-1)){
+                    $newStudent[date('Y')-1] = ++$newStudent[date('Y')-1];
+                }
+                if(date('Y' , $value['create_time']) == (date('Y')-2)){
+                    $newStudent[date('Y')-2] = ++$newStudent[date('Y')-2];
+                }
+                if(date('Y' , $value['create_time']) == (date('Y')-3)){
+                    $newStudent[date('Y')-3] = ++$newStudent[date('Y')];
+                }
+            }
         }
-        foreach($teacher as $value){
-            $teaStatus[$value['division_id']] = isset($teaStatus[$value['division_id']]) ? $teaStatus[$value['division_id']]+= 1 : 1;
+        if($teacher){
+            foreach($teacher as $value){
+                $teaStatus[$value['division_id']] = isset($teaStatus[$value['division_id']]) ? $teaStatus[$value['division_id']]+= 1 : 1;
+            }
+        }
+        $register = new Register();
+        $register->setAttributes(Yii::$app->request->post());
+        $register->expand = ['student.user'];
+        list($registerCount , $register) = $register->getList();
+        $course = [];
+        if($register){
+            foreach($register as $value){
+                if($value['score']>=60) {
+                    $course['pass'] = isset($course['pass'])? $course['pass'] += 1 : 1 ;
+                }
+                if($value['score']>=85) {
+                    $course['super'] = isset($course['super'])? $course['super'] += 1 : 1 ;
+                }
+            }
+            $course['pass'] = round($course['pass']/$registerCount*100 , 2);
+            $course['super'] = round($course['super']/$registerCount*100 , 2);
+            $course['class'] = array_sum(array_column($register , 'class_rate'))/$registerCount;
+            $course['Attendance'] = 66;
         }
         return[
             'overCount' => $overCount,
             'stuStatus' => $stuStatus,
             'teaStatus' => $teaStatus,
+            'course' => $course,
+            'newStudent' => $newStudent,
         ];
     }
-    public function actionList()
-    {
-        $course = new Course();
-        $course->scenario = Course::SCENARIO_LIST;
-        $course->setAttributes(Yii::$app->request->post());
-        $course->expand = ['user' , 'major' , 'department','classRoom'];
-        list($total, $result) = $course->getList();
-        if($result){
-            foreach($result as &$value){
-                $value['people'] = Register::find()->where(['id'=>$course->id])->count();
-                $value['class_time'] = json_decode($value['class_time']);
-            }
-        }
-        return ['data'=>$result , 'total' => $total];
-    }
-    public function actionListData()
-    {
-        $user = new User();
-        $user->type = 2;
-        $user->expand = ['teacher'];
-        $user->per_page = '';
-        list($totle , $teacher) = $user->getList();
 
-        $major = new Major();
-        $major->per_page = '';
-        list($total, $major) = $major->getList();
-
-        $classRoom = new ClassRoom();
-        $classRoom->per_page = '';
-        $classRoom->crNumberOfSeat = Yii::$app->request->post('number');
-        list($total, $classRoom) = $classRoom->getList();
-        return[
-            'teacher' => $teacher,
-            'major' => $major,
-            'classRoom' => $classRoom
-        ];
-    }
 }
