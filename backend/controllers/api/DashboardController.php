@@ -17,7 +17,7 @@ use common\models\UserStudent;
 /**
  * Site controller
  */
-class Dashboard extends Controller
+class DashboardController extends Controller
 {
 
     public function init()
@@ -37,13 +37,21 @@ class Dashboard extends Controller
         $alumna = new Alumna();
         list($aiuTotal , $alumna) = $alumna->getList();
         $overCount = [];
-        $overCount[] = $stuTotal;
-        $overCount[] = $teaTotal;
-        $overCount[] = $depTotal;
-        $overCount[] = $aiuTotal;
+        $overCount['studentList'] = $stuTotal;
+        $overCount['teacherList'] = $teaTotal;
+        $overCount['departmentList'] = $depTotal;
+        $overCount['alumnaList'] = $aiuTotal;
+        $stuStatus = [];$teaStatus = [];
+        foreach($student as $value){
+            $stuStatus[$value['status']] = isset($stuStatus[$value['status']]) ? $stuStatus[$value['status']]+= 1 : 1;
+        }
+        foreach($teacher as $value){
+            $teaStatus[$value['division_id']] = isset($teaStatus[$value['division_id']]) ? $teaStatus[$value['division_id']]+= 1 : 1;
+        }
         return[
             'overCount' => $overCount,
-
+            'stuStatus' => $stuStatus,
+            'teaStatus' => $teaStatus,
         ];
     }
     public function actionList()

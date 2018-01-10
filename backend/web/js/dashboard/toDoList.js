@@ -4,7 +4,7 @@
 $(function() {
     var htmlData;
     var token = $('meta[name=csrf-token]').attr('content');
-    var params = {_csrf:token , per_page:10},page = 1;
+    var params = {_csrf:token , per_page:10},page = 1,stuStatua_old,stuStatua = 1,teaStatua = 1;
     (function(){
         $.ajax({
             url: 'api/dashboard/todo',
@@ -12,10 +12,30 @@ $(function() {
             type: 'post',
             dataType: 'json',
             success:function(data){
-                var i = 0;
-                $('.overView .todolist').each(function(){
-                    $(this).find('p').text(data.overCount[i]);
-                });
+                if(data.overCount){
+                    $('.overView .todolist').each(function(){
+                        var dataName = $(this).attr('data-name');
+                        if(data.overCount[dataName]){
+                            $(this).find('p').text(data.overCount[dataName]);
+                        }
+                    });
+                }
+                if(data.stuStatus){
+                    $('.stuStatus .gray').each(function(){
+                        var dataName = $(this).attr('data-name');
+                        if(data.stuStatus[dataName]){
+                            $(this).find('.small').text(data.stuStatus[dataName]);
+                        }
+                    });
+                }
+                if(data.teaStatus){
+                    $('.teaStatus .gray').each(function(){
+                        var dataName = $(this).attr('data-name');
+                        if(data.teaStatus[dataName]){
+                            $(this).find('.small').text(data.teaStatus[dataName]);
+                        }
+                    });
+                }
             }
         })
     })();
@@ -177,25 +197,32 @@ $(function() {
     mainApp.initFunction();
 
     //列表总览样式切换
+    if($('.overView .todolist .active')){
+        var dataName = $('.overView .todolist .active').parent().attr('data-name');
+        $('#'+dataName).show().siblings().hide();
+        eval(dataName + '()');
+    }
     $('.overView .todolist').click(function(){
         page = 1;
         $(this).children().addClass('active');
         $(this).parent().siblings().children().children().removeClass('active');
-        console.log($(this).attr('data-name'));
-        switch ($(this).attr('data-name')){
-            case 'studentList':
-                $('#studentList').show().siblings().hide();
-                StudentList();break;
-            case 'teacherList':
-                $('#teacherList').show().siblings().hide();
-                TeacherList();break;
-            case 'departmentList':
-                $('#departmentList').show().siblings().hide();
-                DepartmentList();break;
-            case 'alumnaList':
-                $('#alumnaList').show().siblings().hide();
-                AlumnaList();break;
-        }
+        var dataName = $(this).attr('data-name');
+        $('#'+dataName).show().siblings().hide();
+        eval(dataName + '()');
+    });
+    //学生的状态切换
+    $('.stuStatus .gray').click(function(){
+        $(this).addClass('this-status');
+        $(this).siblings().removeClass('this-status');
+        stuStatua = $(this).attr('data-name');
+        studentList();
+    });
+    //教师部门切换
+    $('.teaStatus .gray').click(function(){
+        $(this).addClass('this-status');
+        $(this).siblings().removeClass('this-status');
+        teaStatua = $(this).attr('data-name');
+        teacherList();
     });
 
     function intTostr(value , type){
@@ -212,75 +239,84 @@ $(function() {
         }
         if(type == 'status') {
             if (value == 1) return '在读';
-            if (value == 2) return '毕业';
-            if (value == 3) return '休学';
-            if (value == 4) return '退学';
-            if (value == 5) return '开除';
-            if (value == 6) return '考研';
-            if (value == 7) return '硕博';
+            if (value == 2) return '考研';
+            if (value == 3) return '硕博';
+            if (value == 4) return '休学';
+            if (value == 5) return '退学';
+            if (value == 6) return '开除';
             return '';
         }
     }
-    var createButtonList = function(row){
+    var createButtonList = function(row , type){
         var buttonList = [];
-        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-        buttonList.push("<a name=\"table-button-list\" class='user-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
+        if(type == 'student'){
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
+        }
         return buttonList;
     };
-    function StudentList(page){
+    function studentList(){
         var postData = {};
-        postData['page'] = page ? page : '';
+        postData['page'] = page;
+        postData['status'] = stuStatua;
         postData['per_page'] = 5;
         postData['_csrf'] = token;
         postData['type'] = 1;
         $.ajax({
-            url:"/api/user/list",
+            url:"/api/user/list-student",
             data:postData,
             dataType:'json',
             type:'POST',
             success:function(data){
                 var total = data.total,student = data.data,html = '';
+                var lastPage = total?1+(page-1)*5:0 , fastPage = page*5>parseInt(total)?parseInt(total):page*5 , overPage = total;
                 if(student){
                     total = total > 5 ? Math.ceil(total/5) : 1;
 
                     //数据列表
                     for (var i=0;i<student.length;i++){
-                        var button = createButtonList(student[i]['id']);
+                        var button = createButtonList(student[i]['id'] , 'student');
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td>'+student[i]["id"]+'</td>';
-                        html +='<td>'+ student[i]['username'] +'</td>';
-                        html +='<td>'+ student[i]['email']+'</td>';
-                        html +='<td>'+ student[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(student[i]['sex'] , 'sex') +'</td>';
+                        html +='<td>'+student[i]["stuNo"]+'</td>';
+                        html +='<td>'+ student[i]['user']['username'] +'</td>';
+                        html +='<td>'+ student[i]['user']['email']+'</td>';
+                        html +='<td>'+ student[i]['user']['phone']+'</td>';
+                        html +='<td>'+ intTostr(student[i]['user']['sex'] , 'sex') +'</td>';
                         html +='<td>'+ intTostr(student[i]['status'] , 'status') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
                     //分页代码
-
+                    var refresh = false;
+                    if(stuStatua_old != stuStatua){
+                        stuStatua_old = stuStatua;
+                        refresh = true;
+                    }
                     var per_page = 5;
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    $('#visible-pages').twbsPagination({
+                    $('#student-pages').twbsPagination({
                         //总页数
                         totalPages: total,
                         //显示页码数
                         visiblePages: per_page,
                         //是否刷新页码
-                        page: false,
+                        page: refresh,
                         version: '1.1'
                     });
                 } else {
                     html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
-                    $('#visible-pages').empty();
+                    $('#student-pages').empty();
                 }
-                if(total = 0) $('#visible-pages').empty();
-                $('#table-student-list tbody').empty();
-                $('#table-student-list tbody').append(html);
-                $('.user-edit').click(function(){
+                if(total = 0) $('#student-pages').empty();
+                $('#student-over').children('.last-page').text(lastPage);
+                $('#student-over').children('.fast-page').text(fastPage);
+                $('#student-over').children('.over-page').text(overPage);
+                $('#table-student-list tbody').empty().append(html);
+                $('.student-edit').click(function(){
                     var student_id = $(this).attr('data-id');
                     for (var i=0 ; i<student.length ; i++){
                         if(student_id == student[i]['id']){
@@ -296,29 +332,27 @@ $(function() {
             }
         });
     }
-    StudentList();
-
-    $('#visible-pages').on('click' , function(){
-        console.log($(this).find('li.active'));
+    $('#student-pages').on('click' , function(){
         var dataPage = $(this).find('li.active').attr('data-page');
         if(dataPage != page){
             page = dataPage;
-            StudentList(page);
+            studentList();
         }
     });
-    function TeacherList(page){
+    function teacherList(){
         var postData = {};
-        postData['page'] = page ? page : '';
+        postData['page'] = page;
         postData['per_page'] = 5;
         postData['_csrf'] = token;
         postData['type'] = 2;
         $.ajax({
-            url:"/api/user/list",
+            url:"/api/user/list-teacher",
             data:postData,
             dataType:'json',
             type:'POST',
             success:function(data){
                 var total = data.total,teacher = data.data,html = '';
+                var lastPage = total?1+(page-1)*5:0 , fastPage = page*5>parseInt(total)?parseInt(total):page*5 , overPage = total;
                 if(teacher){
                     total = total > 5 ? Math.ceil(total/5) : 1;
 
@@ -343,7 +377,7 @@ $(function() {
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    $('#visible-pages').twbsPagination({
+                    $('#teacher-pages').twbsPagination({
                         //总页数
                         totalPages: total,
                         //显示页码数
@@ -354,11 +388,13 @@ $(function() {
                     });
                 } else {
                     html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
-                    $('#visible-pages').empty();
+                    $('#teacher-pages').empty();
                 }
-                if(total = 0) $('#visible-pages').empty();
-                $('#table-teacher-list tbody').empty();
-                $('#table-teacher-list tbody').append(html);
+                if(total = 0) $('#teacher-pages').empty();
+                $('#teacher-over').children('.last-page').text(lastPage);
+                $('#teacher-over').children('.fast-page').text(fastPage);
+                $('#teacher-over').children('.over-page').text(overPage);
+                $('#table-teacher-list tbody').empty().append(html);
                 $('.user-edit').click(function(){
                     var teacher_id = $(this).attr('data-id');
                     for (var i=0 ; i<teacher.length ; i++){
@@ -375,34 +411,118 @@ $(function() {
             }
         });
     }
-    function DepartmentList(page){
+    $('#teacher-pages').on('click' , function(){
+        var dataPage = $(this).find('li.active').attr('data-page');
+        if(dataPage != page){
+            page = dataPage;
+            teacherList(page);
+        }
+    });
+    function departmentList(){
         var postData = {};
-        postData['page'] = page ? page : '';
+        postData['page'] = page;
         postData['per_page'] = 5;
         postData['_csrf'] = token;
-        postData['type'] = 2;
         $.ajax({
-            url:"/api/user/list",
+            url:"/api/department/list",
             data:postData,
             dataType:'json',
             type:'POST',
             success:function(data){
-                var total = data.total,teacher = data.data,html = '';
-                if(teacher){
+                var total = data.total,department = data.data,html = '';
+                var lastPage = total?1+(page-1)*5:0 , fastPage = page*5>parseInt(total)?parseInt(total):page*5 , overPage = total;
+                if(department){
                     total = total > 5 ? Math.ceil(total/5) : 1;
 
                     //数据列表
-                    for (var i=0;i<teacher.length;i++){
-                        var button = createButtonList(teacher[i]['id']);
+                    for (var i=0;i<department.length;i++){
+                        var button = createButtonList(department[i]['id']);
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td>'+teacher[i]["id"]+'</td>';
-                        html +='<td>'+ teacher[i]['username'] +'</td>';
-                        html +='<td>'+ teacher[i]['email']+'</td>';
-                        html +='<td>'+ teacher[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['sex'] , 'sex') +'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['status'] , 'status') +'</td>';
+                        html +='<td>'+ department[i]["id"]+'</td>';
+                        html +='<td>'+ department[i]["depNo"]+'</td>';
+                        html +='<td>'+ department[i]['user']['username'] +'</td>';
+                        html +='<td>'+ department[i]['depName']+'</td>';
+                        html +='<td>'+ department[i]['depAddress'] +'</td>';
+                        html +='<td>'+ department[i]['phone'] +'</td>';
+                        html +='<td>'+ button +'</td>';
+                        html +='</tr>';
+                    }
+                    //分页代码
+                    var per_page = 5;
+                    //当页码总数少于要显示的页码数时，显示页码总数
+                    if(total < 5){ per_page = total;}
+                    //判断筛选条件是否发生了变化
+                    $('#department-pages').twbsPagination({
+                        //总页数
+                        totalPages: total,
+                        //显示页码数
+                        visiblePages: per_page,
+                        //是否刷新页码
+                        page: false,
+                        version: '1.1'
+                    });
+                } else {
+                    html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
+                    $('#department-pages').empty();
+                }
+                if(total = 0) $('#department-pages').empty();
+                $('#department-over').children('.last-page').text(lastPage);
+                $('#department-over').children('.fast-page').text(fastPage);
+                $('#department-over').children('.over-page').text(overPage);
+                $('#table-department-list tbody').empty().append(html);
+                $('.department-edit').click(function(){
+                    var department_id = $(this).attr('data-id');
+                    for (var i=0 ; i<department.length ; i++){
+                        if(department_id == department[i]['id']){
+                            htmlData = department[i];
+                        }
+                    }
+                    var Model = $(this).attr('type');
+                    resetModel(Model);
+                });
+            },
+            error:function(XMLHttpRequest){
+                alert(XMLHttpRequest.responseJSON.message+"");
+            }
+        });
+    }
+    $('#department-pages').on('click' , function(){
+        var dataPage = $(this).find('li.active').attr('data-page');
+        if(dataPage != page){
+            page = dataPage;
+            departmentList(page);
+        }
+    });
+    function alumnaList(){
+        var postData = {};
+        postData['page'] = page;
+        postData['per_page'] = 5;
+        postData['_csrf'] = token;
+        $.ajax({
+            url:"/api/alumna/list",
+            data:postData,
+            dataType:'json',
+            type:'POST',
+            success:function(data){
+                var total = data.total,alumna = data.data,html = '';
+                var lastPage = total?1+(page-1)*5:0 , fastPage = page*5>parseInt(total)?parseInt(total):page*5 , overPage = total;
+                if(alumna){
+                    total = total > 5 ? Math.ceil(total/5) : 1;
+
+                    //数据列表
+                    for (var i=0;i<alumna.length;i++){
+                        var button = createButtonList(alumna[i]['id']);
+                        button = CommonTool.renderActionButtons(button);
+
+                        html += '<tr class="odd" role="row">';
+                        html +='<td>'+alumna[i]["id"]+'</td>';
+                        html +='<td>'+ alumna[i]['username'] +'</td>';
+                        html +='<td>'+ alumna[i]['email']+'</td>';
+                        html +='<td>'+ alumna[i]['phone']+'</td>';
+                        html +='<td>'+ intTostr(alumna[i]['sex'] , 'sex') +'</td>';
+                        html +='<td>'+ intTostr(alumna[i]['status'] , 'status') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
@@ -412,7 +532,7 @@ $(function() {
                     //当页码总数少于要显示的页码数时，显示页码总数
                     if(total < 5){ per_page = total;}
                     //判断筛选条件是否发生了变化
-                    $('#visible-pages').twbsPagination({
+                    $('#alumna-pages').twbsPagination({
                         //总页数
                         totalPages: total,
                         //显示页码数
@@ -423,16 +543,18 @@ $(function() {
                     });
                 } else {
                     html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
-                    $('#visible-pages').empty();
+                    $('#alumna-pages').empty();
                 }
-                if(total = 0) $('#visible-pages').empty();
-                $('#table-teacher-list tbody').empty();
-                $('#table-teacher-list tbody').append(html);
+                if(total = 0) $('#alumna-pages').empty();
+                $('#alumna-over').children('.last-page').text(lastPage);
+                $('#alumna-over').children('.fast-page').text(fastPage);
+                $('#alumna-over').children('.over-page').text(overPage);
+                $('#table-alumna-list tbody').empty().append(html);
                 $('.user-edit').click(function(){
-                    var teacher_id = $(this).attr('data-id');
-                    for (var i=0 ; i<teacher.length ; i++){
-                        if(teacher_id == teacher[i]['id']){
-                            htmlData = teacher[i];             //获取到当前id的所有数据
+                    var alumna_id = $(this).attr('data-id');
+                    for (var i=0 ; i<alumna.length ; i++){
+                        if(alumna_id == alumna[i]['id']){
+                            htmlData = alumna[i];
                         }
                     }
                     var Model = $(this).attr('type');
@@ -444,73 +566,11 @@ $(function() {
             }
         });
     }
-    function AlumnaList(page){
-        var postData = {};
-        postData['page'] = page ? page : '';
-        postData['per_page'] = 5;
-        postData['_csrf'] = token;
-        postData['type'] = 2;
-        $.ajax({
-            url:"/api/user/list",
-            data:postData,
-            dataType:'json',
-            type:'POST',
-            success:function(data){
-                var total = data.total,teacher = data.data,html = '';
-                if(teacher){
-                    total = total > 5 ? Math.ceil(total/5) : 1;
-
-                    //数据列表
-                    for (var i=0;i<teacher.length;i++){
-                        var button = createButtonList(teacher[i]['id']);
-                        button = CommonTool.renderActionButtons(button);
-
-                        html += '<tr class="odd" role="row">';
-                        html +='<td>'+teacher[i]["id"]+'</td>';
-                        html +='<td>'+ teacher[i]['username'] +'</td>';
-                        html +='<td>'+ teacher[i]['email']+'</td>';
-                        html +='<td>'+ teacher[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['sex'] , 'sex') +'</td>';
-                        html +='<td>'+ intTostr(teacher[i]['status'] , 'status') +'</td>';
-                        html +='<td>'+ button +'</td>';
-                        html +='</tr>';
-                    }
-                    //分页代码
-
-                    var per_page = 5;
-                    //当页码总数少于要显示的页码数时，显示页码总数
-                    if(total < 5){ per_page = total;}
-                    //判断筛选条件是否发生了变化
-                    $('#visible-pages').twbsPagination({
-                        //总页数
-                        totalPages: total,
-                        //显示页码数
-                        visiblePages: per_page,
-                        //是否刷新页码
-                        page: false,
-                        version: '1.1'
-                    });
-                } else {
-                    html = '<tr rowspan="4"><td style="text-align: center" colspan="7">No matching records found</td></tr>';
-                    $('#visible-pages').empty();
-                }
-                if(total = 0) $('#visible-pages').empty();
-                $('#table-teacher-list tbody').empty();
-                $('#table-teacher-list tbody').append(html);
-                $('.user-edit').click(function(){
-                    var teacher_id = $(this).attr('data-id');
-                    for (var i=0 ; i<teacher.length ; i++){
-                        if(teacher_id == teacher[i]['id']){
-                            htmlData = teacher[i];             //获取到当前id的所有数据
-                        }
-                    }
-                    var Model = $(this).attr('type');
-                    resetModel(Model);
-                });
-            },
-            error:function(XMLHttpRequest){
-                alert(XMLHttpRequest.responseJSON.message+"");
-            }
-        });
-    }
+    $('#alumna-pages').on('click' , function(){
+        var dataPage = $(this).find('li.active').attr('data-page');
+        if(dataPage != page){
+            page = dataPage;
+            alumnaList(page);
+        }
+    });
 });

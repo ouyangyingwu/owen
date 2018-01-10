@@ -53,7 +53,7 @@ class Department extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','depNo','depName','depAddress','phone'],
+            self::SCENARIO_LIST => ['id','user_id','depNo','depName','depAddress','phone','page','per_page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'depNo'],
             self::SCENARIO_ADD => ['user_id','depNo','depName','phone','depAddress'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],

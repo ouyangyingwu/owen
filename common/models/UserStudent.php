@@ -62,7 +62,7 @@ class UserStudent extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','team_id','per_page','page'],
+            self::SCENARIO_LIST => ['id','user_id','team_id','status','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -93,6 +93,14 @@ class UserStudent extends  BaseModel
                 $this->_query->andFilterWhere(['in', 'team_id', $this->team_id]);
             }else{
                 $this->_query->andFilterWhere(['team_id' => $this->team_id]);
+            }
+        }
+        if ($this->status)
+        {
+            if(is_array($this->status)){
+                $this->_query->andFilterWhere(['in', 'status', $this->status]);
+            }else{
+                $this->_query->andFilterWhere(['status' => $this->status]);
             }
         }
         if(count($this->select)>0)

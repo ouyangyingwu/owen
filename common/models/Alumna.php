@@ -8,13 +8,6 @@ use common\exception\ModelException;
  * This is the model class for table "alumna".    校友
  *
  * @property integer $id
- * @property string $teamName
- * @property integer $period
- * @property integer $number_limit
- * @property integer $major_id
- * @property integer $department_id
- * @property integer $user_id
- * @property string $honor
  */
 class Alumna extends  BaseModel
 {
@@ -54,9 +47,9 @@ class Alumna extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','className','period','major_id','per_page','page'],
+            self::SCENARIO_LIST => ['id','per_page','page'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_ADD => ['department_id','major_id','teamName','user_id','period','number_limit']
+            self::SCENARIO_ADD => []
         ];
     }
 
@@ -78,22 +71,6 @@ class Alumna extends  BaseModel
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
         }
-        if($this->major_id)
-        {
-            $this->_query->andFilterWhere(['major_id' => $this->major_id]);
-        }
-        if($this->user_id)
-        {
-            $this->_query->andFilterWhere(['user_id' => $this->user_id]);
-        }
-        if($this->period)
-        {
-            $this->_query->andFilterWhere(['period' => $this->period]);
-        }
-        if($this->teamName)
-        {
-            $this->_query->andFilterWhere(['like' , 'teamName' , $this->teamName]);
-        }
         if(count($this->select)>0)
         {
             $this->_query->select($this->select);
@@ -108,10 +85,6 @@ class Alumna extends  BaseModel
     public function getUser()
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
-    }
-    public function getMajor()
-    {
-        return $this->hasOne(Major::className(),['id'=>'major_id']);
     }
     public function getDepartment()
     {

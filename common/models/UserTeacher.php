@@ -16,6 +16,7 @@ use common\exception\ModelException;
  * @property string $reward
  * @property string $punish
  * @property integer $create_time
+ * @property integer $status
  */
 class UserTeacher extends  BaseModel
 {
