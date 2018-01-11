@@ -8,6 +8,23 @@ use common\exception\ModelException;
  * This is the model class for table "alumna".    校友
  *
  * @property integer $id
+ * @property string $stuNo
+ * @property string $name
+ * @property integer $sex
+ * @property integer $birth
+ * @property string $email
+ * @property integer $phone
+ * @property integer $session
+ * @property string $depName
+ * @property string $majorName
+ * @property string $teamName
+ * @property integer $credit
+ * @property string $reward
+ * @property string $punish
+ * @property integer $admission_time
+ * @property integer $graduate_time
+ * @property integer $eminent
+ * @property string $reason_list
  */
 class Alumna extends  BaseModel
 {
@@ -47,7 +64,7 @@ class Alumna extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','per_page','page'],
+            self::SCENARIO_LIST => ['id','per_page','page','name','session','depName','majorName','teamName'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
             self::SCENARIO_ADD => []
         ];
@@ -71,6 +88,26 @@ class Alumna extends  BaseModel
         }elseif(is_numeric($this->id)){
             $this->_query->andFilterWhere(['id' => $this->id]);
         }
+        if ($this->depName)
+        {
+            $this->_query->andFilterWhere(['like', 'depName', $this->depName]);
+        }
+        if ($this->majorName)
+        {
+            $this->_query->andFilterWhere(['like', 'majorName', $this->majorName]);
+        }
+        if ($this->teamName)
+        {
+            $this->_query->andFilterWhere(['like', 'teamName', $this->teamName]);
+        }
+        if ($this->session)
+        {
+            $this->_query->andFilterWhere(['session' => $this->session]);
+        }
+        if ($this->name)
+        {
+            $this->_query->andFilterWhere(['like', 'name', $this->name]);
+        }
         if(count($this->select)>0)
         {
             $this->_query->select($this->select);
@@ -86,40 +123,13 @@ class Alumna extends  BaseModel
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
     }
-    public function getDepartment()
-    {
-        return $this->hasOne(Department::className(),['id'=>'department_id']);
-    }
     /**
      * add expand query
      * 关联表查询
      */
     private function addQueryExpand()
     {
-        if (count($this->expand)>0){
-            if(in_array('user' , $this->expand)){
-                //$this->_query->with('user');              //查询User的所有字段
-                $this->_query->with([
-                    'user' => function($query) {
-                        $query->select(['id', 'username']);
-                    }
-                ]);
-            }
-            if(in_array('major' , $this->expand)){
-                $this->_query->with([
-                    'major' => function($query) {
-                        $query->select(['id', 'majorName']);
-                    }
-                ]);
-            }
-            if(in_array('department' , $this->expand)){
-                $this->_query->with([
-                    'department' => function($query) {
-                        $query->select(['id', 'depName']);
-                    }
-                ]);
-            }
-        }
+        if (count($this->expand)>0){}
     }
     /**
      * deal order by
@@ -203,11 +213,11 @@ class Alumna extends  BaseModel
     {
         if($this->validate())
         {
-            $team = Team::find()->andFilterWhere(['id' => $this->id])->one();
+            $team = Alumna::find()->andFilterWhere(['id' => $this->id])->one();
             if($team)
             {
                 $team->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'honor'){$this->edit_value = json_encode($this->edit_value);}
+                if($this->edit_name == 'reward' || $this->edit_name == 'punish'){$this->edit_value = json_encode($this->edit_value);}
                 $team->setAttribute($this->edit_name , $this->edit_value);
                 if($team->save())
                 {

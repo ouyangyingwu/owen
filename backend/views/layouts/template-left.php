@@ -85,7 +85,12 @@
             </ul>
         </li>
         <li>
-            <a href="/#/empty.html"><i class="icon-edit"></i> Forms </a>
+            <a href="javascript:void(0)"><i class="icon-magnet"></i> Alumna <span class="icon-angle-right arrow"></span></a>
+            <ul class="nav nav-second-level b-color hidee">
+                <li>
+                    <a href="/#/alumna_list.html" class="location-file"><i class="icon-cogs"></i>Alumna List</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="/#/empty.html"><i class="icon-sitemap"></i> Multi-Level Dropdown<span class="icon-angle-right arrow"></span></a>

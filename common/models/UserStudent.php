@@ -15,12 +15,11 @@ use common\exception\ModelException;
  * @property string $punish
  * @property integer $status
  * @property integer $create_time
- * @property integer $graduation_time
  * @property integer $leaveschool_time
  * @property integer $dropout_time
  * @property integer $class
  * @property integer $team_id
- * @property integer $marjor_id
+ * @property integer $major_id
  * @property integer $department_id
  */
 class UserStudent extends  BaseModel

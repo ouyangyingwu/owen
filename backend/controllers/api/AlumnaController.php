@@ -21,35 +21,33 @@ class AlumnaController extends Controller
     }
     public function actionList()
     {
-        $classRoom = new Alumna();
-        $classRoom->scenario = Alumna::SCENARIO_LIST;
-        $classRoom->setAttributes(Yii::$app->request->post());
-        $classRoom->expand = ['user'];
-        list($total, $result) = $classRoom->getList();
+        $alumna = new Alumna();
+        $alumna->scenario = Alumna::SCENARIO_LIST;
+        $alumna->setAttributes(Yii::$app->request->post());
+        list($total, $result) = $alumna->getList();
+        if($result){
+            foreach($result as &$value){
+                $value['age'] = (date('m') - date('m' , $value['birth'])) > 0 ? (date('Y') - date('Y' , $value['birth'])) : (date('Y') - date('Y' , $value['birth']))-1;
+                $value['reason_list'] = json_decode($value['reason_list']);
+                $value['reward'] = json_decode($value['reward']);
+                $value['punish'] = json_decode($value['punish']);
+            }
+        }
         return ['data'=>$result , 'total' => $total];
     }
     public function actionEdit()
     {
-        $classRoom = new ClassRoom();
-        $classRoom->scenario = ClassRoom::SCENARIO_EDIT;
-        $classRoom->setAttributes(Yii::$app->request->post());
-        return $classRoom->getEdit();
-    }
-    public function actionUpdate()
-    {
-        $classRoom = new ClassRoom();
-        $classRoom->scenario = ClassRoom::SCENARIO_UPDATE;
-        $postData = Yii::$app->request->post();
-        $classRoom->setAttributes($this->SafeFilter($postData));
-        return $classRoom->getUpdate();
+        $alumna = new Alumna();
+        $alumna->scenario = Alumna::SCENARIO_EDIT;
+        $alumna->setAttributes(Yii::$app->request->post());
+        return $alumna->getEdit();
     }
     public function actionAdd()
     {
-        $classRoom = new ClassRoom();
-        $classRoom->scenario = ClassRoom::SCENARIO_ADD;
+        $alumna = new Alumna();
+        $alumna->scenario = Alumna::SCENARIO_ADD;
         $postData = Yii::$app->request->post();
-        $classRoom->setAttributes($this->SafeFilter($postData));
-        return $classRoom->getAdd();
-
+        $alumna->setAttributes($this->SafeFilter($postData));
+        return $alumna->getAdd();
     }
 }

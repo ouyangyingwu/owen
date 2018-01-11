@@ -60,6 +60,29 @@ $(function() {
                         barColor: '#30a5ff'
                     });
                 }
+                if(data.newStudent){
+                    var newStudent = [];
+                    for(var tmp in data.newStudent){
+                        newStudent.push({x:tmp , value:data['newStudent'][tmp]});
+                    };
+                    /* 折线图（无底色）
+                     ----------------------------------------*/
+                    Morris.Line({
+                        element: 'morris-line-chart',
+                        data: newStudent,
+                        xkey: 'x',
+                        ykeys: ['value'],
+                        labels: ['每年届人数'],
+                        fillOpacity: 0.6,
+                        hideHover: 'auto',
+                        behaveLikeLine: true,
+                        resize: false,
+                        pointFillColors:['#ffffff'],
+                        pointStrokeColors: ['black'],
+                        lineColors:['gray','#24C2CE']
+
+                    });
+                }
             }
         })
     })();
@@ -68,9 +91,9 @@ $(function() {
     var mainApp = {
 
         initFunction: function () {
-            /* MORRIS BAR CHART
+            /* 直方图
              -----------------------------------------*/
-            Morris.Bar({
+            /*Morris.Bar({
                 element: 'morris-bar-chart',
                 data: [{
                     y: '2006',
@@ -112,8 +135,8 @@ $(function() {
                 resize: true
             });
 
-            /* MORRIS DONUT CHART
-             ----------------------------------------*/
+            /!* 圆形图
+             ----------------------------------------*!/
             Morris.Donut({
                 element: 'morris-donut-chart',
                 data: [{
@@ -122,20 +145,19 @@ $(function() {
                 }, {
                     label: "In-Store Sales",
                     value: 60
-                }/*, {
+                }/!*, {
                     label: "Mail-Order Sales",
                     value: 28
-                }*/],
+                }*!/],
                 colors: [
                     '#A6A6A6','#24C2CE',
                     //'#A8E9DC'
                 ],
                 resize: true
-            });
+            });*/
 
-            /* MORRIS AREA CHART
+            /* 折线图加底色
              ----------------------------------------*/
-
             Morris.Area({
                 element: 'morris-area-chart',
                 data: [
@@ -165,36 +187,6 @@ $(function() {
                 pointStrokeColors: ['black'],
                 lineColors:['#A6A6A6','#24C2CE'],
                 resize: true
-            });
-
-            /* MORRIS LINE CHART
-             ----------------------------------------*/
-            Morris.Line({
-                element: 'morris-line-chart',
-                data: [
-                    { x: '2014', a: 50, b: 90},
-                    { x: '2015', a: 165,  b: 185},
-                    { x: '2016', a: 150,  b: 130},
-                    { x: '2017', a: 175,  b: 160},
-                    { x: '2018', a: 80,  b: 65},
-                    { x: '2019', a: 90,  b: 70},
-                    { x: '2020', a: 100, b: 125},
-                    { x: '2021', a: 155, b: 175},
-                    { x: '2022', a: 80, b: 85},
-                    { x: '2023', a: 145, b: 155},
-                    { x: '2024', a: 160, b: 195}
-                ],
-                xkey: 'x',
-                ykeys: ['a', 'b'],
-                labels: ['Total Income', 'Total Outcome'],
-                fillOpacity: 0.6,
-                hideHover: 'auto',
-                behaveLikeLine: true,
-                resize: false,
-                pointFillColors:['#ffffff'],
-                pointStrokeColors: ['black'],
-                lineColors:['gray','#24C2CE']
-
             });
         }
     };
@@ -507,6 +499,7 @@ $(function() {
         var postData = {};
         postData['page'] = page;
         postData['per_page'] = 5;
+        postData['eminent'] = 1;
         postData['_csrf'] = token;
         $.ajax({
             url:"/api/alumna/list",
@@ -525,12 +518,13 @@ $(function() {
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
-                        html +='<td>'+alumna[i]["id"]+'</td>';
-                        html +='<td>'+ alumna[i]['username'] +'</td>';
+                        html +='<td>'+ alumna[i]["stuNo"] +'</td>';
+                        html +='<td>'+ alumna[i]['name'] +'</td>';
+                        html +='<td>'+ intTostr(alumna[i]['sex'] , 'sex') +'</td>';
+                        html +='<td>'+ alumna[i]["age"] +'</td>';
                         html +='<td>'+ alumna[i]['email']+'</td>';
                         html +='<td>'+ alumna[i]['phone']+'</td>';
-                        html +='<td>'+ intTostr(alumna[i]['sex'] , 'sex') +'</td>';
-                        html +='<td>'+ intTostr(alumna[i]['status'] , 'status') +'</td>';
+                        html +='<td>'+ CommonTool.formatTime(alumna[i]['graduate_time'] , 'Y-m') +'</td>';
                         html +='<td>'+ button +'</td>';
                         html +='</tr>';
                     }
