@@ -2,10 +2,10 @@
  * Created by admin on 2018/1/5.
  */
 $(function() {
-    var htmlData;
+    var htmlData, department,major,team;
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10},page = 1,stuStatua_old,stuStatua = 1,teaStatua_old,teaStatua = 1;
-    (function(){
+    function todo(){
         $.ajax({
             url: 'api/dashboard/todo',
             data: params,
@@ -85,6 +85,22 @@ $(function() {
                 }
             }
         })
+    }
+    (function(){
+        var postDate = {};
+        postDate['_csrf'] = token;
+        $.ajax({
+            url: 'api/user/list-data',
+            data: postDate,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                department = data.department;
+                major = data.major;
+                team = data.team;
+            }
+        })
+        todo();
     })();
 
     "use strict";
@@ -222,7 +238,7 @@ $(function() {
     });
 
     function intTostr(value , type){
-        if(type == 'active') {
+        if(type == 'user.active') {
             if (value == 1) return '激活';
             if (value == 0) return '冻结';
             return '';
@@ -233,21 +249,251 @@ $(function() {
             if (value == 0)return '第三类性别';
             return '';
         }
-        if(type == 'status') {
-            if (value == 1) return '在读';
-            if (value == 2) return '考研';
-            if (value == 3) return '硕博';
-            if (value == 4) return '休学';
-            if (value == 5) return '退学';
-            if (value == 6) return '开除';
-            return '';
+        if(type == 'status'){
+            if(value == 1) return '在读';
+            if(value == 2) return '硕士研究生';
+            if(value == 3) return '博士研究生';
+            if(value == 4) return '休学';
+            if(value == 5) return '其他';
+        }
+        if(type == 'admin.purview'){
+            if(value == 1) return '信息查看员';
+            if(value == 2) return '信息管理员';
+            if(value == 10) return '管理员';
+        }
+        if(type == 'reward_type'){
+            if(value == 0) return '奖助学金';
+            if(value == 1) return '奥数比赛';
+            if(value == 2) return '演讲比赛';
+            if(value == 3) return '文章发表';
+            if(value == 4) return '运动会';
+            if(value == 5) return '书法文艺';
+            if(value == 6) return '音乐舞蹈';
+            if(value == 7) return '其他';
+        }
+        if(type == 'reward_ranking'){
+            if(value == 0) return '此类比赛无名次';
+            if(value == 1) return '第一名';
+            if(value == 2) return '第二名';
+            if(value == 3) return '第三名';
+            if(value == 4) return '特等奖';
+            if(value == 5) return '参与奖';
+        }
+        if(type == 'reward_level'){
+            if(value == 1) return '奖助学金';
+            if(value == 2) return '班级';
+            if(value == 3) return '院校级';
+            if(value == 4) return '市级';
+            if(value == 5) return '省级';
+            if(value == 6) return '国家级';
+            if(value == 7) return '世界级';
+            if(value == 7) return '世界级';
+        }
+        if(type == 'punish_content'){
+            if(value == 0) return '请选择';
+            if(value == 1) return '警告处分';
+            if(value == 2) return '记小过一次';
+            if(value == 3) return '记大过一次';
+            if(value == 4) return '留校查看';
+            if(value == 5) return '劝退';
+            if(value == 6) return '开除';
+            if(value == 7) return '其他';
+        }
+        if(type == 'user.birth') return CommonTool.formatTime(value , 'Y年m月d日');
+        return value;
+    }
+
+    //二级列表
+    function towForm(data , type){
+        var html = '';
+        if(type == 'reward'){
+            for (var i= 0,leng=data.length ; i<leng ; i++){
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ (data[i]["reward_time"]?data[i]["reward_time"]:'') +'</td>';
+                html +='<td>'+ (data[i]['reward_name']?data[i]['reward_name']:'') +'</td>';
+                html +='<td>'+ (data[i]['reward_type']?intTostr(data[i]['reward_type'] , 'reward_type'):'') +'</td>';
+                html +='<td>'+ (data[i]['reward_ranking']?intTostr(data[i]['reward_ranking'] , 'reward_ranking'):'') +'</td>';
+                html +='<td>'+ (data[i]['reward_level']?intTostr(data[i]['reward_level'] , 'reward_level'):'') +'</td>';
+                html +='<td class="delete-reward" data-id="'+data[i]['dataTime']+'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+            }
+            $("#reward-table tbody").append(html);return;
+        }
+        if(type == 'punish'){
+            for (var i= 0,leng=data.length ; i<leng ; i++){
+                html += '<tr class="odd" role="row">';
+                html +='<td>'+ (data[i]["punish_time"]?data[i]["punish_time"]:'') +'</td>';
+                html +='<td>'+ (data[i]['punish_reason']?data[i]['punish_reason']:'') +'</td>';
+                html +='<td>'+ (data[i]['punish_content']?intTostr(data[i]['punish_content'] , 'punish_content'):'') +'</td>';
+                html +='<td class="delete-punish" data-id="'+data[i]['dataTime']+'"><i class="icon-trash"></i>删除</td>';
+                html +='</tr>';
+            }
+            $("#punish-table tbody").append(html)
         }
     }
+    //init edit form
+    var getEditSource = function(name){
+        switch(name){
+            case 'user.active':
+                return [
+                    {value: 1, text: '激活'},
+                    {value: 0, text: '冻结'}
+                ];break;
+            case 'user.sex':
+                return [
+                    {value: 0, text: '第三性别'},
+                    {value: 1, text: '男'},
+                    {value: 2, text: '女'},
+                ];break;
+            case 'department.depName':
+                var departmentList = [];
+                for(var i = 0,len = department.length; i<len; i++){
+                    departmentList.push({value: department[i]['id'], text: department[i]['depName']});
+                }
+                return departmentList;break;
+            case 'major.majorName':
+                var majorList = [];
+                for(var i = 0,len = major.length; i<len; i++){
+                    majorList.push({value: major[i]['id'], text: major[i]['majorName']});
+                }
+                return majorList;break;
+            case 'team.teamName':
+                var teamList = [];
+                for(var i = 0,len = team.length; i<len; i++){
+                    teamList.push({value: team[i]['id'], text: team[i]['teamName']});
+                }
+                return teamList;break;
+            case 'status':
+                return [
+                    {value: 1, text: '在读'},
+                    {value: 2, text: '硕士研究生'},
+                    {value: 3, text: '博士研究生'},
+                    {value: 4, text: '休学'},
+                    {value: 5, text: '其他'},
+
+                ];break;
+            default:
+                return null;
+        }
+    };
+    //修改、详情
+    function initEditForm(data){
+        //$("#iframe-image-show").empty();
+        $('#reward-table').find('.odd').remove();
+        $('#punish-table').find('.odd').remove();
+        if(data.reward){towForm(data.reward,'reward')}
+        if(data.punish){towForm(data.punish,'punish')}
+
+        $.fn.editable.defaults.mode = 'inline';
+        $('#student-detail').find("[name='form-edit']").each(function(){
+            if(!$(this).parents('fieldset').hasClass('hide')){
+                var name = $(this).attr("data-name");
+                var dataType = $(this).attr("data-type");
+                var copythis = this;
+                var editSource = getEditSource(name);
+                var displayValue = eval("data." + name);
+                var notEdit = false;                                //默认为可编辑
+                if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                var options = {
+                    type: dataType,
+                    name: name,
+                    value: displayValue,
+                    disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                    inputclass: "form-control",
+                    url: function(param){
+                        var oldValue = $(copythis).text();
+                        var postData = {};
+                        postData["_csrf"] = token;
+                        postData["id"] = data.id;
+                        postData["edit_value"] = param["value"];
+                        postData["edit_name"] = name;
+                        if(name.split('.').length == 2){
+                            postData["type"] = name.split('.')[0];
+                            postData["edit_name"] = name.split('.')[1];
+                            postData["id"] = data[(name.split('.')[0])]['id'];
+                        }
+                        $.ajax({
+                            url:"/api/user/edit",
+                            data:postData,
+                            dataType:'json',
+                            type:'POST',
+                            success:function(data){
+                                if(name.split('.').length == 2){
+                                    $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                    htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                    if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                        htmlData['student']['team_id'] = 0;
+                                    }
+                                    resetModel('edit');
+                                    return;
+                                }
+                                $(copythis).text(intTostr(data[name] , name));
+                                userList(params);
+                            },
+                            error:function(XMLHttpRequest){
+                                alert(XMLHttpRequest.responseJSON.message+"");
+                                $(copythis).text(oldValue);
+                            }
+                        });
+                    },
+                    validate: function(value){
+                        var needValidate = $(copythis).attr("data-need-validate");
+                        if(needValidate){
+                            var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                            if(msg){
+                                return msg;
+                            }
+                        }
+                    }
+                };
+            }
+            //启用下拉框中的下拉选项
+            if(editSource){options["source"] = editSource;}
+            //为data-name为describe的项做数据验证
+            switch (name){}
+            displayValue = intTostr(displayValue , name);
+            if(!displayValue){displayValue="Empty";}
+            $(this).text(displayValue).editable('destroy');
+            $(this).editable(options);
+        });
+    }
+
+    resetModel = function (model) {
+        switch (model){
+            case 'edit':
+                $("#student-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+            case 'graduation':
+                statusChang(htmlData , model);
+                break;
+            case 'pubMed':
+                $("#student-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+            case 'leaveSchool':
+                $("#student-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+            case 'dropOut':
+                $("#student-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+            case 'delete':
+                $("#student-detail").modal("show");
+                initEditForm(htmlData);
+                break;
+        }
+    };
     var createButtonList = function(row , type){
         var buttonList = [];
         if(type == 'student'){
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> Edit</a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> Remove</a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='graduation' data-id='"+row+"' ><i class=\"icon-trash\"></i> 毕业 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='pubMed' data-id='"+row+"' ><i class=\"icon-trash\"></i> 考研 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='leaveSchool' data-id='"+row+"' ><i class=\"icon-trash\"></i> 休学 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='dropOut' data-id='"+row+"' ><i class=\"icon-trash\"></i> 退学 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> 开除 </a>");
         }
         return buttonList;
     };
@@ -368,7 +614,6 @@ $(function() {
                     }
                     //分页代码
                     var refresh = false;
-                    console.log(teaStatua_old != teaStatua);
                     if(teaStatua_old != teaStatua){
                         teaStatua_old = teaStatua;
                         refresh = true;
@@ -575,4 +820,35 @@ $(function() {
             alumnaList(page);
         }
     });
+
+    function statusChang(data , type){
+        if(type == 'graduation' || type == 'pubMed'){
+            if(parseInt(data.credit) >= parseInt(data.major.majorCred)){
+                var postData = {},url = type=='graduation'?'api/user/edit':'';
+                postData["_csrf"] = token;
+                postData["id"] = data.id;
+                postData["edit_value"] = type=='graduation'?0:2;
+                postData["edit_name"] = 'status';
+                postData["type"] = 'student';
+
+                $.ajax({
+                    url: 'api/user/edit',
+                    data: postData,
+                    type: 'post',
+                    dataType: 'json',
+                    success:function(data){
+                        $("#dialog-confirm p").text('操作成功！！！');
+                        $("#dialog-confirm").modal('show');
+                        todo();
+                        studentList();
+                    }
+                })
+            }else {
+                $("#dialog-confirm p").text('该学生的学分不足！！！');
+                $("#dialog-confirm").modal('show');
+            }
+        }else{
+
+        }
+    }
 });

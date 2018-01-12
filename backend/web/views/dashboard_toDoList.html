@@ -370,8 +370,8 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="padding0 font-20">考研 (<small class="small">0</small>)</div>
-                                    <span>在校研究生</span>
+                                    <div class="padding0 font-20">硕士研究生 (<small class="small">0</small>)</div>
+                                    <span>在校硕士生</span>
                                 </div>
                             </div>
                         </div>
@@ -383,8 +383,8 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <div class="padding0 font-20">硕博 (<small class="small">0</small>)</div>
-                                    <span>在校硕士博士生</span>
+                                    <div class="padding0 font-20">博士研究生 (<small class="small">0</small>)</div>
+                                    <span>在校博士生</span>
                                 </div>
                             </div>
                         </div>
@@ -410,7 +410,7 @@
                                 </div>
                                 <div class="text-center">
                                     <div class="padding0 font-20">退学 (<small class="small">0</small>)</div>
-                                    <span>休退学</span>
+                                    <span>退学</span>
                                 </div>
                             </div>
                         </div>
@@ -672,4 +672,272 @@
         </div>
     </div>
 </div>
+
+<!--student detail-->
+<div class="modal fade bs-example-modal-lg" id="student-detail" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <!--<div class="modal container fade" id="user-detail" aria-hidden="false">-->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <span class="modal-title"><i class="icon-file-alt"></i> &nbsp;User Detail</span>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="tab-pane active">
+                    <!-- general -->
+                    <div class="col-md-12 paddingb-20 paddingt-10">
+                        <fieldset class="fieldset">
+                            <legend>基本信息</legend>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>ID #:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a class="notEdit" name="form-edit" data-name="id" data-type="text"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>User Namee:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="user.username" data-type="text"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>Phone:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="user.phone" data-type="text"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>Email:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="user.email" data-type="text"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>Sex:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="user.sex" data-type="select"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>Activ:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="user.active" data-type="select"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>Birth:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a class="notEdit" name="form-edit" data-name="user.birth" data-type="text"></a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- general -->
+                    <div class="col-md-12 paddingb-20 paddingt-10">
+                        <fieldset class="fieldset" id="student">
+                            <legend>详细信息信息</legend>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>学号:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a class="notEdit" name="form-edit" data-name="stuNo" data-type="text"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>学分:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a class="notEdit" name="form-edit" data-name="credit" data-type="text"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>系:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="department.depName" data-type="select"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>专业:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="major.majorName" data-type="select"></a>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <div class="col-md-2 text-right">
+                                    <span>班級:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="team.teamName" class="team" data-type="select"></a>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <span>状态:</span>
+                                </div>
+                                <div class="col-md-4 text-left">
+                                    <a name="form-edit" data-name="status" data-type="select"></a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!-- general -->
+                    <div class="col-md-12 paddingb-20 padingt-0">
+                        <fieldset class="fieldset">
+                            <legend>奖励记录&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="btn-group btn-group-xs btn-group-solid">
+                                    <button type="button" class="btn blue" id="add-reward">Add New</button>
+                                </div>
+                            </legend>
+                            <div class="padding-LR-10">
+                                <table class="table table-striped table-bordered table-hover" id="reward-table">
+                                    <thead>
+                                    <tr class="heading">
+                                        <th>获奖时间</th>
+                                        <th>奖励名称</th>
+                                        <th>获奖类型</th>
+                                        <th>获奖名次</th>
+                                        <th>奖励级别</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr id="form-add-reward" class="hide">
+                                        <td>
+                                            <input class="form-control scheduleTime" type="text" data-name="reward_time"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="reward_name"/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" data-name="reward_type">
+                                                <option value="0">奖助学金</option>
+                                                <option value="1">奥数比赛</option>
+                                                <option value="2">演讲比赛</option>
+                                                <option value="3">文章发表</option>
+                                                <option value="4">运动会</option>
+                                                <option value="5">书法文艺</option>
+                                                <option value="6">音乐舞蹈</option>
+                                                <option value="7">其他</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" data-name="reward_ranking">
+                                                <option value="">请选择</option>
+                                                <option value="0">此类比赛无名次</option>
+                                                <option value="1">第一名</option>
+                                                <option value="2">第二名</option>
+                                                <option value="3">第三名</option>
+                                                <option value="4">特等奖</option>
+                                                <option value="5">参与奖</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" data-name="reward_level">
+                                                <option value="">请选择</option>
+                                                <option value="1">班级</option>
+                                                <option value="2">系级</option>
+                                                <option value="3">院校级</option>
+                                                <option value="4">市级</option>
+                                                <option value="5">省级</option>
+                                                <option value="6">国家级</option>
+                                                <option value="7">世界级</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs btn-group-solid">
+                                                <button type="button" class="btn green" id="insert-reward">Save</button>
+                                                <button type="button" class="btn red" id="cancel-reward">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-12 paddingb-20 padingt-0">
+                        <fieldset class="fieldset">
+                            <legend>处罚记录&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="btn-group btn-group-xs btn-group-solid">
+                                    <button type="button" class="btn blue" id="add-punish">Add New</button>
+                                </div>
+                            </legend>
+                            <div class="padding-LR-10">
+                                <table class="table table-striped table-bordered table-hover" id="punish-table">
+                                    <thead>
+                                    <tr class="heading">
+                                        <th>处罚时间</th>
+                                        <th>处罚原因</th>
+                                        <th>处罚内容</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr id="form-add-punish" class="hide">
+                                        <td>
+                                            <input class="form-control scheduleTime" type="text" data-name="punish_time"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="punish_reason"/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" data-name="punish_content">
+                                                <option value="0">请选择</option>
+                                                <option value="1">警告处分</option>
+                                                <option value="2">记小过一次</option>
+                                                <option value="3">记大过一次</option>
+                                                <option value="4">留校查看</option>
+                                                <option value="5">劝退</option>
+                                                <option value="6">开除</option>
+                                                <option value="7">其他</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs btn-group-solid">
+                                                <button type="button" class="btn green" id="insert-punish">Save</button>
+                                                <button type="button" class="btn red" id="cancel-punish">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn green">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- confirm dialog -->
+<div class="modal fade" id="dialog-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">通知：</h4>
+            </div>
+            <div class="modal-body">
+                <p><!--弹框显示的内容--></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default">确定</button>
+                <!--<button type="submit" id="doConfirm" class="btn green">Confirm</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+
 

@@ -3,9 +3,7 @@ namespace backend\controllers\api;
 
 use Yii;
 use yii\web\Controller;
-use common\models\ClassRoom;
 use yii\web\Response;
-use common\models\User;
 use common\models\Alumna;
 
 /**

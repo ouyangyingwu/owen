@@ -27,6 +27,9 @@
                 <li>
                     <a href="/#/user_add.html" class="location-file"><i class="icon-cogs"></i>User Add</a>
                 </li>
+                <li>
+                    <a href="/#/user_check.html" class="location-file"><i class="icon-cogs"></i>User Check</a>
+                </li>
             </ul>
         </li>
         <li>

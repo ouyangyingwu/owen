@@ -193,12 +193,12 @@ class Alumna extends  BaseModel
     public function getAdd()
     {
         if ($this->validate()) {
-            $team = new Team();
-            $team->scenario = self::SCENARIO_ADD;
-            $team->setAttributes($this->safeAttributesData());
-            if($team->save())
+            $alumna = new Alumna();
+            $alumna->scenario = self::SCENARIO_ADD;
+            $alumna->setAttributes($this->safeAttributesData());
+            if($alumna->save())
             {
-                return $team;
+                return $alumna;
             }
             return null;
         } else {
@@ -213,13 +213,13 @@ class Alumna extends  BaseModel
     {
         if($this->validate())
         {
-            $team = Alumna::find()->andFilterWhere(['id' => $this->id])->one();
-            if($team)
+            $alumna = Alumna::find()->andFilterWhere(['id' => $this->id])->one();
+            if($alumna)
             {
-                $team->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish'){$this->edit_value = json_encode($this->edit_value);}
-                $team->setAttribute($this->edit_name , $this->edit_value);
-                if($team->save())
+                $alumna->scenario = self::SCENARIO_EDIT;
+                if($this->edit_name == 'reward' || $this->edit_name == 'punish' || $this->edit_name == 'reason_list'){$this->edit_value = json_encode($this->edit_value);}
+                $alumna->setAttribute($this->edit_name , $this->edit_value);
+                if($alumna->save())
                 {
                     return [$this->edit_name => $this->edit_value];
                 }

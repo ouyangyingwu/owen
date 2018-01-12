@@ -117,6 +117,18 @@ class UserStudent extends  BaseModel
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
     }
+    public function getDepartment()
+    {
+        return $this->hasOne(Department::className(),['id'=>'department_id']);
+    }
+    public function getMajor()
+    {
+        return $this->hasOne(Major::className(),['id'=>'major_id']);
+    }
+    public function getTeam()
+    {
+        return $this->hasOne(Team::className(),['id'=>'team_id']);
+    }
     /**
      * add expand query
      * 关联表查询
@@ -128,11 +140,21 @@ class UserStudent extends  BaseModel
                 //$this->_query->with('user');              //查询User的所有字段
                 $this->_query->with([
                     'user' => function($query) {
-                        $query->select(['id', 'username','email','phone','birth','sex']);
+                        $query->select(['id', 'username','email','phone','birth','sex','active']);
                     }
                 ]);
             }
+            if(in_array('department' , $this->expand)){
+                $this->_query->with('department');
+            }
+            if(in_array('major' , $this->expand)){
+                $this->_query->with('major');
+            }
+            if(in_array('team' , $this->expand)){
+                $this->_query->with('team');
+            }
         }
+
     }
     /**
      * deal order by
