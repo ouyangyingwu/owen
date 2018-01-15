@@ -333,6 +333,23 @@ class User extends BaseModel implements IdentityInterface
     }
 
     /**
+     * 删除数据
+     */
+    public function getDelete(){
+        if ($this->validate()) {
+            $user = User::find()->andFilterWhere(['id' => $this->id])->one();
+            if ($user) {
+                if ($user->delete()) {
+                    return true;
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+    /**
      * @inheritdoc
      */
     public function behaviors()

@@ -465,26 +465,37 @@ $(function() {
                 initEditForm(htmlData);
                 break;
             case 'graduation':
-                statusChang(htmlData , model);
+                $('#prompt-confirm p').text('是否准该学生毕业？');
+                $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'pubMed':
-                $("#student-detail").modal("show");
-                initEditForm(htmlData);
+                $('#prompt-confirm p').text('该学生是否确认考取硕士研究生学位？');
+                $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'leaveSchool':
-                $("#student-detail").modal("show");
-                initEditForm(htmlData);
+                $('#prompt-confirm p').text('该学生是否确认休学？');
+                $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'dropOut':
-                $("#student-detail").modal("show");
-                initEditForm(htmlData);
+                $('#prompt-confirm p').text('该学生是否确认退学？');
+                $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'delete':
-                $("#student-detail").modal("show");
-                initEditForm(htmlData);
+                $('#prompt-confirm p').text('是否？');
+                $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
         }
     };
+    //提示信息处理
+    $('#doConfirm').click(function(){
+        var dataType = $(this).parents('prompt-confirm').attr('data-type');
+        switch (dataType){
+            case 'graduation': statusChang(htmlData , dataType);
+        }
+        switch (dataType){
+            case 'pubMed': statusChang(htmlData , dataType);
+        }
+    });
     var createButtonList = function(row , type){
         var buttonList = [];
         if(type == 'student'){
@@ -824,15 +835,34 @@ $(function() {
     function statusChang(data , type){
         if(type == 'graduation' || type == 'pubMed'){
             if(parseInt(data.credit) >= parseInt(data.major.majorCred)){
-                var postData = {},url = type=='graduation'?'api/user/edit':'';
+                var postData = {},url = type=='graduation'?'api/user/finish-school':'api/user/edit';
                 postData["_csrf"] = token;
-                postData["id"] = data.id;
-                postData["edit_value"] = type=='graduation'?0:2;
-                postData["edit_name"] = 'status';
-                postData["type"] = 'student';
+                postData["id"] = data.user.id;
+                if(type=='graduation'){
+                    /*'stuNo','name','sex','birth','email','phone','session','depName','majorName', 'teamName','credit',
+                     'reward','punish','admission_time'*/
+                    postData['stuNo'] = data.stuNo;
+                    postData['name'] = data.user.username;
+                    postData['sex'] = data.user.stuNo;
+                    postData['birth'] = data.user.birth;
+                    postData['email'] = data.user.email;
+                    postData['phone'] = data.user.phone;
+                    postData['session'] = data.team.period;
+                    postData['depName'] = data.department.depName;
+                    postData['majorName'] = data.major.majorName;
+                    postData['teamName'] = data.team.teamName;
+                    postData['credit'] = data.credit;
+                    postData['reward'] = data.reward;
+                    postData['punish'] = data.punish;
+                    postData['admission_time'] = data.create_time;
+                }else{
+                    postData["edit_value"] = 0;
+                    postData["edit_name"] = 'status';
+                    postData["type"] = 'student';
+                }
 
                 $.ajax({
-                    url: 'api/user/edit',
+                    url: url,
                     data: postData,
                     type: 'post',
                     dataType: 'json',

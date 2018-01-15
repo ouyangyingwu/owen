@@ -66,7 +66,10 @@ class Alumna extends  BaseModel
         return [
             self::SCENARIO_LIST => ['id','per_page','page','name','session','depName','majorName','teamName'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_ADD => []
+            self::SCENARIO_ADD => [
+                'stuNo','name','sex','birth','email','phone','session','depName','majorName', 'teamName','credit',
+                'reward','punish','admission_time'
+            ]
         ];
     }
 
@@ -196,9 +199,12 @@ class Alumna extends  BaseModel
             $alumna = new Alumna();
             $alumna->scenario = self::SCENARIO_ADD;
             $alumna->setAttributes($this->safeAttributesData());
+            $alumna->graduate_time = strtotime(date('Y-m'));
+            $alumna->eminent = false;
             if($alumna->save())
             {
                 return $alumna;
+                return true;
             }
             return null;
         } else {

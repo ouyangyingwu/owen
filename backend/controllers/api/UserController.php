@@ -2,6 +2,7 @@
 namespace backend\controllers\api;
 
 
+use common\models\Alumna;
 use common\models\Department;
 use common\models\Major;
 use common\models\Team;
@@ -220,5 +221,23 @@ class UserController extends Controller
             throw new \Exception($e->getMessage());
         }
         return true;
+    }
+    public function actionFinishSchool()
+    {
+        $user = new User();
+        $user->scenario = User::SCENARIO_DELETE;
+        $user->id = Yii::$app->request->post('id');
+        $student = new UserStudent();
+        $student->scenario = User::SCENARIO_DELETE;
+        $student->id = Yii::$app->request->post('id');
+        if($user->getDelete() && $student->getDelete()){
+            $alumna = new Alumna();
+            $alumna->scenario = Alumna::SCENARIO_ADD;
+            $alumna->setAttributes(Yii::$app->request->post());
+            $alumna->reward = json_encode($alumna->reward);
+            $alumna->punish = json_encode($alumna->punish);
+            return $alumna->getAdd();
+        }
+        throw new \Exception('未知错误！！！');
     }
 }

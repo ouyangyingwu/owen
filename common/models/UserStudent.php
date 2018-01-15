@@ -46,6 +46,7 @@ class UserStudent extends  BaseModel
     const SCENARIO_SEARCH_ONE = 'one';
     const SCENARIO_ADD = 'add';
     const SCENARIO_EDIT = 'edit';
+    const SCENARIO_DELETE = 'delete';
 
     /**
      * @inheritdoc
@@ -65,6 +66,7 @@ class UserStudent extends  BaseModel
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
+            self::SCENARIO_DELETE => ['id'],
         ];
     }
 
@@ -263,6 +265,24 @@ class UserStudent extends  BaseModel
                 if($userStudent->save())
                 {
                     return [$this->edit_name => $this->edit_value];
+                }
+            }
+            return null;
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
+        }
+    }
+
+    /**
+     * 删除数据
+     */
+    public function getDelete(){
+        if ($this->validate()) {
+            $student = UserStudent::find()->andFilterWhere(['user_id' => $this->id])->one();
+            if ($student) {
+                if ($student->delete()) {
+                    return true;
                 }
             }
             return null;
