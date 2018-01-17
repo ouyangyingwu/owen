@@ -116,7 +116,7 @@ class UserController extends Controller
         $user = new UserTeacher();
         $user->scenario = UserTeacher::SCENARIO_LIST;
         $user->setAttributes(Yii::$app->request->post());
-        $user->expand = ['user'];
+        $user->expand = ['user','department','division'];
         list($total, $result) = $user->getList();
         if($result){
             foreach($result as &$item){

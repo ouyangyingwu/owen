@@ -926,7 +926,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <span class="modal-title"><i class="icon-file-alt"></i> &nbsp;Student Detail</span>
+                <span class="modal-title"><i class="icon-file-alt"></i> &nbsp;Teacher Detail</span>
             </div>
             <div class="modal-body clearfix">
                 <div class="tab-pane active">
@@ -942,7 +942,7 @@
                                     <a class="notEdit" name="form-edit" data-name="id" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>User Namee:</span>
+                                    <span>姓名:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a name="form-edit" data-name="user.username" data-type="text"></a>
@@ -950,13 +950,13 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Phone:</span>
+                                    <span>手机:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a name="form-edit" data-name="user.phone" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>Email:</span>
+                                    <span>邮箱:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a name="form-edit" data-name="user.email" data-type="text"></a>
@@ -964,13 +964,13 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Sex:</span>
+                                    <span>性别:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a name="form-edit" data-name="user.sex" data-type="select"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>Activ:</span>
+                                    <span>状态:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a name="form-edit" data-name="user.active" data-type="select"></a>
@@ -978,7 +978,7 @@
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Birth:</span>
+                                    <span>生日:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
                                     <a class="notEdit" name="form-edit" data-name="user.birth" data-type="text"></a>
@@ -992,16 +992,16 @@
                             <legend>详细信息信息</legend>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>学号:</span>
+                                    <span>教职工号:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="stuNo" data-type="text"></a>
+                                    <a class="notEdit" name="form-edit" data-name="teachNo" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>学分:</span>
+                                    <span>部门:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="credit" data-type="text"></a>
+                                    <a name="form-edit" data-name="division.divName" data-type="text"></a>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
@@ -1012,20 +1012,6 @@
                                     <a name="form-edit" data-name="department.depName" data-type="select"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>专业:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="major.majorName" data-type="select"></a>
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="col-md-2 text-right">
-                                    <span>班級:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="team.teamName" class="team" data-type="select"></a>
-                                </div>
-                                <div class="col-md-2 text-right">
                                     <span>状态:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
@@ -1034,7 +1020,7 @@
                             </div>
                         </fieldset>
                     </div>
-                    <!-- general -->
+                    <!-- 奖惩记录 -->
                     <div class="col-md-12 paddingb-20 padingt-0">
                         <fieldset class="fieldset">
                             <legend>奖励记录&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1179,7 +1165,7 @@
                     <!-- general -->
                     <div class="col-md-12 paddingb-20 paddingt-10">
                         <fieldset class="fieldset">
-                            <legend>基本信息</legend>
+                            <legend>系信息</legend>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
                                     <span>ID #:</span>
@@ -1188,95 +1174,143 @@
                                     <a class="notEdit" name="form-edit" data-name="id" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>User Namee:</span>
+                                    <span>系主任:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="user.username" data-type="text"></a>
+                                    <a name="form-edit" data-name="user_id" data-type="select"></a>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Phone:</span>
+                                    <span>系编号:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="user.phone" data-type="text"></a>
+                                    <a class="notEdit" name="form-edit" data-name="depNo" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>Email:</span>
+                                    <span>系名称:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="user.email" data-type="text"></a>
+                                    <a name="form-edit" data-name="depName" data-type="text"></a>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Sex:</span>
+                                    <span>办公室电话:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="user.sex" data-type="select"></a>
+                                    <a name="form-edit" data-name="phone" data-type="text"></a>
                                 </div>
                                 <div class="col-md-2 text-right">
-                                    <span>Activ:</span>
+                                    <span>地址:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="user.active" data-type="select"></a>
+                                    <a href="#" name="form-edit" data-name="depAddress" data-type="text"></a>
                                 </div>
                             </div>
                             <div class="col-md-12 form-group">
                                 <div class="col-md-2 text-right">
-                                    <span>Birth:</span>
+                                    <span>创办时间:</span>
                                 </div>
                                 <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="user.birth" data-type="text"></a>
+                                    <a name="form-edit" data-name="create_time" data-type="text"></a>
                                 </div>
                             </div>
                         </fieldset>
                     </div>
-                    <!-- general -->
-                    <div class="col-md-12 paddingb-20 paddingt-10">
-                        <fieldset class="fieldset" id="department">
-                            <legend>详细信息信息</legend>
-                            <div class="col-md-12 form-group">
-                                <div class="col-md-2 text-right">
-                                    <span>学号:</span>
+                    <!-- 师资力量 -->
+                    <div class="col-md-12 paddingb-20 padingt-0">
+                        <fieldset class="fieldset">
+                            <legend>师资力量&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="btn-group btn-group-xs btn-group-solid">
+                                    <button type="button" class="btn blue" id="teacher">Add New</button>
                                 </div>
-                                <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="stuNo" data-type="text"></a>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <span>学分:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a class="notEdit" name="form-edit" data-name="credit" data-type="text"></a>
-                                </div>
+                            </legend>
+                            <div class="padding-LR-10">
+                                <table class="table table-striped table-bordered table-hover" id="teacher-table">
+                                    <thead>
+                                    <tr class="heading">
+                                        <th>教师名称</th>
+                                        <th>教师编号</th>
+                                        <th>教师职位</th>
+                                        <th>电话</th>
+                                        <th>邮箱</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr id="add-teacher" class="hide">
+                                        <td>
+                                            <select class="form-control" data-name="username">
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="teachNo" disabled="disabled"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="position" disabled="disabled"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="phone" disabled="disabled"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="email" disabled="disabled"/>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs btn-group-solid">
+                                                <button type="button" class="btn green" id="insert-teacher" data-toggle="modal" data-target="#exampleModal">Save</button>
+                                                <button type="button" class="btn red" id="cancel-teacher">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="col-md-12 form-group">
-                                <div class="col-md-2 text-right">
-                                    <span>系:</span>
+                        </fieldset>
+                    </div>
+                    <!-- 下属专业 -->
+                    <div class="col-md-12 paddingb-20 padingt-0">
+                        <fieldset class="fieldset">
+                            <legend>下属专业&nbsp;&nbsp;&nbsp;&nbsp;
+                                <div class="btn-group btn-group-xs btn-group-solid">
+                                    <button type="button" class="btn blue" id="major">Add New</button>
                                 </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="department.depName" data-type="select"></a>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <span>专业:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="major.majorName" data-type="select"></a>
-                                </div>
-                            </div>
-                            <div class="col-md-12 form-group">
-                                <div class="col-md-2 text-right">
-                                    <span>班級:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="team.teamName" class="team" data-type="select"></a>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <span>状态:</span>
-                                </div>
-                                <div class="col-md-4 text-left">
-                                    <a name="form-edit" data-name="status" data-type="select"></a>
-                                </div>
+                            </legend>
+                            <div class="padding-LR-10">
+                                <table class="table table-striped table-bordered table-hover" id="major-table">
+                                    <thead>
+                                    <tr class="heading">
+                                        <th>专业编号</th>
+                                        <th>专业名称</th>
+                                        <th>专业负责人</th>
+                                        <th>专业学分</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr id="add-major" class="hide">
+                                        <td>
+                                            <input class="form-control" type="text" data-name="majorNo" disabled="disabled"/>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="majorName"/>
+                                        </td>
+                                        <td>
+                                            <select class="form-control" data-name="user_id">
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input class="form-control" type="text" data-name="majorCred"/>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs btn-group-solid">
+                                                <button type="button" class="btn green" id="insert-major">Save</button>
+                                                <button type="button" class="btn red" id="cancel-major">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </fieldset>
                     </div>
@@ -1571,30 +1605,30 @@
         </div>
     </div>
 </div>
-<!--输入弹框-->
+<!--休学时长-->
 <div class="modal fade" id="prompt-enter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="leaveschool">
+            <form id="leaveschool"  novalidate="novalidate">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="exampleModalLabel">请确定休学时长：</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        &lt;!&ndash;<label class="control-label">Recipient:</label>&ndash;&gt;
+                        <!--<label class="control-label">Recipient:</label>-->
                         <input type="number" name="leaveschool_length" class="form-control" value="1">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="submit" class="btn btn-primary">确认</button>
+                    <button type="submit" class="btn btn-primary" id="mmp111">确认</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<!-- 休学开除理由 -->
+<!-- 退学开除理由 -->
 <div class="modal fade" id="expelANDabort" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

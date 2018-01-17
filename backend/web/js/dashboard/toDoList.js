@@ -103,7 +103,6 @@ $(function() {
             }
         })
         todo();
-
     })();
 
     var mainApp = {
@@ -379,7 +378,8 @@ $(function() {
         }
     };
     //修改、详情
-    function initEditForm(data){
+    function initEditForm(data , type){
+        console.log(data);
         //$("#iframe-image-show").empty();
         $('#reward-table').find('.odd').remove();
         $('#punish-table').find('.odd').remove();
@@ -387,84 +387,307 @@ $(function() {
         if(data.punish){towForm(data.punish,'punish')}
 
         $.fn.editable.defaults.mode = 'inline';
-        $('#student-detail').find("[name='form-edit']").each(function(){
-            if(!$(this).parents('fieldset').hasClass('hide')){
-                var name = $(this).attr("data-name");
-                var dataType = $(this).attr("data-type");
-                var copythis = this;
-                var editSource = getEditSource(name);
-                var displayValue = eval("data." + name);
-                var notEdit = false;                                //默认为可编辑
-                if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
-                var options = {
-                    type: dataType,
-                    name: name,
-                    value: displayValue,
-                    disabled:notEdit,           //是否可编辑，默认为false(可编辑)
-                    inputclass: "form-control",
-                    url: function(param){
-                        var oldValue = $(copythis).text();
-                        var postData = {};
-                        postData["_csrf"] = token;
-                        postData["id"] = data.id;
-                        postData["edit_value"] = param["value"];
-                        postData["edit_name"] = name;
-                        if(name.split('.').length == 2){
-                            postData["type"] = name.split('.')[0];
-                            postData["edit_name"] = name.split('.')[1];
-                            postData["id"] = data[(name.split('.')[0])]['id'];
-                        }
-                        $.ajax({
-                            url:"/api/user/edit",
-                            data:postData,
-                            dataType:'json',
-                            type:'POST',
-                            success:function(data){
+        switch (type){
+            case 'student':
+                $('#student-detail').find("[name='form-edit']").each(function(){
+                    if(!$(this).parents('fieldset').hasClass('hide')){
+                        var name = $(this).attr("data-name");
+                        var dataType = $(this).attr("data-type");
+                        var copythis = this;
+                        var editSource = getEditSource(name);
+                        var displayValue = eval("data." + name);
+                        var notEdit = false;                                //默认为可编辑
+                        if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                        var options = {
+                            type: dataType,
+                            name: name,
+                            value: displayValue,
+                            disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                            inputclass: "form-control",
+                            url: function(param){
+                                var oldValue = $(copythis).text();
+                                var postData = {};
+                                postData["_csrf"] = token;
+                                postData["id"] = data.id;
+                                postData["edit_value"] = param["value"];
+                                postData["edit_name"] = name;
                                 if(name.split('.').length == 2){
-                                    $(copythis).text(intTostr(data[name.split('.')[1]] , name));
-                                    htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
-                                    if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
-                                        htmlData['student']['team_id'] = 0;
-                                    }
-                                    resetModel('edit');
-                                    return;
+                                    postData["type"] = name.split('.')[0];
+                                    postData["edit_name"] = name.split('.')[1];
+                                    postData["id"] = data[(name.split('.')[0])]['id'];
                                 }
-                                $(copythis).text(intTostr(data[name] , name));
-                                studentList();
+                                $.ajax({
+                                    url:"/api/user/edit",
+                                    data:postData,
+                                    dataType:'json',
+                                    type:'POST',
+                                    success:function(data){
+                                        if(name.split('.').length == 2){
+                                            $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                            htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                            if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                                htmlData['student']['team_id'] = 0;
+                                            }
+                                            resetModel('edit');
+                                            return;
+                                        }
+                                        $(copythis).text(intTostr(data[name] , name));
+                                        studentList();
+                                    },
+                                    error:function(XMLHttpRequest){
+                                        alert(XMLHttpRequest.responseJSON.message+"");
+                                        $(copythis).text(oldValue);
+                                    }
+                                });
                             },
-                            error:function(XMLHttpRequest){
-                                alert(XMLHttpRequest.responseJSON.message+"");
-                                $(copythis).text(oldValue);
+                            validate: function(value){
+                                var needValidate = $(copythis).attr("data-need-validate");
+                                if(needValidate){
+                                    var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                                    if(msg){
+                                        return msg;
+                                    }
+                                }
                             }
-                        });
-                    },
-                    validate: function(value){
-                        var needValidate = $(copythis).attr("data-need-validate");
-                        if(needValidate){
-                            var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
-                            if(msg){
-                                return msg;
-                            }
-                        }
+                        };
                     }
-                };
-            }
-            //启用下拉框中的下拉选项
-            if(editSource){options["source"] = editSource;}
-            //为data-name为describe的项做数据验证
-            switch (name){}
-            displayValue = intTostr(displayValue , name);
-            if(!displayValue){displayValue="Empty";}
-            $(this).text(displayValue).editable('destroy');
-            $(this).editable(options);
-        });
+                    //启用下拉框中的下拉选项
+                    if(editSource){options["source"] = editSource;}
+                    //为data-name为describe的项做数据验证
+                    switch (name){}
+                    displayValue = intTostr(displayValue , name);
+                    if(!displayValue){displayValue="Empty";}
+                    $(this).text(displayValue).editable('destroy');
+                    $(this).editable(options);
+                });
+                break;
+            case 'teacher':
+                $('#teacher-detail').find("[name='form-edit']").each(function(){
+                    if(!$(this).parents('fieldset').hasClass('hide')){
+                        var name = $(this).attr("data-name");
+                        var dataType = $(this).attr("data-type");
+                        var copythis = this;
+                        var editSource = getEditSource(name);
+                        var displayValue = eval("data." + name);
+                        var notEdit = false;                                //默认为可编辑
+                        if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                        var options = {
+                            type: dataType,
+                            name: name,
+                            value: displayValue,
+                            disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                            inputclass: "form-control",
+                            url: function(param){
+                                var oldValue = $(copythis).text();
+                                var postData = {};
+                                postData["_csrf"] = token;
+                                postData["id"] = data.id;
+                                postData["edit_value"] = param["value"];
+                                postData["edit_name"] = name;
+                                if(name.split('.').length == 2){
+                                    postData["type"] = name.split('.')[0];
+                                    postData["edit_name"] = name.split('.')[1];
+                                    postData["id"] = data[(name.split('.')[0])]['id'];
+                                }
+                                $.ajax({
+                                    url:"/api/user/edit",
+                                    data:postData,
+                                    dataType:'json',
+                                    type:'POST',
+                                    success:function(data){
+                                        if(name.split('.').length == 2){
+                                            $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                            htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                            if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                                htmlData['student']['team_id'] = 0;
+                                            }
+                                            resetModel('edit');
+                                            return;
+                                        }
+                                        $(copythis).text(intTostr(data[name] , name));
+                                        studentList();
+                                    },
+                                    error:function(XMLHttpRequest){
+                                        alert(XMLHttpRequest.responseJSON.message+"");
+                                        $(copythis).text(oldValue);
+                                    }
+                                });
+                            },
+                            validate: function(value){
+                                var needValidate = $(copythis).attr("data-need-validate");
+                                if(needValidate){
+                                    var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                                    if(msg){
+                                        return msg;
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    //启用下拉框中的下拉选项
+                    if(editSource){options["source"] = editSource;}
+                    //为data-name为describe的项做数据验证
+                    switch (name){}
+                    displayValue = intTostr(displayValue , name);
+                    if(!displayValue){displayValue="Empty";}
+                    $(this).text(displayValue).editable('destroy');
+                    $(this).editable(options);
+                });
+                break;
+            case 'department':
+                $('#department-detail').find("[name='form-edit']").each(function(){
+                    if(!$(this).parents('fieldset').hasClass('hide')){
+                        var name = $(this).attr("data-name");
+                        var dataType = $(this).attr("data-type");
+                        var copythis = this;
+                        var editSource = getEditSource(name);
+                        var displayValue = eval("data." + name);
+                        var notEdit = false;                                //默认为可编辑
+                        if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                        var options = {
+                            type: dataType,
+                            name: name,
+                            value: displayValue,
+                            disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                            inputclass: "form-control",
+                            url: function(param){
+                                var oldValue = $(copythis).text();
+                                var postData = {};
+                                postData["_csrf"] = token;
+                                postData["id"] = data.id;
+                                postData["edit_value"] = param["value"];
+                                postData["edit_name"] = name;
+                                if(name.split('.').length == 2){
+                                    postData["type"] = name.split('.')[0];
+                                    postData["edit_name"] = name.split('.')[1];
+                                    postData["id"] = data[(name.split('.')[0])]['id'];
+                                }
+                                $.ajax({
+                                    url:"/api/user/edit",
+                                    data:postData,
+                                    dataType:'json',
+                                    type:'POST',
+                                    success:function(data){
+                                        if(name.split('.').length == 2){
+                                            $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                            htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                            if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                                htmlData['student']['team_id'] = 0;
+                                            }
+                                            resetModel('edit');
+                                            return;
+                                        }
+                                        $(copythis).text(intTostr(data[name] , name));
+                                        studentList();
+                                    },
+                                    error:function(XMLHttpRequest){
+                                        alert(XMLHttpRequest.responseJSON.message+"");
+                                        $(copythis).text(oldValue);
+                                    }
+                                });
+                            },
+                            validate: function(value){
+                                var needValidate = $(copythis).attr("data-need-validate");
+                                if(needValidate){
+                                    var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                                    if(msg){
+                                        return msg;
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    //启用下拉框中的下拉选项
+                    if(editSource){options["source"] = editSource;}
+                    //为data-name为describe的项做数据验证
+                    switch (name){}
+                    displayValue = intTostr(displayValue , name);
+                    if(!displayValue){displayValue="Empty";}
+                    $(this).text(displayValue).editable('destroy');
+                    $(this).editable(options);
+                });
+                break;
+            case 'alumna':
+                $('#alumna-detail').find("[name='form-edit']").each(function(){
+                    if(!$(this).parents('fieldset').hasClass('hide')){
+                        var name = $(this).attr("data-name");
+                        var dataType = $(this).attr("data-type");
+                        var copythis = this;
+                        var editSource = getEditSource(name);
+                        var displayValue = eval("data." + name);
+                        var notEdit = false;                                //默认为可编辑
+                        if($(this).hasClass('notEdit')){notEdit = true;}    //class为notEdit的数据不可编辑
+                        var options = {
+                            type: dataType,
+                            name: name,
+                            value: displayValue,
+                            disabled:notEdit,           //是否可编辑，默认为false(可编辑)
+                            inputclass: "form-control",
+                            url: function(param){
+                                var oldValue = $(copythis).text();
+                                var postData = {};
+                                postData["_csrf"] = token;
+                                postData["id"] = data.id;
+                                postData["edit_value"] = param["value"];
+                                postData["edit_name"] = name;
+                                if(name.split('.').length == 2){
+                                    postData["type"] = name.split('.')[0];
+                                    postData["edit_name"] = name.split('.')[1];
+                                    postData["id"] = data[(name.split('.')[0])]['id'];
+                                }
+                                $.ajax({
+                                    url:"/api/user/edit",
+                                    data:postData,
+                                    dataType:'json',
+                                    type:'POST',
+                                    success:function(data){
+                                        if(name.split('.').length == 2){
+                                            $(copythis).text(intTostr(data[name.split('.')[1]] , name));
+                                            htmlData[name.split('.')[0]][name.split('.')[1]] = data[name.split('.')[1]];
+                                            if(name.split('.')[1] == 'department_id' && name.split('.')[0] == 'student'){
+                                                htmlData['student']['team_id'] = 0;
+                                            }
+                                            resetModel('edit');
+                                            return;
+                                        }
+                                        $(copythis).text(intTostr(data[name] , name));
+                                        studentList();
+                                    },
+                                    error:function(XMLHttpRequest){
+                                        alert(XMLHttpRequest.responseJSON.message+"");
+                                        $(copythis).text(oldValue);
+                                    }
+                                });
+                            },
+                            validate: function(value){
+                                var needValidate = $(copythis).attr("data-need-validate");
+                                if(needValidate){
+                                    var msg = $.validator_tool.checkValue(value, validateRules[name], validateMessages[name]);
+                                    if(msg){
+                                        return msg;
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    //启用下拉框中的下拉选项
+                    if(editSource){options["source"] = editSource;}
+                    //为data-name为describe的项做数据验证
+                    switch (name){}
+                    displayValue = intTostr(displayValue , name);
+                    if(!displayValue){displayValue="Empty";}
+                    $(this).text(displayValue).editable('destroy');
+                    $(this).editable(options);
+                });
+                break;
+        }
     }
 
     resetModel = function (model) {
         switch (model){
             case 'edit':
                 $("#student-detail").modal("show");
-                initEditForm(htmlData);
+                initEditForm(htmlData , 'student');
                 break;
             case 'graduation':
                 $('#prompt-confirm p').text('是否准该学生毕业？');
@@ -485,6 +708,18 @@ $(function() {
             case 'delete':
                 $('#expelANDabort').attr('data-type' , model).modal('show');
                 break;
+            case 'teacher-edit':
+                $("#teacher-detail").modal("show");
+                initEditForm(htmlData , 'teacher');
+                break;
+            case 'department-edit':
+                $("#department-detail").modal("show");
+                initEditForm(htmlData , 'department');
+                break;
+            case 'alumna-edit':
+                $("#alumna-detail").modal("show");
+                initEditForm(htmlData , 'alumna');
+                break;
         }
     };
     //提示信息处理
@@ -504,7 +739,7 @@ $(function() {
         errorClass: "help-block",
         //错误提示的html标签
         errorElement:'span',
-        focusCleanup:true,
+        //focusCleanup:true,
         submitHandler: function() {
             statusChang('leaveSchool' , $('[name="leaveschool_length"]').val());
             $('#prompt-enter').modal('hide');
@@ -517,10 +752,10 @@ $(function() {
         errorClass: "help-block",
         //错误提示的html标签
         errorElement:'span',
-        focusCleanup:true,
+        //focusCleanup:true,
         submitHandler: function() {
-            var typt = $('#expelANDabort').attr('data-type');
-            statusChang(typt , $('[name="expel-reason"]').val());
+            var type = $('#expelANDabort').attr('data-type');
+            statusChang(type , $('[name="expel-reason"]').val());
             $('#expelANDabort').modal('hide');
         }
     });
@@ -545,6 +780,15 @@ $(function() {
             if(row['status'] == 5){
                 buttonList.push("<a name=\"table-button-list\" class='student-edit' type='back_school' data-id='"+ row['id'] +"' ><i class=\"icon-signin\"></i> 返校 </a>");
             }
+        }
+        if(type == 'teacher'){
+            buttonList.push("<a name=\"table-button-list\" class='teacher-edit' type='teacher-edit' data-id='"+ row['id'] +"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
+        }
+        if(type == 'department'){
+            buttonList.push("<a name=\"table-button-list\" class='department-edit' type='department-edit' data-id='"+ row['id'] +"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
+        }
+        if(type == 'alumna'){
+            buttonList.push("<a name=\"table-button-list\" class='alumna-edit' type='alumna-edit' data-id='"+ row['id'] +"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
         }
         return buttonList;
     };
@@ -631,6 +875,7 @@ $(function() {
             studentList();
         }
     });
+
     function teacherList(){
         var postData = {};
         postData['page'] = page;
@@ -650,7 +895,7 @@ $(function() {
 
                     //数据列表
                     for (var i=0;i<teacher.length;i++){
-                        var button = createButtonList(teacher[i]['id']);
+                        var button = createButtonList(teacher[i] , 'teacher');
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
@@ -691,7 +936,7 @@ $(function() {
                 $('#teacher-over').children('.fast-page').text(fastPage);
                 $('#teacher-over').children('.over-page').text(overPage);
                 $('#table-teacher-list tbody').empty().append(html);
-                $('.user-edit').click(function(){
+                $('.teacher-edit').click(function(){
                     var teacher_id = $(this).attr('data-id');
                     for (var i=0 ; i<teacher.length ; i++){
                         if(teacher_id == teacher[i]['id']){
@@ -714,6 +959,7 @@ $(function() {
             teacherList(page);
         }
     });
+
     function departmentList(){
         var postData = {};
         postData['page'] = page;
@@ -732,7 +978,7 @@ $(function() {
 
                     //数据列表
                     for (var i=0;i<department.length;i++){
-                        var button = createButtonList(department[i]['id']);
+                        var button = createButtonList(department[i] , 'department');
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
@@ -791,6 +1037,7 @@ $(function() {
             departmentList(page);
         }
     });
+
     function alumnaList(){
         var postData = {};
         postData['page'] = page;
@@ -810,7 +1057,7 @@ $(function() {
 
                     //数据列表
                     for (var i=0;i<alumna.length;i++){
-                        var button = createButtonList(alumna[i]['id']);
+                        var button = createButtonList(alumna[i] , 'alumna');
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
@@ -848,7 +1095,7 @@ $(function() {
                 $('#alumna-over').children('.fast-page').text(fastPage);
                 $('#alumna-over').children('.over-page').text(overPage);
                 $('#table-alumna-list tbody').empty().append(html);
-                $('.user-edit').click(function(){
+                $('.alumna-edit').click(function(){
                     var alumna_id = $(this).attr('data-id');
                     for (var i=0 ; i<alumna.length ; i++){
                         if(alumna_id == alumna[i]['id']){
@@ -856,7 +1103,7 @@ $(function() {
                         }
                     }
                     var Model = $(this).attr('type');
-                    resetModel(Model);
+                    resetModel(Model , 'alumna-edit');
                 });
             },
             error:function(XMLHttpRequest){

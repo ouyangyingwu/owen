@@ -1311,13 +1311,16 @@ $(function() {
         $.ajax({
             url:'site/logout',
             data:{'_csrf':_csrf},
-            type:'POST'
+            type:'POST',
+            success:function(){
+                location.reload();
+            }
         });
     };
 
     var hrefList = [] , html = location.href.split('#/')[1];
     if(html) {
-        $('#page-inner').load('views/'+html);
+        //$('#page-inner').load('views/'+html);
         $('#main-menu li a').removeClass('active-menu');
         $('#main-menu a.location-file').each(function(){
             hrefList.push($(this).attr('href').split('#/')[1]);
@@ -1330,7 +1333,9 @@ $(function() {
                      var jsc = html.substring(0,html.indexOf('.')).split('_');
                      var script = document.createElement("script");
                      script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-                     $('#addScript').html(script);
+                     $('#page-inner').load('views/'+html,function(){
+                         $('#addScript').html(script);
+                     });
                  }
              });
             //return;
@@ -1338,7 +1343,9 @@ $(function() {
             var jsc = html.substring(0,html.indexOf('.')).split('_');
             var script = document.createElement("script");
             script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-            $('#addScript').html(script);
+            $('#page-inner').load('views/'+html,function(){
+                $('#addScript').html(script);
+            });
         }
     }
     /*实现局部刷新（头部与导航不刷新）*/
@@ -1346,11 +1353,12 @@ $(function() {
         var html = $(this).attr('href').split('#/')[1];
         if(html) {
             if($(this).parent().parent().hasClass('nav')){
-                $('#page-inner').load('views/'+html);
                 var jsc = html.substring(0,html.indexOf('.')).split('_');
                 var script = document.createElement("script");
                 script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-                $('#addScript').html(script);
+                $('#page-inner').load('views/'+html,function(){
+                    $('#addScript').html(script);
+                });
             }else {
                 $('#main-menu li ul').slideUp();
                 $('#main-menu li a').children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
@@ -1359,7 +1367,9 @@ $(function() {
                 var jsc = html.substring(0,html.indexOf('.')).split('_');
                 var script = document.createElement("script");
                 script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
-                $('#addScript').html(script);
+                $('#page-inner').load('views/'+html,function(){
+                    $('#addScript').html(script);
+                });
             }
         }
     });
