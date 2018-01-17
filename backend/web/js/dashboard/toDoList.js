@@ -82,6 +82,8 @@ $(function() {
                         lineColors:['gray','#24C2CE']
 
                     });
+                    mainApp.initFunction();
+                    mainApp.Conversion();
                 }
             }
         })
@@ -101,76 +103,75 @@ $(function() {
             }
         })
         todo();
+
     })();
 
-    "use strict";
     var mainApp = {
-
         initFunction: function () {
             /* 直方图
              -----------------------------------------*/
             /*Morris.Bar({
-                element: 'morris-bar-chart',
-                data: [{
-                    y: '2006',
-                    a: 100,
-                    b: 90
-                }, {
-                    y: '2007',
-                    a: 75,
-                    b: 65
-                }, {
-                    y: '2008',
-                    a: 50,
-                    b: 40
-                }, {
-                    y: '2009',
-                    a: 75,
-                    b: 65
-                }, {
-                    y: '2010',
-                    a: 50,
-                    b: 40
-                }, {
-                    y: '2011',
-                    a: 75,
-                    b: 65
-                }, {
-                    y: '2012',
-                    a: 100,
-                    b: 90
-                }],
-                xkey: 'y',
-                ykeys: ['a', 'b'],
-                labels: ['Series A', 'Series B'],
-                barColors: [
-                    '#A6A6A6','#24C2CE',
-                    '#A8E9DC'
-                ],
-                hideHover: 'auto',
-                resize: true
-            });
+             element: 'morris-bar-chart',
+             data: [{
+             y: '2006',
+             a: 100,
+             b: 90
+             }, {
+             y: '2007',
+             a: 75,
+             b: 65
+             }, {
+             y: '2008',
+             a: 50,
+             b: 40
+             }, {
+             y: '2009',
+             a: 75,
+             b: 65
+             }, {
+             y: '2010',
+             a: 50,
+             b: 40
+             }, {
+             y: '2011',
+             a: 75,
+             b: 65
+             }, {
+             y: '2012',
+             a: 100,
+             b: 90
+             }],
+             xkey: 'y',
+             ykeys: ['a', 'b'],
+             labels: ['Series A', 'Series B'],
+             barColors: [
+             '#A6A6A6','#24C2CE',
+             '#A8E9DC'
+             ],
+             hideHover: 'auto',
+             resize: true
+             });
 
-            /!* 圆形图
+             /!* 圆形图
              ----------------------------------------*!/
-            Morris.Donut({
-                element: 'morris-donut-chart',
-                data: [{
-                    label: "Download Sales",
-                    value: 12
-                }, {
-                    label: "In-Store Sales",
-                    value: 60
-                }/!*, {
-                    label: "Mail-Order Sales",
-                    value: 28
-                }*!/],
-                colors: [
-                    '#A6A6A6','#24C2CE',
-                    //'#A8E9DC'
-                ],
-                resize: true
-            });*/
+             Morris.Donut({
+             element: 'morris-donut-chart',
+             data: [{
+             label: "Download Sales",
+             value: 12
+             }, {
+             label: "In-Store Sales",
+             value: 60
+             }/!*, {
+             label: "Mail-Order Sales",
+             value: 28
+             }*!/],
+             colors: [
+             '#A6A6A6','#24C2CE',
+             //'#A8E9DC'
+             ],
+             resize: true
+             });*/
 
             /* 折线图加底色
              ----------------------------------------*/
@@ -204,38 +205,39 @@ $(function() {
                 lineColors:['#A6A6A6','#24C2CE'],
                 resize: true
             });
+        },
+        //数据转换装换
+        Conversion: function () {
+        //列表总览样式切换
+        if ($('.overView .todolist .active')) {
+            var dataName = $('.overView .todolist .active').parent().attr('data-name');
+            $('#' + dataName).show().siblings().hide();
+            eval(dataName + '()');
         }
-    };
-    mainApp.initFunction();
-
-    //列表总览样式切换
-    if($('.overView .todolist .active')){
-        var dataName = $('.overView .todolist .active').parent().attr('data-name');
-        $('#'+dataName).show().siblings().hide();
-        eval(dataName + '()');
+        $('.overView .todolist').click(function () {
+            page = 1;
+            $(this).children().addClass('active');
+            $(this).parent().siblings().children().children().removeClass('active');
+            var dataName = $(this).attr('data-name');
+            $('#' + dataName).show().siblings().hide();
+            eval(dataName + '()');
+        });
+        //学生的状态切换
+        $('.stuStatus .gray').click(function () {
+            $(this).addClass('this-status');
+            $(this).siblings().removeClass('this-status');
+            stuStatua = $(this).attr('data-name');
+            studentList();
+        });
+        //教师部门切换
+        $('.teaStatus .gray').click(function () {
+            $(this).addClass('this-status');
+            $(this).siblings().removeClass('this-status');
+            teaStatua = $(this).attr('data-name');
+            teacherList();
+        });
     }
-    $('.overView .todolist').click(function(){
-        page = 1;
-        $(this).children().addClass('active');
-        $(this).parent().siblings().children().children().removeClass('active');
-        var dataName = $(this).attr('data-name');
-        $('#'+dataName).show().siblings().hide();
-        eval(dataName + '()');
-    });
-    //学生的状态切换
-    $('.stuStatus .gray').click(function(){
-        $(this).addClass('this-status');
-        $(this).siblings().removeClass('this-status');
-        stuStatua = $(this).attr('data-name');
-        studentList();
-    });
-    //教师部门切换
-    $('.teaStatus .gray').click(function(){
-        $(this).addClass('this-status');
-        $(this).siblings().removeClass('this-status');
-        teaStatua = $(this).attr('data-name');
-        teacherList();
-    });
+    };
 
     function intTostr(value , type){
         if(type == 'user.active') {
@@ -243,7 +245,7 @@ $(function() {
             if (value == 0) return '冻结';
             return '';
         }
-        if(type == 'sex') {
+        if(type == 'user.sex' || type == 'sex') {
             if (value == 1)return '男';
             if (value == 2)return '女';
             if (value == 0)return '第三类性别';
@@ -428,7 +430,7 @@ $(function() {
                                     return;
                                 }
                                 $(copythis).text(intTostr(data[name] , name));
-                                userList(params);
+                                studentList();
                             },
                             error:function(XMLHttpRequest){
                                 alert(XMLHttpRequest.responseJSON.message+"");
@@ -473,38 +475,76 @@ $(function() {
                 $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'leaveSchool':
-                $('#prompt-confirm p').text('该学生是否确认休学？');
+                $('#prompt-enter').modal('show');
+                break;
+            case 'back_school':
+                $('#prompt-confirm p').text('该学生是否确认结束休学并且以返校？');
                 $('#prompt-confirm').attr('data-type' , model).modal('show');
                 break;
             case 'dropOut':
-                $('#prompt-confirm p').text('该学生是否确认退学？');
-                $('#prompt-confirm').attr('data-type' , model).modal('show');
-                break;
             case 'delete':
-                $('#prompt-confirm p').text('是否？');
-                $('#prompt-confirm').attr('data-type' , model).modal('show');
+                $('#expelANDabort').attr('data-type' , model).modal('show');
                 break;
         }
     };
     //提示信息处理
     $('#doConfirm').click(function(){
-        var dataType = $(this).parents('prompt-confirm').attr('data-type');
+        var dataType = $(this).parents('#prompt-confirm').attr('data-type');
         switch (dataType){
-            case 'graduation': statusChang(htmlData , dataType);
+            case 'graduation':
+            case 'pubMed':
+            case 'back_school':
+                statusChang(dataType);$('#prompt-confirm').modal('hide');break;
         }
-        switch (dataType){
-            case 'pubMed': statusChang(htmlData , dataType);
+    });
+    //休学验证
+    $('#leaveschool').validate({
+        rules:{"leaveschool_length": {required: true , max:2,min:0.5}},
+        messages: {'leaveschool_length':'休学时长最多为2年，最少为半年'},
+        errorClass: "help-block",
+        //错误提示的html标签
+        errorElement:'span',
+        focusCleanup:true,
+        submitHandler: function() {
+            statusChang('leaveSchool' , $('[name="leaveschool_length"]').val());
+            $('#prompt-enter').modal('hide');
+        }
+    });
+    //退学开除验证
+    $('#expel-reason').validate({
+        rules:{"leaveschool_length": {required: true}},
+        messages: {},
+        errorClass: "help-block",
+        //错误提示的html标签
+        errorElement:'span',
+        focusCleanup:true,
+        submitHandler: function() {
+            var typt = $('#expelANDabort').attr('data-type');
+            statusChang(typt , $('[name="expel-reason"]').val());
+            $('#expelANDabort').modal('hide');
         }
     });
     var createButtonList = function(row , type){
         var buttonList = [];
         if(type == 'student'){
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='edit' data-id='"+row+"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='graduation' data-id='"+row+"' ><i class=\"icon-trash\"></i> 毕业 </a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='pubMed' data-id='"+row+"' ><i class=\"icon-trash\"></i> 考研 </a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='leaveSchool' data-id='"+row+"' ><i class=\"icon-trash\"></i> 休学 </a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='dropOut' data-id='"+row+"' ><i class=\"icon-trash\"></i> 退学 </a>");
-            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='delete' data-id='"+row+"' ><i class=\"icon-trash\"></i> 开除 </a>");
+            buttonList.push("<a name=\"table-button-list\" class='student-edit' type='edit' data-id='"+ row['id'] +"' ><i class=\"icon-edit\"></i> 编辑信息 </a>");
+            if(row['status'] == 1){
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='graduation' data-id='"+ row['id'] +"' ><i class=\"icon-exchange\"></i> 毕业 </a>");
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='pubMed' data-id='"+ row['id'] +"' ><i class=\"icon-external-link\"></i> 考研 </a>");
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='leaveSchool' data-id='"+ row['id'] +"' ><i class=\"icon-signout\"></i> 休学 </a>");
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='dropOut' data-id='"+ row['id'] +"' ><i class=\"icon-reply\"></i> 退学 </a>");
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='delete' data-id='"+ row['id'] +"' ><i class=\"icon-trash\"></i> 开除 </a>");
+            }
+            if(row['status'] == 2){
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='graduation' data-id='"+ row['id'] +"' ><i class=\"icon-exchange\"></i> 毕业 </a>");
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='pubMed' data-id='"+ row['id'] +"' ><i class=\"icon-external-link\"></i> 考博 </a>");
+            }
+            if(row['status'] == 3 || row['status'] == 4){
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='graduation' data-id='"+ row['id'] +"' ><i class=\"icon-exchange\"></i> 毕业 </a>");
+            }
+            if(row['status'] == 5){
+                buttonList.push("<a name=\"table-button-list\" class='student-edit' type='back_school' data-id='"+ row['id'] +"' ><i class=\"icon-signin\"></i> 返校 </a>");
+            }
         }
         return buttonList;
     };
@@ -527,7 +567,7 @@ $(function() {
 
                     //数据列表
                     for (var i=0;i<student.length;i++){
-                        var button = createButtonList(student[i]['id'] , 'student');
+                        var button = createButtonList(student[i] , 'student');
                         button = CommonTool.renderActionButtons(button);
 
                         html += '<tr class="odd" role="row">';
@@ -832,53 +872,90 @@ $(function() {
         }
     });
 
-    function statusChang(data , type){
+    function statusChang(type , data){
         if(type == 'graduation' || type == 'pubMed'){
-            if(parseInt(data.credit) >= parseInt(data.major.majorCred)){
+            if(parseInt(htmlData.credit) >= parseInt(htmlData.major.majorCred)){
                 var postData = {},url = type=='graduation'?'api/user/finish-school':'api/user/edit';
                 postData["_csrf"] = token;
-                postData["id"] = data.user.id;
+                postData["id"] = htmlData.id;
                 if(type=='graduation'){
-                    /*'stuNo','name','sex','birth','email','phone','session','depName','majorName', 'teamName','credit',
-                     'reward','punish','admission_time'*/
-                    postData['stuNo'] = data.stuNo;
-                    postData['name'] = data.user.username;
-                    postData['sex'] = data.user.stuNo;
-                    postData['birth'] = data.user.birth;
-                    postData['email'] = data.user.email;
-                    postData['phone'] = data.user.phone;
-                    postData['session'] = data.team.period;
-                    postData['depName'] = data.department.depName;
-                    postData['majorName'] = data.major.majorName;
-                    postData['teamName'] = data.team.teamName;
-                    postData['credit'] = data.credit;
-                    postData['reward'] = data.reward;
-                    postData['punish'] = data.punish;
-                    postData['admission_time'] = data.create_time;
-                }else{
-                    postData["edit_value"] = 0;
+                    postData["id"] = htmlData.user.id;
+                    postData['stuNo'] = htmlData.stuNo;
+                    postData['name'] = htmlData.user.username;
+                    postData['sex'] = htmlData.user.sex;
+                    postData['birth'] = htmlData.user.birth;
+                    postData['email'] = htmlData.user.email;
+                    postData['phone'] = htmlData.user.phone;
+                    postData['session'] = htmlData.team.period;
+                    postData['depName'] = htmlData.department.depName;
+                    postData['majorName'] = htmlData.major.majorName;
+                    postData['teamName'] = htmlData.team.teamName;
+                    postData['credit'] = htmlData.credit;
+                    postData['reward'] = htmlData.reward;
+                    postData['punish'] = htmlData.punish;
+                    postData['admission_time'] = htmlData.create_time;
+                }else if(type=='pubMed'){
+                    postData["edit_value"] = 2;
                     postData["edit_name"] = 'status';
                     postData["type"] = 'student';
                 }
-
-                $.ajax({
-                    url: url,
-                    data: postData,
-                    type: 'post',
-                    dataType: 'json',
-                    success:function(data){
-                        $("#dialog-confirm p").text('操作成功！！！');
-                        $("#dialog-confirm").modal('show');
-                        todo();
-                        studentList();
-                    }
-                })
+                userEdit(url , postData);
             }else {
                 $("#dialog-confirm p").text('该学生的学分不足！！！');
                 $("#dialog-confirm").modal('show');
+                return;
             }
         }else{
-
+            var postData = {},url = 'api/user/edit';
+            postData["_csrf"] = token;
+            if( type == 'leaveSchool'){
+                postData["id"] = htmlData.id;
+                postData["edit_value"] = 5;
+                postData["edit_name"] = 'status';
+                postData["type"] = 'student';
+                postData["leaveschool_length"] = data;
+            }
+            if(type == 'back_school'){
+                postData["id"] = htmlData.id;
+                postData["edit_value"] = 1;
+                postData["edit_name"] = 'status';
+                postData["type"] = 'student';
+            }
+            if(type == 'dropOut' || type == 'delete'){
+                url = 'api/user/finish-school';
+                postData["id"] = htmlData.user.id;
+                postData['stuNo'] = htmlData.stuNo;
+                postData['name'] = htmlData.user.username;
+                postData['sex'] = htmlData.user.sex;
+                postData['birth'] = htmlData.user.birth;
+                postData['email'] = htmlData.user.email;
+                postData['phone'] = htmlData.user.phone;
+                postData['session'] = htmlData.team.period;
+                postData['depName'] = htmlData.department.depName;
+                postData['majorName'] = htmlData.major.majorName;
+                postData['teamName'] = htmlData.team.teamName;
+                postData['credit'] = htmlData.credit;
+                postData['reward'] = htmlData.reward;
+                postData['punish'] = htmlData.punish;
+                postData['admission_time'] = htmlData.create_time;
+                postData['type'] = type == 'dropOut' ? 2 : 3;
+                postData['expel_reason'] = data;
+            }
+            userEdit(url , postData);
         }
+    }
+    function userEdit(url , postData){
+        $.ajax({
+            url: url,
+            data: postData,
+            type: 'post',
+            dataType: 'json',
+            success:function(data){
+                $("#dialog-confirm p").text('操作成功！！！');
+                $("#dialog-confirm").modal('show');
+                todo();
+                studentList();
+            }
+        })
     }
 });

@@ -96,6 +96,7 @@ class UserController extends Controller
         $user->scenario = UserStudent::SCENARIO_LIST;
         $user->setAttributes(Yii::$app->request->post());
         $user->expand = ['user','major','department','team'];
+        $user->order_by = ['id'=>1];
         list($total, $result) = $user->getList();
         if($result){
             foreach($result as &$item){
@@ -132,7 +133,7 @@ class UserController extends Controller
     }
     public function actionEdit()
     {
-        if(!Yii::$app->request->post('type')){
+        if(!Yii::$app->request->post('type') || Yii::$app->request->post('type')=='user'){
             $user = new User();
             $user->scenario = User::SCENARIO_EDIT;
             $postData = Yii::$app->request->post();

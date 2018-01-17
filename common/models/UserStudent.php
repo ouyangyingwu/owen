@@ -16,6 +16,7 @@ use common\exception\ModelException;
  * @property integer $status
  * @property integer $create_time
  * @property integer $leaveschool_time
+ * @property integer $leaveschool_length
  * @property integer $dropout_time
  * @property integer $class
  * @property integer $team_id
@@ -65,7 +66,7 @@ class UserStudent extends  BaseModel
             self::SCENARIO_LIST => ['id','user_id','team_id','status','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','stuNo','department_id','major_id'],
-            self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
+            self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value' , 'leaveschool_length'],
             self::SCENARIO_DELETE => ['id'],
         ];
     }
@@ -248,7 +249,6 @@ class UserStudent extends  BaseModel
             {
                 $userStudent->scenario = self::SCENARIO_EDIT;
                 if($this->edit_name == 'reward' || $this->edit_name == 'punish')$this->edit_value = json_encode($this->edit_value);
-                $userStudent->setAttribute($this->edit_name, $this->edit_value);
                 if($this->edit_name == 'department_id'){
                     $userStudent->major_id = 0;
                     $userStudent->team_id = 0;
@@ -262,6 +262,15 @@ class UserStudent extends  BaseModel
                         throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
                     }
                 }
+                if($this->edit_name == 'status' && $this->edit_value == 5){
+                    $userStudent->leaveschool_time = time();
+                    $userStudent->leaveschool_length = $this->leaveschool_length;
+                }
+                if($this->edit_name == 'status' && $this->edit_value == 1){
+                    $userStudent->leaveschool_time = null;
+                    $userStudent->leaveschool_length = null;
+                }
+                $userStudent->setAttribute($this->edit_name, $this->edit_value);
                 if($userStudent->save())
                 {
                     return [$this->edit_name => $this->edit_value];

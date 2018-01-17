@@ -25,6 +25,8 @@ use common\exception\ModelException;
  * @property integer $graduate_time
  * @property integer $eminent
  * @property string $reason_list
+ * @property integer $type
+ * @property string $expel_reason
  */
 class Alumna extends  BaseModel
 {
@@ -68,7 +70,7 @@ class Alumna extends  BaseModel
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
             self::SCENARIO_ADD => [
                 'stuNo','name','sex','birth','email','phone','session','depName','majorName', 'teamName','credit',
-                'reward','punish','admission_time'
+                'reward','punish','admission_time','type','expel_reason'
             ]
         ];
     }
@@ -203,7 +205,6 @@ class Alumna extends  BaseModel
             $alumna->eminent = false;
             if($alumna->save())
             {
-                return $alumna;
                 return true;
             }
             return null;
@@ -223,7 +224,7 @@ class Alumna extends  BaseModel
             if($alumna)
             {
                 $alumna->scenario = self::SCENARIO_EDIT;
-                if($this->edit_name == 'reward' || $this->edit_name == 'punish' || $this->edit_name == 'reason_list'){$this->edit_value = json_encode($this->edit_value);}
+                if($this->edit_name == 'reason_list'){$this->edit_value = json_encode($this->edit_value);}
                 $alumna->setAttribute($this->edit_name , $this->edit_value);
                 if($alumna->save())
                 {
