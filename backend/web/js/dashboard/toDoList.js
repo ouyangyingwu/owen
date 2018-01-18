@@ -2,7 +2,7 @@
  * Created by admin on 2018/1/5.
  */
 $(function() {
-    var htmlData, department,major,team;
+    var htmlData, department,major,team, Cache={};
     var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10},page = 1,stuStatua_old,stuStatua = 1,teaStatua_old,teaStatua = 1;
     function todo(){
@@ -12,6 +12,9 @@ $(function() {
             type: 'post',
             dataType: 'json',
             success:function(data){
+                Cache.setStorage = function(key , value){
+
+                };
                 if(data.overCount){
                     $('.overView .todolist').each(function(){
                         var dataName = $(this).attr('data-name');
@@ -238,7 +241,12 @@ $(function() {
     }
     };
 
-    function intTostr(value , type){
+    function intTostr(value , type , data){
+        if(type == 'user.birth') return CommonTool.formatTime(value , 'Y年m月d日');
+        if(type == 'department_id') return data.department.depName;
+        if(type == 'major_id') return data.major.majorName;
+        if(type == 'team_id') return data.team.teamName;
+
         if(type == 'user.active') {
             if (value == 1) return '激活';
             if (value == 0) return '冻结';
@@ -300,7 +308,6 @@ $(function() {
             if(value == 6) return '开除';
             if(value == 7) return '其他';
         }
-        if(type == 'user.birth') return CommonTool.formatTime(value , 'Y年m月d日');
         return value;
     }
 
@@ -346,22 +353,26 @@ $(function() {
                     {value: 1, text: '男'},
                     {value: 2, text: '女'},
                 ];break;
-            case 'department.depName':
+            case 'department_id':
                 var departmentList = [];
                 for(var i = 0,len = department.length; i<len; i++){
                     departmentList.push({value: department[i]['id'], text: department[i]['depName']});
                 }
                 return departmentList;break;
-            case 'major.majorName':
+            case 'major_id':
                 var majorList = [];
                 for(var i = 0,len = major.length; i<len; i++){
-                    majorList.push({value: major[i]['id'], text: major[i]['majorName']});
+                    if(major[i]['department_id'] == htmlData.department_id){
+                        majorList.push({value: major[i]['id'], text: major[i]['majorName']});
+                    }
                 }
                 return majorList;break;
-            case 'team.teamName':
+            case 'team_id':
                 var teamList = [];
                 for(var i = 0,len = team.length; i<len; i++){
-                    teamList.push({value: team[i]['id'], text: team[i]['teamName']});
+                    if(team[i]['major_id'] == htmlData.major_id && team[i]['period'] == htmlData.stuNo.substr(1,4)){
+                        teamList.push({value: team[i]['id'], text: team[i]['teamName']});
+                    }
                 }
                 return teamList;break;
             case 'status':
@@ -455,7 +466,7 @@ $(function() {
                     if(editSource){options["source"] = editSource;}
                     //为data-name为describe的项做数据验证
                     switch (name){}
-                    displayValue = intTostr(displayValue , name);
+                    displayValue = intTostr(displayValue , name , data);
                     if(!displayValue){displayValue="Empty";}
                     $(this).text(displayValue).editable('destroy');
                     $(this).editable(options);
@@ -563,7 +574,7 @@ $(function() {
                                     postData["id"] = data[(name.split('.')[0])]['id'];
                                 }
                                 $.ajax({
-                                    url:"/api/user/edit",
+                                    url:"/api/department/edit",
                                     data:postData,
                                     dataType:'json',
                                     type:'POST',

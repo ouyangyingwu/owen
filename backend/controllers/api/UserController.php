@@ -46,12 +46,15 @@ class UserController extends Controller
     public function actionListData()
     {
         $department = new Department();
+        $department->per_page = '';
         list($total , $department) = $department->getList();
 
         $major = new Major();
+        $major->per_page = '';
         list($total , $major) = $major->getList();
 
         $team = new Team();
+        $team->per_page = '';
         list($total , $team) = $team->getList();
 
         return[
