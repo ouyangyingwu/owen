@@ -1306,7 +1306,7 @@ $(function() {
         if(x<10) x = '0'+x;
         return x;
     }
-    //顶部头像
+    //退出登录
     logout = function(){
         $.ajax({
             url:'site/logout',

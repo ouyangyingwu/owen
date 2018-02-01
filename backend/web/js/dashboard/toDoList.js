@@ -864,6 +864,7 @@ $(function() {
                 $('#student-over').children('.over-page').text(overPage);
                 $('#table-student-list tbody').empty().append(html);
                 $('.student-edit').click(function(){
+                    $('.student-edit');
                     var student_id = $(this).attr('data-id');
                     for (var i=0 ; i<student.length ; i++){
                         if(student_id == student[i]['id']){
