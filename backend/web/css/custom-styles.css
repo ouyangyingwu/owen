@@ -128,6 +128,9 @@ border-radius: 0;
 .text-muted {
   color: #FB5651;
 }
+.text-black {
+    color: #000000 !important;
+}
 .badge {
   display: inline-block;
   min-width: 10px;
@@ -793,6 +796,10 @@ font-size: 19px;
     padding-top: 10px;
     padding-bottom: 10px;
 }
+.padding-TB-0{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
 .profile-sidebar {
     float: left;
     width: 300px;
@@ -807,7 +814,7 @@ font-size: 19px;
     overflow: hidden;
 }
 .float-none{
-    float: none;
+    float: none !important;
 }
 .todolist {
     height: 150px;
