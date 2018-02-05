@@ -1,0 +1,714 @@
+ <style>
+    .nav-tabs{border-bottom: none!important;}
+</style>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-gift"></i>New Common Reporting </div>
+    </div>
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <ul class="nav nav-tabs tabs-left">
+					<li class="active" name="btn-select-project" data-report="project">
+						<a> Project Report </a>
+					</li>
+					<li name="btn-select-project" data-report="service">
+						<a> Service Report </a>
+					</li>
+                    <!--<li name="btn-select-project" data-report="financial">-->
+                        <!--<a> Financial Report </a>-->
+                    <!--</li>-->
+                    <!--<li name="btn-select-project" data-report="inventory">-->
+                        <!--<a> Inventory Sold Report </a>-->
+                    <!--</li>-->
+                    <!--<li name="btn-select-project" data-report="inventoryCurrent">-->
+                        <!--<a> Inventory Current Report </a>-->
+                    <!--</li>-->
+                    <li name="btn-select-project" data-report="source">
+                        <a> Source Report </a>
+                    </li>
+					<li name="btn-select-project" data-report="es_employee_record">
+						<a> ES Employee Record </a>
+					</li>
+                    <li name="btn-select-project" data-report="vendor_revenue_report">
+                        <a> Vendor Revenue Report </a>
+                    </li>
+                    <!--<li name="btn-select-project" data-report="productDetail">-->
+                        <!--<a> Vendor Reconciliation Report Product Detail </a>-->
+                    <!--</li>-->
+                    <!--<li name="btn-select-project" data-report="employeeReport">-->
+                        <!--<a> Employee Activity Report </a>-->
+                    <!--</li>-->
+                </ul>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                <div class="tab-content">
+                    <!-- Active Users By Site -->
+                    <div class="tab-pane fade active in" id="tab_project">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Project Report</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+                                    <div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Rport Type:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" style="width:475px;" id="select-project-report-type" data-required="1" data-field="report_type">
+													<option value="1">Weekly Project Report</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Client Company:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" name="form-select-client" data-scope="projectLocationList"
+													style="width:475px;" data-required="1" data-field="client_id">
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"
+														data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group" data-parents style="display:none;">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple" class="multi-select" data-field="location_list" data-display="projectLocationList">
+
+												</select>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label"></label>
+											<div class="col-md-5">
+												<div class="alert alert-success">
+													<font data-name="project-remark-1">
+														This time is the activity time of the project, including the request time and the tracking time.
+													</font>
+													<font data-name="project-remark-2" style="display:none;">
+														This time is the request time of the project.
+													</font>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button name="btn-export" data-form="tab_project" class="btn blue" data-action="new-project">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Registered Users By Site -->
+                    <div class="tab-pane fade in" id="tab_financial">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold">Financial Report</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+                                    <div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"   
+														data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple" class="multi-select" data-field="location_list" name="select-location">
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>												
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label"></label>
+											<div class="col-md-5">
+												<div class="alert alert-success">
+													This time is the payment time or the time of the refund.
+												</div>
+											</div>
+										</div>	
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button name="btn-export" class="btn blue" data-form="tab_financial" data-action="financial">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lapsed User Export -->
+                    <div class="tab-pane fade in" id="tab_inventory">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Inventory Sold Report</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														   data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"
+														   data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple" class="multi-select" data-field="location_list" name="select-location">
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>										
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="inventory" data-form="tab_inventory">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<!-- end -->
+					<!-- Lapsed User Export -->
+                    <div class="tab-pane fade in" id="tab_inventoryCurrent">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Inventory Current Report</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str" 
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple" class="multi-select" data-field="location_list" name="select-location">
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>										
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="inventory-current" data-form="tab_inventoryCurrent">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					<!-- end -->
+					<!-- Lapsed User Export -->
+					<div class="tab-pane fade in" id="tab_source">
+						<div class="portlet light ">
+							<div class="portlet-title">
+								<div class="caption font-red-sunglo">
+									<i class="fa fa-file-excel-o font-dark"></i>
+									<span class="caption-subject font-dark sbold"> Source Report</span>
+								</div>
+							</div>
+							<div class="portlet-body form">
+								<div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Date:</label>
+											<div class="col-md-4">
+												<select class="form-control select2" id="select-date-type" data-field="date_type">
+													<option value="1">Monthly Report</option>
+													<option value="2">Year-to-date Report</option>
+												</select>
+											</div>
+											<div class="col-md-3" id="form-date">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control js-sourcestart-date" readonly data-required="1" data-field-str="start_date"
+														   data-field="start_date_str" data-time-type="month">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" data-field="location_id" >
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="new-source" data-form="tab_source">Export</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- end -->
+					<div class="tab-pane fade in" id="tab_es_employee_record">
+						<div class="portlet light ">
+							<div class="portlet-title">
+								<div class="caption font-red-sunglo">
+									<i class="fa fa-file-excel-o font-dark"></i>
+									<span class="caption-subject font-dark sbold"> CS Employee Record </span>
+								</div>
+							</div>
+							<div class="portlet-body form">
+								<div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														   data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"
+														   data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Employee:</label>
+											<div class="col-md-5">
+												<select class="form-control select2"  multiple="multiple" id="select-user-employee"
+														style="width:475px;" data-field="user_id">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export"
+													data-action="new-employee-saved" data-form="tab_es_employee_record">Export</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade in" id="tab_vendor_revenue_report">
+						<div class="portlet light ">
+							<div class="portlet-title">
+								<div class="caption font-red-sunglo">
+									<i class="fa fa-file-excel-o font-dark"></i>
+									<span class="caption-subject font-dark sbold"> Vendor Revenue Report </span>
+								</div>
+							</div>
+							<div class="portlet-body form">
+								<div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														   data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"
+														   data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" data-field="location_id" >
+													<option value="">All Location</option>
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export"
+													data-action="new-revenue-report" data-form="tab_vendor_revenue_report">Export</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade in" id="tab_service">
+						<div class="portlet light ">
+							<div class="portlet-title">
+								<div class="caption font-red-sunglo">
+									<i class="fa fa-file-excel-o font-dark"></i>
+									<span class="caption-subject font-dark sbold"> Service Report</span>
+								</div>
+							</div>
+							<div class="portlet-body form">
+								<div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str"
+														   data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"
+														   data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" data-field="location_id" >
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="new-service" data-form="tab_service">Export</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade in" id="tab_vendorReconciliation">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Vendor Reconciliation Report</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str" 
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"   
+														data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Vendor Name:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" name="form-select-client" data-scope="vendorNameList" 
+													style="width:475px;" data-required="1" data-field="vendor_id">
+												</select>
+											</div>
+										</div>
+										<div class="form-group" data-parents style="display:none;">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple"  class="multi-select" data-field="location_list" data-display="vendorList">
+													
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="vendor-reconciliation" data-form="tab_vendorReconciliation">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="tab_productDetail">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Vendor Reconciliation Report Product Detail</span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str" 
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"   
+														data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Vendor Name:</label>
+											<div class="col-md-5">
+												<select class="form-control select2" name="form-select-client" data-scope="vendorNameList" 
+													style="width:475px;" data-required="1" data-field="vendor_id">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="product-detail" data-form="tab_productDetail">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade in" id="tab_employeeReport">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption font-red-sunglo">
+                                    <i class="fa fa-file-excel-o font-dark"></i>
+                                    <span class="caption-subject font-dark sbold"> Employee Activity Report </span>
+                                </div>
+                            </div>
+                            <div class="portlet-body form">
+                                <div class="form-horizontal">
+									<div class="form-body">
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="start_date_str" 
+														data-field="start_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date date-picker">
+													<input type="text" class="form-control" readonly data-required="1" data-field-str="end_date_str"   
+														data-add-day="1" data-field="end_time" data-time-type="day">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="fa fa-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										
+										<div class="form-group">
+											<label class="col-md-4 control-label">Location:</label>
+											<div class="col-md-5">
+												<select multiple="multiple" class="multi-select" data-field="location_list" name="select-location">
+													<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
+												</select>										
+											</div>
+										</div>
+									</div>
+									<div class="form-actions right">
+										<div class="col-md-9">
+											<button class="btn blue" name="btn-export" data-action="employee-export" data-form="tab_employeeReport">Export</button>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

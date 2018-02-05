@@ -98,7 +98,6 @@ class SiteController extends Controller
     {
         //var_dump(Yii::$app->request->post());die;
         Yii::$app->user->logout();
-        return true;
         return $this->goHome();
     }
 }

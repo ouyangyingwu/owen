@@ -96,13 +96,13 @@
             </ul>
         </li>
         <li>
-            <a href="/#/empty.html"><i class="icon-sitemap"></i> Multi-Level Dropdown<span class="icon-angle-right arrow"></span></a>
+            <a href="javascript:void(0)"><i class="icon-bar-chart"></i> Report <span class="icon-angle-right arrow"></span></a>
             <ul class="nav nav-second-level hidee b-color">
                 <li>
-                    <a href="#">Second Level Link</a>
+                    <a href="/#/report_export.html" class="location-file"><i class="icon-cogs"></i>Export Report</a>
                 </li>
                 <li>
-                    <a href="#">Second Level Link</a>
+                    <a href="/#/export_import.html" class="location-file"><i class="icon-cogs"></i>Import Report</a>
                 </li>
             </ul>
         </li>
