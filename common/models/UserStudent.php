@@ -97,6 +97,14 @@ class UserStudent extends  BaseModel
                 $this->_query->andFilterWhere(['team_id' => $this->team_id]);
             }
         }
+        if ($this->stuNo)
+        {
+            if(is_array($this->stuNo)){
+                $this->_query->andFilterWhere(['in', 'stuNo', $this->stuNo]);
+            }else{
+                $this->_query->andFilterWhere(['stuNo' => $this->stuNo]);
+            }
+        }
         if ($this->status)
         {
             if(is_array($this->status)){
@@ -132,6 +140,10 @@ class UserStudent extends  BaseModel
     {
         return $this->hasOne(Team::className(),['id'=>'team_id']);
     }
+    public function getRegister()
+    {
+        return $this->hasMany(Register::className(),['student_id'=>'id']);
+    }
     /**
      * add expand query
      * 关联表查询
@@ -155,6 +167,16 @@ class UserStudent extends  BaseModel
             }
             if(in_array('team' , $this->expand)){
                 $this->_query->with('team');
+            }
+            if(in_array('register' , $this->expand)){
+                $this->_query->with('register');
+            }
+            if(in_array('register.course' , $this->expand)){
+                $this->_query->with([
+                    'register' => function($query){
+                        $query->where(['NOT',['exam_time' => null]])->andwhere(['NOT',['exam_time' => '']])->with('course');
+                    }
+                ]);
             }
         }
 

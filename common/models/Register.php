@@ -10,6 +10,7 @@ use common\exception\ModelException;
  * @property integer $id
  * @property integer $student_id
  * @property integer $course_id
+ * @property integer $exam_time
  * @property integer $score
  * @property integer $lack_class
  * @property integer $be_late
@@ -120,10 +121,12 @@ class Register extends  BaseModel
      */
     private function addQueryExpand()
     {
-        if (count($this->expand)>0){
+        if (count($this->expand)>0)
+        {
             if(in_array('student' , $this->expand)){
                 $this->_query->with('student');
             }
+
             if(in_array('student.user' , $this->expand)){
                 /*$this->_query->with(['student.user'=>function($q){
                     //只能对最后一个关联表的字段进行筛选
@@ -139,13 +142,9 @@ class Register extends  BaseModel
                     }
                 ]);
             }
+
             if(in_array('course' , $this->expand)){
                 $this->_query->with('course');
-                /*$this->_query->with([
-                    'course' => function($query) {
-                        $query->select(['id', 'majorNo','majorName']);
-                    }
-                ]);*/
             }
         }
     }

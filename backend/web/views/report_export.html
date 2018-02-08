@@ -12,16 +12,16 @@
 								<li class="active float-none" name="student-score">
 									<a> Student Score </a>
 								</li>
-								<li name="btn-select-project" data-report="service">
-									<a> Service Report </a>
+								<li class="float-none" name="team-score">
+									<a> Team Score </a>
 								</li>
-								<li name="btn-select-project" data-report="source">
+								<li class="float-none" name="btn-select-project">
 									<a> Source Report </a>
 								</li>
-								<li name="btn-select-project" data-report="es_employee_record">
+								<li class="float-none" name="btn-select-project">
 									<a> ES Employee Record </a>
 								</li>
-								<li name="btn-select-project" data-report="vendor_revenue_report">
+								<li class="float-none" name="btn-select-project">
 									<a> Vendor Revenue Report </a>
 								</li>
 							</ul>
@@ -29,58 +29,111 @@
 					</div>
 				</div>
 				<div class="profile-content">
-					<div class="portlet light" id="student-score">
+					<!-- 学生个人成绩 -->
+					<div class="portlet light student-score">
 						<div class="portlet-title clearfix">
 							<div class="caption font-red-sunglo">
 								<i class="icon-file"></i>
-								<span class="caption-subject font-dark sbold"> Student Score </span>
+								<span class="caption-subject font-dark sbold"> 学生个人成绩单 </span>
 							</div>
 						</div>
 						<div class="portlet-body form">
 							<div class="form-horizontal">
-								<div class="form-body text-black">
-									<div class="form-group">
-										<label class="col-md-4 control-label">Start Date:</label>
-										<div class="col-md-5">
-											<div class="input-group date">
-												<input type="text" class="form-control scheduleTime" readonly data-required="1" data-field="start_time" data-time-type="day">
+								<form id="student-score" method="post" action="">
+									<div class="form-body text-black">
+										<div class="form-group">
+											<label class="col-md-4 control-label">学号:</label>
+											<div class="col-md-5">
+												<div class="input-group col-md-12">
+													<input type="text" class="form-control" name="stuNo">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">Start Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control scheduleTime" name="start_time">
 													<span class="input-group-btn">
 														<button class="btn default date-set" type="button">
 															<i class="icon-calendar"></i>
 														</button>
 													</span>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-md-4 control-label">End Date:</label>
-										<div class="col-md-5">
-											<div class="input-group date">
-												<input type="text" class="form-control scheduleTime" readonly data-required="1" data-add-day="1" data-field="end_time" data-time-type="day">
+										<div class="form-group">
+											<label class="col-md-4 control-label">End Date:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control scheduleTime" name="end_time">
 													<span class="input-group-btn">
 														<button class="btn default date-set" type="button">
 															<i class="icon-calendar"></i>
 														</button>
 													</span>
+												</div>
 											</div>
 										</div>
 									</div>
-									<div class="form-group">
-										<label class="col-md-4 control-label">Location:</label>
-										<div class="col-md-5">
-											<select class="form-control select2" data-field="location_id" >
-												<option value="">All Location</option>
-												<option ng-repeat="location in EmployeeLocationList" value="{{location.id}}">{{location.location_name}}</option>
-											</select>
+									<div class="form-actions text-right">
+										<div class="col-md-9">
+											<button type="submit" class="btn blue">Export</button>
 										</div>
 									</div>
-								</div>
-								<div class="form-actions text-right">
-									<div class="col-md-9">
-										<button class="btn blue" name="btn-export"
-												data-action="student-score" data-form="student-score">Export</button>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!-- 班级全部成绩 -->
+					<div class="portlet light team-score hide">
+						<div class="portlet-title clearfix">
+							<div class="caption font-red-sunglo">
+								<i class="icon-file"></i>
+								<span class="caption-subject font-dark sbold"> 班级成绩单 </span>
+							</div>
+						</div>
+						<div class="portlet-body form">
+							<div class="form-horizontal">
+								<form id="team-score" method="post" action="">
+									<div class="form-body text-black">
+										<div class="form-group">
+											<label class="col-md-4 control-label">届:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control scheduleTime" name="period">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="icon-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">班级:</label>
+											<div class="col-md-5">
+												<div class="input-group col-md-12">
+													<input type="text" class="form-control" name="teamName">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">时间:</label>
+											<div class="col-md-5">
+												<div class="input-group col-md-12">
+													<select class="form-control" name="exam_time">
+													</select>
+												</div>
+											</div>
+										</div>
 									</div>
-								</div>
+									<div class="form-actions text-right">
+										<div class="col-md-9">
+											<button type="submit" class="btn blue">Export</button>
+										</div>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>

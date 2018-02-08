@@ -3,22 +3,33 @@ namespace common\models;
 
 use Yii;
 use common\exception\ModelException;
+use yii\base\Model;
 
 /**
  * 导出excel文件
- *
+ * 在没有对应表的模型中应该继承Mode
  */
-class Report extends  BaseModel
+class Report extends  Model
 {
     public $start_time;
     public $end_time;
     public $student_id;
     public $teacher_id;
     public $admin_id;
+    public $teamName;
+    public $stuNo;
+    public $couNo;
+    public $period;
+    public $exam_time;
 
     private $_query;
 
     const SCENARIO_EXPORT_REPORT = 'export_report';
+    const SCENARIO_EXPORT_REPORT_ONE = 'export_report_one';
+    const SCENARIO_EXPORT_REPORT_TEAM = 'export_report_team';
+    const SCENARIO_EXPORT_REPORT_MAJOR = 'export_report_major';
+    const SCENARIO_EXPORT_REPORT_COURSE = 'export_report_course';
+
     const SCENARIO_IMPORT_REPORT = 'import_report';
 
     /**
@@ -28,125 +39,109 @@ class Report extends  BaseModel
     public function rules()
     {
         return [
-            [['start_time','end_time','student_id','teacher_id','admin_id' ],'integer'],
+            [['start_time','end_time','student_id','teacher_id','admin_id','major_id','period'],'integer'],
+            [['stuNo','couNo','exam_time','teamName'],'string'],
+            [['stuNo'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_ONE]],
+            [['teamName','period'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_TEAM]],
+            [['major_id'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_MAJOR]],
+            [['couNo'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_COURSE]],
         ];
     }
     //保护字段
     public function scenarios()
     {
         return [
-            self::SCENARIO_EXPORT_REPORT => ['start_time','end_time','student_id','teacher_id','admin_id'],
+            self::SCENARIO_EXPORT_REPORT => ['start_time','end_time','student_id','teacher_id','admin_id','stuNo'],
+            self::SCENARIO_EXPORT_REPORT_ONE => ['start_time','end_time','stuNo'],
+            self::SCENARIO_EXPORT_REPORT_TEAM => ['period','teamName','exam_time'],
         ];
     }
 
-    public function exportStudentScore(){
-        //$this->scenario = self::SCENARIO_EXPORT_REPORT;
-        //if ($this->validate()) {
-        /*WHERE r.exam_time >= time($this->start_time)
-            AND r.exam_time < time($this->end_time)
-            AND r.exam_time <> null*/
-            $connection = Yii::$app->db;
-            $staticSql = "SELECT * FROM register AS r
-            LEFT JOIN course AS c ON r.course_id=c.id
-            LEFT JOIN user_student AS s ON r.student_id=s.id
-            LEFT JOIN user AS u ON s.user_id=u.id
-            LEFT JOIN team as t ON s.team_id=t.id
-            LEFT JOIN major as m ON s.major_id=m.id
-            LEFT JOIN department as d ON s.department_id=d.id
+    public function exportStudentScore()
+    {
+        $this->scenario = self::SCENARIO_EXPORT_REPORT_ONE;
+        if ($this->validate()) {
 
-            ORDER BY c.courseName ASC";
-
-            $countCommand = $connection->createCommand($staticSql);
-            $student_register = $countCommand->query()->readAll();
-            $connection->close();
-            /*$csvData = [];
-            array_push($csvData, [
-                '系', '专业', '班级', '学号', '姓名', '届', '开始时间', '结束时间', '科目','成绩'
-            ]);*/
-            $csvData = "系\t 专业\t 班级\t 学号\t 姓名\t 届\t 开始时间\t 结束时间\t 科目\t 成绩\r";
-
+            $student = new UserStudent();
+            $student->expand = ['register','register.course','user','team','major','department'];
+            $student->stuNo = $this->stuNo;
+            $student_register = $student->getOne();
             //var_dump($student_register);die;
+            $csvData = [];
+            array_push($csvData , ['系','专业','届','班级','学号','姓名']);
             if($student_register){
-                foreach($student_register as $res){
-                    /*array_push($csvData, [
-                        $res['depName'],
-                        $res['majorName'],
-                        $res['teamName'],
-                        $res['stuNo'],
-                        $res['username'],
-                        $res['period'],
-                        $this->start_time,
-                        $this->end_time,
-                        $res['courseName'],
-                        $res['score'],
-                    ]);*/
-                    $csvData .= $res['depName']."\t";
-                    $csvData .= $res['majorName']."\t";
-                    $csvData .= $res['teamName']."\t";
-                    $csvData .= $res['stuNo']."\t";
-                    $csvData .= $res['username']."\t";
-                    $csvData .= $res['period']."\t";
-                    $csvData .= $this->start_time."\t";
-                    $csvData .= $this->end_time."\t";
-                    $csvData .= $res['courseName']."\t";
-                    $csvData .= $res['score']."\r";
+                array_push($csvData, [
+                    $student_register['department']['depName'],
+                    $student_register['major']['majorName'],
+                    $student_register['team']['period'],
+                    $student_register['team']['teamName'],
+                    $student_register['stuNo'],
+                    $student_register['user']['username'],
+                ]);
+
+                array_push($csvData , []);
+                array_push($csvData , ['科目','考试时间','成绩','获得学分']);
+
+                foreach ($student_register['register'] as $value) {
+                    array_push($csvData , [
+                        $value['course']['courseName'],
+                        date('Y/m/d' , $value['exam_time']),
+                        $value['score'],
+                        $value['credit']
+                    ]);
                 }
             }
-            //array_push($csvData,[]);
-
-            $fileName = '成绩 ('.$this->start_time.' to '.$this->end_time.')';
-            //return [$fileName, $csvData];
-            //return [$fileName, $this->outPutCSV($csvData)];
-        /*} else {
+            $fileName = $student_register['user']['username'].'的成绩';
+            return [$fileName, $this->outPutCSV($csvData)];
+        } else {
             $errorStr = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
-        }*/
-        $dataResult = array();      //todo:导出数据（自行设置）
-        $headTitle = "XX保险公司 优惠券赠送记录";
-        $title = "优惠券记录";
-        $headtitle= "<tr style='height:50px;border-style:none;><th border=\"0\" style='height:60px;width:270px;font-size:22px;' colspan='11' >{$headTitle}</th></tr>";
-        $titlename = "<tr>
-               <th style='width:70px;' >合作商户</th>
-               <th style='width:70px;' >会员卡号</th>
-               <th style='width:70px;'>车主姓名</th>
-               <th style='width:150px;'>手机号</th>
-               <th style='width:70px;'>车牌号</th>
-               <th style='width:100px;'>优惠券类型</th>
-               <th style='width:100px;'>优惠券名称</th>
-               <th style='width:100px;'>优惠券面值</th>
-               <th style='width:100px;'>优惠券数量</th>
-               <th style='width:70px;'>赠送时间</th>
-               <th style='width:90px;'>截至有效期</th>
-           </tr>";
-        $filename = $title.".xls";
-        $this->excelData($dataResult,$titlename,$headtitle,$filename);
+        }
     }
 
-    public function excelData($datas,$titlename,$title,$filename){
-        $str = "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"\r\nxmlns:x=\"urn:schemas-microsoft-com:office:excel\"\r\nxmlns=\"http://www.w3.org/TR/REC-html40\">\r\n<head>\r\n<meta http-equiv=Content-Type content=\"text/html; charset=utf-8\">\r\n</head>\r\n<body>";
-        $str .="<table border=1><head>".$titlename."</head>";
-        $str .= $title;
-        foreach ($datas  as $key=> $rt )
-        {
-            $str .= "<tr>";
-            foreach ( $rt as $k => $v )
-            {
-                $str .= "<td>{$v}</td>";
+    public function exportTeamScore()
+    {
+        $this->scenario = self::SCENARIO_EXPORT_REPORT_TEAM;
+        if ($this->validate()) {
+            $team = new Team();
+            $team->expand = ['student','student.user','student.register','department'];
+            $team->teamName = $this->teamName;
+            $student_register = $team->getOne();
+            //var_dump($student_register);die;
+
+            $headTitle = '第'.$student_register['period'].'届'.$student_register['department']['depName'].$student_register['teamName'].'的成绩单';
+            $titlename = ['学号','姓名'];
+            $course = new Course();
+            $course->major_id = $student_register['major_id'];
+            $course->period = $student_register['period'];
+            $course->order_by = ['id'=>1];
+            list($total , $courseList) = $course->getList();
+            foreach($courseList as $value){
+                $titlename[] = $value['courseName'];
             }
-            $str .= "</tr>\n";
+            list($title , $headTitle) = $this->excelData($titlename , $headTitle);
+
+            $csvData = [];
+            if($student_register){
+                foreach($student_register['student'] as $value){
+                    $data = [$value['stuNo'] , $value['user']['username']];
+                    foreach ($value['register'] as $item) {
+                        $data[] = $item['score']?:'';
+                    }
+                    array_push($csvData , $data);
+                }
+            }
+            $fileName = $student_register['teamName'].'的成绩单';
+
+            return [$csvData,$fileName,$title,$headTitle];
+        } else {
+            $errorStr = current($this->getFirstErrors());
+            throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
         }
-        $str .= "</table></body></html>";
-        header( "Content-Type: application/vnd.ms-excel; name='excel'" );
-        header( "Content-type: application/octet-stream" );
-        header( "Content-Disposition: attachment; filename=".$filename );
-        header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-        header( "Pragma: no-cache" );
-        header( "Expires: 0" );
-        exit( $str );
     }
 
     /**
-     * 把数据处理好，为导出做准备
+     * 字符串在转换
     */
     private function outPutCSV($csvData)
     {
@@ -156,5 +151,20 @@ class Report extends  BaseModel
             $content[] = '"'.implode('","', $data).'"';
         }
         return implode("\n", $content);
+    }
+    /**
+     * html格式转换
+     */
+    private function excelData($titlename , $headTitle)
+    {
+        $width = count($titlename);
+        $headTitle= "<tr style='height:50px;border-style:none;><th border=\"0\" style=\"height:60px;width:270px;font-size:22px;\" rowspan=\"2\" colspan='{$width}' >{$headTitle}</th></tr>";
+        $title = '';
+        $title = "<tr>";
+        foreach($titlename as $value){
+            $title .= "<th>{$value}</th>";
+        }
+        $title .= "</tr>";
+        return [$title , $headTitle];
     }
 }

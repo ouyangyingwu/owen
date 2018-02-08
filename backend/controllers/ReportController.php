@@ -15,32 +15,78 @@ class ReportController extends Controller
      */
     public function actionStudentScore(){
         $report = new Report();
-        //$report->scenario = Report::SCENARIO_EXPORT_REPORT;
+        $report->scenario = Report::SCENARIO_EXPORT_REPORT_ONE;
         $report->setAttributes(Yii::$app->request->get());
-        $report->start_time = Yii::$app->request->get('start_time');
-        $report->end_time = Yii::$app->request->get('end_time');
         list($filenName, $content) = $report->exportStudentScore();
-        //var_dump($content);die;
-        $this->putCsv($content,$filenName);
+        $this->putCsv($content,$filenName,'','');
+    }
+    /**
+     * 导出班级全部学生成绩
+     */
+    public function actionTeamScore(){
+        $report = new Report();
+        $report->scenario = Report::SCENARIO_EXPORT_REPORT_TEAM;
+        $report->setAttributes(Yii::$app->request->get());
+        list($content,$fileName,$title,$titlename) = $report->exportTeamScore();
+        //var_dump($content,$fileName,$title,$titlename);die;
+        $this->putCsv($content,$fileName,$title,$titlename);
+    }
+    /**
+     * 导出专业全部学生成绩
+     */
+    public function actionMajorScore(){
+        $report = new Report();
+        $report->scenario = Report::SCENARIO_EXPORT_REPORT_MAJOR;
+        $report->setAttributes(Yii::$app->request->get());
+        list($filenName, $content) = $report->exportStudentScore();
+        $this->putCsv($content,$filenName,'','');
+    }
+    /**
+     * 导出课程成绩
+     */
+    public function actionCourseScore(){
+        $report = new Report();
+        $report->scenario = Report::SCENARIO_EXPORT_REPORT_COURSE;
+        $report->setAttributes(Yii::$app->request->get());
+        list($filenName, $content) = $report->exportStudentScore();
+        $this->putCsv($content,$filenName,'','');
     }
 
     /**
      * 生成导出excel文件
      */
-    private function putCsv($content,$fileName){
-        /* //可用，但是中文会出现乱码
-        header('Content-type:text/csv; charset=utf-8');
-        header('Content-Disposition:attachment;filename='.$fileName.'.csv');
-        header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
-        header('Expires:0');
-        header('Pragma:public');
-        echo $content;*/
-
-        /* //可用，但是每次打开会报（文件格式和扩展名不匹配）
-        header("Content-type:application/vnd.ms-excel");
-        header("Content-Disposition:filename=".$fileName.".xls");
-        $strexport = iconv('UTF-8',"GB2312//IGNORE",$content);
-        exit($strexport);*/
+    private function putCsv($content,$fileName,$title,$titlename){
+        if($title && $titlename){
+            $str = "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"\r\nxmlns:x=\"urn:schemas-microsoft-com:office:excel\"\r\nxmlns=\"http://www.w3.org/TR/REC-html40\">\r\n<head>\r\n<meta http-equiv=Content-Type content=\"text/html; charset=utf-8\">\r\n</head>\r\n<body>";
+            $str .="<table border=1><head>".$titlename."</head>";
+            $str .= $title;
+            foreach ($content  as $key=> $rt )
+            {
+                $str .= "<tr>";
+                foreach ( $rt as $k => $v )
+                {
+                    $str .= "<td>{$v}</td>";
+                }
+                $str .= "</tr>\n";
+            }
+            $str .= "</table></body></html>";
+            header( "Content-Type: application/vnd.ms-excel; name='excel'" );
+            header( "Content-type: application/octet-stream" );
+            header( "Content-Disposition: attachment; filename=".$fileName.'.xls' );
+            header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+            header( "Pragma: no-cache" );
+            header( "Expires: 0" );
+            //$str = iconv('UTF-8',"GB2312//IGNORE",$str);
+            exit( $str );
+        }else{
+            header('Content-type:text/csv; charset=utf-8');
+            header('Content-Disposition:attachment;filename='.$fileName.'.csv');
+            header('Cache-Control:must-revalidate,post-check=0,pre-check=0');
+            header('Expires:0');
+            header('Pragma:public');
+            //字符转译，使的中文不乱码
+            $content = iconv('UTF-8',"GB2312//IGNORE",$content);
+            echo $content;
+        }
     }
-
 }

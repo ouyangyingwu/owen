@@ -20,6 +20,7 @@ use common\exception\ModelException;
  * @property integer $classroom_id
  * @property integer $number
  * @property integer $type
+ * @property integer $period
  */
 class Course extends  BaseModel
 {
@@ -99,6 +100,10 @@ class Course extends  BaseModel
         if ($this->major_id)
         {
             $this->_query->andFilterWhere(['major_id' => $this->major_id]);
+        }
+        if ($this->period)
+        {
+            $this->_query->andFilterWhere(['period' => $this->period]);
         }
         if(count($this->select)>0)
         {

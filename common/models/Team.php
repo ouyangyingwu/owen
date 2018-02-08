@@ -56,7 +56,8 @@ class Team extends  BaseModel
         return [
             self::SCENARIO_LIST => ['id','user_id','className','period','major_id','per_page','page'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
-            self::SCENARIO_ADD => ['department_id','major_id','teamName','user_id','period','number_limit']
+            self::SCENARIO_ADD => ['department_id','major_id','teamName','user_id','period','number_limit'],
+            self::SCENARIO_SEARCH_ONE => ['id'],
         ];
     }
 
@@ -117,6 +118,10 @@ class Team extends  BaseModel
     {
         return $this->hasOne(Department::className(),['id'=>'department_id']);
     }
+    public function getStudent()
+    {
+        return $this->hasMany(UserStudent::className(),['team_id'=>'id']);
+    }
     /**
      * add expand query
      * 关联表查询
@@ -143,6 +148,26 @@ class Team extends  BaseModel
                 $this->_query->with([
                     'department' => function($query) {
                         $query->select(['id', 'depName']);
+                    }
+                ]);
+            }
+            if(in_array('student' , $this->expand)){
+                $this->_query->with('student');
+            }
+            if(in_array('student.user' , $this->expand)){
+                $this->_query->with([
+                    'student.user'
+
+                ]);
+            }
+            if(in_array('student.register' , $this->expand)){
+                $this->_query->with([
+                    'student' => function($query){
+                        $query->addOrderBy(['id'=>SORT_ASC])->with([
+                            'register' => function($query){
+                                $query->addOrderBy(['id'=>SORT_ASC]);
+                            }
+                        ]);
                     }
                 ]);
             }
