@@ -78,7 +78,7 @@ $(function(){
             params.push(name + "=" + value);
         });
         var url = "report/" + form + "?" + params.join("&");
-        console.log(url);return;
+        //console.log(url);return;
         window.location.href = url;
     };
 });

@@ -165,7 +165,7 @@ class Team extends  BaseModel
                     'student' => function($query){
                         $query->addOrderBy(['id'=>SORT_ASC])->with([
                             'register' => function($query){
-                                $query->addOrderBy(['id'=>SORT_ASC]);
+                                $query->addOrderBy(['course_id'=>SORT_ASC]);
                             }
                         ]);
                     }

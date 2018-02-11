@@ -60,7 +60,7 @@ class Course extends  BaseModel
     public function scenarios()
     {
         return [
-            self::SCENARIO_LIST => ['id','user_id','major_id','type','couNo','courseName','per_page','page'],
+            self::SCENARIO_LIST => ['id','user_id','major_id','type','couNo','courseName','period','per_page','page'],
             self::SCENARIO_SEARCH_ONE => ['id', 'user_id','stuNo'],
             self::SCENARIO_ADD => ['user_id','couNo','courseName','department_id','classroom_id','major_id','credit','number','start_time','end_time','class_time','type'],
             self::SCENARIO_EDIT => ['id' , 'edit_name' , 'edit_value'],
@@ -132,6 +132,10 @@ class Course extends  BaseModel
     {
         return $this->hasOne(ClassRoom::className(),['id'=>'classroom_id']);
     }
+    public function getRegister()
+    {
+        return $this->hasMany(Register::className(),['course_id'=>'id']);
+    }
     /**
      * add expand query
      * 关联表查询
@@ -167,6 +171,15 @@ class Course extends  BaseModel
                         $query->select(['id', 'crBuildingName','crRoomNo','crNo']);
                     }
                 ]);
+            }
+            if(in_array('register' , $this->expand)){
+                $this->_query->with('register');
+            }
+            if(in_array('register.student.user' , $this->expand)){
+                $this->_query->with('register.student.user');
+            }
+            if(in_array('register.student.team' , $this->expand)){
+                $this->_query->with('register.student.team');
             }
         }
     }
