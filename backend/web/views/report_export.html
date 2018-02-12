@@ -15,14 +15,11 @@
 								<li class="float-none" name="team-score">
 									<a> Team Score </a>
 								</li>
-								<li class="float-none" name="btn-select-project">
-									<a> Source Report </a>
+								<li class="float-none" name="course-score">
+									<a> Course Report </a>
 								</li>
-								<li class="float-none" name="btn-select-project">
-									<a> ES Employee Record </a>
-								</li>
-								<li class="float-none" name="btn-select-project">
-									<a> Vendor Revenue Report </a>
+								<li class="float-none" name="major-score">
+									<a> Major Report </a>
 								</li>
 							</ul>
 						</div>
@@ -124,6 +121,92 @@
 												<div class="input-group col-md-12">
 													<select class="form-control" name="exam_time">
 													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions text-right">
+										<div class="col-md-9">
+											<button type="submit" class="btn blue">Export</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!-- 课程全部成绩 -->
+					<div class="portlet light course-score hide">
+						<div class="portlet-title clearfix">
+							<div class="caption font-red-sunglo">
+								<i class="icon-file"></i>
+								<span class="caption-subject font-dark sbold"> 课程成绩单 </span>
+							</div>
+						</div>
+						<div class="portlet-body form">
+							<div class="form-horizontal">
+								<form id="course-score" method="post" action="">
+									<div class="form-body text-black">
+										<div class="form-group">
+											<label class="col-md-4 control-label">届:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control scheduleTime" name="period">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="icon-calendar"></i>
+														</button>
+													</span>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">课程名称:</label>
+											<div class="col-md-5">
+												<div class="input-group col-md-12">
+													<input type="text" class="form-control" name="courseName">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions text-right">
+										<div class="col-md-9">
+											<button type="submit" class="btn blue">Export</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!-- 专业全部成绩 -->
+					<div class="portlet light major-score hide">
+						<div class="portlet-title clearfix">
+							<div class="caption font-red-sunglo">
+								<i class="icon-file"></i>
+								<span class="caption-subject font-dark sbold"> 专业成绩单 </span>
+							</div>
+						</div>
+						<div class="portlet-body form">
+							<div class="form-horizontal">
+								<form id="major-score" method="post" action="">
+									<div class="form-body text-black">
+										<div class="form-group">
+											<label class="col-md-4 control-label">专业名称:</label>
+											<div class="col-md-5">
+												<div class="input-group col-md-12">
+													<input type="text" class="form-control" name="majorName">
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-4 control-label">届:</label>
+											<div class="col-md-5">
+												<div class="input-group date">
+													<input type="text" class="form-control scheduleTime" name="period">
+													<span class="input-group-btn">
+														<button class="btn default date-set" type="button">
+															<i class="icon-calendar"></i>
+														</button>
+													</span>
 												</div>
 											</div>
 										</div>

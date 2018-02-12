@@ -22,6 +22,7 @@ class Report extends  Model
     public $period;
     public $exam_time;
     public $courseName;
+    public $majorName;
 
     private $_query;
 
@@ -40,11 +41,11 @@ class Report extends  Model
     public function rules()
     {
         return [
-            [['start_time','end_time','student_id','teacher_id','admin_id','major_id','period'],'integer'],
+            [['start_time','end_time','student_id','teacher_id','admin_id','period'],'integer'],
             [['stuNo','couNo','exam_time','teamName'],'string'],
             [['stuNo'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_ONE]],
             [['teamName','period'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_TEAM]],
-            [['major_id'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_MAJOR]],
+            [['majorName'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_MAJOR]],
             [['period','couNo'],'required','on'=>[self::SCENARIO_EXPORT_REPORT_COURSE]],
         ];
     }
@@ -56,7 +57,7 @@ class Report extends  Model
             self::SCENARIO_EXPORT_REPORT_ONE => ['start_time','end_time','stuNo'],
             self::SCENARIO_EXPORT_REPORT_COURSE => ['period','courseName','exam_time'],
             self::SCENARIO_EXPORT_REPORT_TEAM => ['period','teamName','exam_time'],
-            self::SCENARIO_EXPORT_REPORT_MAJOR => ['major','period','exam_time'],
+            self::SCENARIO_EXPORT_REPORT_MAJOR => ['majorName','period'],
         ];
     }
     /**
@@ -190,26 +191,27 @@ class Report extends  Model
         $this->scenario = self::SCENARIO_EXPORT_REPORT_MAJOR;
         if ($this->validate()) {
             $major = new Major();
-            $major->expand = ['team.student','team.student.user','team.student.register'];
-            $major->teamName = $this->teamName;
+            $major->expand = ['team.student.user','team.student.register'];
+            $major->majorName = $this->majorName;
             $student_register = $major->getOne();
             //var_dump($student_register);die;
 
-            $titlename = ['学号','姓名'];
+            $titlename = ['班级','学号','姓名'];
             $course = new Course();
-            $course->period = $student_register['period'];
+            $course->period = $this->period;
             $course->order_by = ['id'=>1];
             list($total , $courseList) = $course->getList();
             foreach($courseList as $value){
                 $titlename[] = $value['courseName'];
             }
             $courseID = array_column($courseList , 'id');
-
             $csvData = [];
-            array_push($csvData , $titlename);
-            if($student_register){
-                foreach($student_register['student'] as $value){
-                    $data = [$value['stuNo'] , $value['user']['username']];
+            foreach($student_register['team'] as $teamList){
+                $team = [];
+                array_push($team , $titlename);
+                $teaminformation = $teamList['period'].'届'.$teamList['teamName'];
+                foreach($teamList['student'] as $value){
+                    $data = [$teaminformation ,$value['stuNo'] , $value['user']['username']];
                     $stuCourseID = array_column($value['register'] , 'course_id');
                     foreach ($courseID as $cId) {
                         $i = array_search($cId , $stuCourseID);
@@ -219,28 +221,75 @@ class Report extends  Model
                             $data[] = '未选择';
                         }
                     }
-                    array_push($csvData , $data);
+                    array_push($team , $data);
                 }
+                array_push($csvData , $team);
+                array_push($csvData , []);
             }
-            $fileName = '第'.$student_register['period'].'届'.$student_register['teamName'].'的成绩单';
-
+            $fileName = $this->period ? $this->majorName.'专业第'.$this->period.'届的成绩单' : $this->majorName.'专业的成绩单';
             return [$fileName, $this->outPutCSV($csvData)];
         } else {
             $errorStr = current($this->getFirstErrors());
             throw new ModelException(ModelException::CODE_INVALID_INPUT, $errorStr);
         }
     }
-
     /**
      * 字符串在转换
     */
     private function outPutCSV($csvData)
     {
         $content = [];
-        foreach ($csvData as $data)
-        {
-            $content[] = '"'.implode('","', $data).'"';
+        $Dimension = $this->array_depth($csvData);
+        if($Dimension == 3){
+            foreach ($csvData as $data)
+            {
+                if(count($data) > 0){
+                    foreach($data as $value){
+                        $content[] = '"'.implode('","', $value).'"';
+                    }
+                } else {
+                    $content[] = '"'.implode('","', []).'"';
+                }
+            }
+        } else {
+            foreach($csvData as $data){
+                $content[] = '"'.implode('","', $data).'"';
+            }
         }
+
         return implode("\n", $content);
+    }
+    /**
+     * 计算数组的维度
+     */
+    private function array_depth($array) {
+        if(!is_array($array)) return 0;
+        $max_depth = 1;
+        foreach ($array as $value) {
+            if (is_array($value)) {
+                $depth = $this->array_depth($value) + 1;
+
+                if ($depth > $max_depth) {
+                    $max_depth = $depth;
+                }
+            }
+        }
+        return $max_depth;
+    }
+
+    /**
+     * 获取一个专业学生的成绩
+     */
+    public function exportImportScore($file_name)
+    {
+        $file = fopen($file_name , 'r');
+        $file_data = [];
+        while ($data = fgetcsv($file)) { //每次读取CSV里面的一行内容
+        //print_r($data); //此为一个数组，要获得每一个数据，访问数组下标即可
+            $file_data[] = $data;
+        }
+        fclose($file);
+
+        var_dump($file_data);die;
     }
 }

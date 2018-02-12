@@ -51,7 +51,6 @@ class ReportController extends Controller
         list($filenName, $content) = $report->exportMajorScore();
         $this->putCsv($content,$filenName);
     }
-
     /**
      * 生成导出excel文件
      */
@@ -65,5 +64,15 @@ class ReportController extends Controller
         //字符转译，使的中文不乱码
         $content = iconv('UTF-8',"GB2312//IGNORE",$content);
         echo $content;
+    }
+    /**
+     * 导入课程成绩
+     */
+    public function actionImportScore(){
+        $report = new Report();
+        $report->scenario = Report::SCENARIO_IMPORT_REPORT;
+        $report->setAttributes(Yii::$app->request->get());
+        list($filenName, $content) = $report->exportImportScore();
+        $this->putCsv($content,$filenName);
     }
 }

@@ -110,6 +110,10 @@ class Major extends  BaseModel
     {
         return $this->hasOne(User::className(),['id'=>'user_id']);
     }
+    public function getTeam()
+    {
+        return $this->hasMany(Team::className(),['major_id'=>'id']);
+    }
     /**
      * add expand query
      * 关联表查询
@@ -124,6 +128,12 @@ class Major extends  BaseModel
                         $query->select(['id', 'username','email','phone']);
                     }
                 ]);
+            }
+            if(in_array('team.student.user' , $this->expand)){
+                $this->_query->with('team.student.user');
+            }
+            if(in_array('team.student.user' , $this->expand)){
+                $this->_query->with('team.student.register');
             }
         }
     }

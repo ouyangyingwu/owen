@@ -67,6 +67,26 @@ $(function(){
             btnExport($('#team-score'));
         }
     });
+    $('#course-score').validate({
+        rules:{"period":{required:true},courseName:{required:true}},
+        messages: {},
+        errorClass: "help-block",
+        //错误提示的html标签
+        errorElement:'span',
+        submitHandler: function() {
+            btnExport($('#course-score'));
+        }
+    });
+    $('#major-score').validate({
+        rules:{majorName:{required:true}},
+        messages: {},
+        errorClass: "help-block",
+        //错误提示的html标签
+        errorElement:'span',
+        submitHandler: function() {
+            btnExport($('#major-score'));
+        }
+    });
 
      function btnExport(Object){
         var form = Object.attr("id");
