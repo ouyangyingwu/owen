@@ -1425,3 +1425,47 @@ $(function() {
         }
     });
 });
+/*  定义全局使用的量  */
+
+//定义验证字符
+var token = $('meta[name=csrf-token]').attr('content');
+
+//定义所有ajax的路径
+var url={
+    // api/user
+    userOne:'api/user/one',
+    userNumber:'api/user/number',
+    userData:'api/user/list-data',
+    userList:'/api/user/list',
+    userStudent:'/api/user/list-student',
+    userTeacher:'/api/user/list-teacher',
+    userEdit:'/api/user/edit',
+    userUpdate:'/api/user/update',
+    userResetPassword:'/api/user/reset-password',
+    userAdd:'/api/user/add',
+    userFinishSchool:'/api/user/finish-school',
+    // api/file
+    fileUrl:'api/file/url',
+    fileDelete:'api/file/delete',
+    fileAdd:'api/file/add',
+    // api/Department
+    departmentOne:'api/department/one',
+    departmentData:'api/department/data',
+    departmentListData:'api/department/list-data',
+    departmentList:'api/department/list',
+    departmentEdit:'api/department/edit',
+    departmentAdd:'api/department/add',
+    // api/major
+    majorOne:'api/major/one',
+    majorData:'api/major/data',
+    majorListData:'api/major/list-data',
+    majorList:'api/major/list',
+    majorEdit:'api/major/edit',
+    majorAdd:'api/major/add',
+    // api/team
+    teamData:'api/team/data',
+    teamListData:'api/team/list-data',
+    teamList:'api/team/list',
+    teamEdit:'api/team/edit',
+    teamAdd:'api/team/add',
+};

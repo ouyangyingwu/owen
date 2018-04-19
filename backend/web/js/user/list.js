@@ -3,24 +3,27 @@
  */
 
 $(function(){
-    //if(!$.cookie['user']){window.location.href = "/site/login";}
     var htmlData;
-    var token = $('meta[name=csrf-token]').attr('content');
     var params = {_csrf:token , per_page:10};
 
-    var department , major , team;
+    var $department , $major , $team, $character, $studentStatus, $sex, $active, $adminPurview;
     (function(){
         var postDate = {};
         postDate['_csrf'] = token;
         $.ajax({
-            url: 'api/user/list-data',
+            url: url.userData,
             data: postDate,
             type: 'post',
             dataType: 'json',
             success:function(data){
-                department = data.department;
-                major = data.major;
-                team = data.team;
+                $department = data.$department;
+                $major = data.$major;
+                $team = data.$team;
+                $sex = data.$sex;
+                $active = data.$active;
+                $adminPurview = data.$adminPurview;
+                $studentStatus = data.$studentStatus;
+                $character = data.$character;
             }
         })
     })();
@@ -87,23 +90,24 @@ $(function(){
     var getEditSource = function(name){
         switch(name){
             case 'active':
-                return [
-                    {value: 1, text: '激活冻结'},
-                    {value: 0, text: 'Freeze'}
-                ];break;
+                var active = [];
+                for(var k in $active){
+                    active.push({value: k, text: $active[k]});
+                }
+                return active;break;
             case 'sex':
-                return [
-                    {value: 0, text: '第三性别'},
-                    {value: 1, text: '男'},
-                    {value: 2, text: '女'},
-                ];break;
+                var sex = [];
+                for(var k in $sex){
+                    sex.push({value: k, text: $sex[k]});
+                }
+                return sex;break;
             case 'student.department_id':
             case 'teacher.department_id':
-                var departmentList = [];
-                for(var i = 0,len = department.length; i<len; i++){
-                    departmentList.push({value: department[i]['id'], text: department[i]['depName']});
+                var department = [];
+                for(var i = 0,len = $department.length; i<len; i++){
+                    department.push({value: $department[i]['id'], text: $department[i]['depName']});
                 }
-                return departmentList;break;
+                return department;break;
             case 'student.major_id':
                 var majorList = [];
                 for(var i = 0,len = myMajor.length; i<len; i++){
@@ -117,23 +121,17 @@ $(function(){
                 }
                 return teamList;break;
             case 'student.status':
-                return [
-                    {value: 0, text: '开除'},
-                    {value: 1, text: '在读'},
-                    {value: 2, text: '毕业'},
-                    {value: 3, text: '休学'},
-                    {value: 4, text: '退学'},
-                    {value: 5, text: '考研'},
-                    {value: 6, text: '硕博'},
-                    {value: 7, text: '其他'},
-
-                ];break;
+                var studentStatus = [];
+                for(var k in $studentStatus){
+                    studentStatus.push({value: k, text: $studentStatus[k]});
+                }
+                return studentStatus;break;
             case 'admin.purview':
-                return [
-                    {value: 1, text: '信息查看员'},
-                    {value: 2, text: '信息管理员'},
-                    {value: 10, text: '管理员'},
-                ];break;
+                var adminPurview = [];
+                for(var k in $adminPurview){
+                    adminPurview.push({value: k, text: $adminPurview[k]});
+                }
+                return adminPurview;break;
             default:
                 return null;
         }
@@ -177,7 +175,7 @@ $(function(){
                             postData["id"] = data[(name.split('.')[0])]['id'];
                         }
                         $.ajax({
-                            url:"/api/user/edit",
+                            url:url.userEdit,
                             data:postData,
                             dataType:'json',
                             type:'POST',
@@ -226,23 +224,18 @@ $(function(){
     }
     function intTostr(value , type){
         if(type == 'active') {
-            if (value == 1) return '激活';
-            if (value == 0) return '冻结';
+            return $active[value];
         }
         if(type == 'sex') {
-            if (value == 1)return '男';
-            if (value == 2)return '女';
-            if (value == 0)return '第三类性别';
+            return $sex[value];
         }
         if(type == 'type') {
-            if (value == 1) return '学生';
-            if (value == 2) return '教职工';
-            if(value == 3) return '管理员';
+            return $character[value];
         }
         if(type == 'student.department_id' || type == 'teacher.department_id'){
-            for(var i = 0,len = department.length; i<len; i++){
-                if(value == department[i]['id']){
-                    return value = department[i]['depName'];
+            for(var i = 0,len = $department.length; i<len; i++){
+                if(value == $department[i]['id']){
+                    return value = $department[i]['depName'];
                 }
             }
         }
@@ -261,18 +254,10 @@ $(function(){
             }
         }
         if(type == 'student.status'){
-            if(value == 1) return '在读';
-            if(value == 2) return '毕业';
-            if(value == 3) return '休学';
-            if(value == 4) return '退学';
-            if(value == 5) return '考研';
-            if(value == 6) return '硕博';
-            if(value == 7) return '其他';
+            return $studentStatus[value];
         }
         if(type == 'admin.purview'){
-            if(value == 1) return '信息查看员';
-            if(value == 2) return '信息管理员';
-            if(value == 10) return '管理员';
+            return $adminPurview[value];
         }
         if(type == 'reward_type'){
             if(value == 0) return '奖助学金';
@@ -367,7 +352,7 @@ $(function(){
         postData['edit_value'] = edit_value;
         htmlData[$type][RewardOrPunish] = edit_value;
         $.ajax({
-            url: 'api/user/edit',
+            url: url.userEdit,
             data: postData,
             type: 'post',
             dataType: 'json',
@@ -413,7 +398,7 @@ $(function(){
         postData['edit_value'] = reward;
         $($this).parents('.odd').remove();
         $.ajax({
-            url: 'api/user/edit',
+            url: url.userEdit,
             data: postData,
             type: 'post',
             dataType: 'json'
@@ -444,7 +429,7 @@ $(function(){
                 postData["name"] = $(this).parent().parent().attr('data-value');
                 postData["url"] = 'image';
                 $.ajax({
-                    url:"/api/file/delete",
+                    url:url.fileDelete,
                     data:postData,
                     dataType:'json',
                     type:'POST',
@@ -461,7 +446,7 @@ $(function(){
                 postData["edit_value"] = 1;
                 postData["id"] = htmlData.id;
                 $.ajax({
-                    url:"/api/user/edit",
+                    url:url.userEdit,
                     data:postData,
                     dataType:'json',
                     type:'POST',
@@ -483,18 +468,16 @@ $(function(){
                 $("#user-detail").modal("show");
                 if(htmlData.type == 1) {
                     myMajor = []; myTeam = [];
-                    for(var i= 0,len=major.length; i<len ; i++){
-                        if(major[i]['department_id'] == htmlData.student.department_id){
-                            myMajor.push(major[i]);
+                    for(var i= 0,len=$major.length; i<len ; i++){
+                        if($major[i]['department_id'] == htmlData.student.department_id){
+                            myMajor.push($major[i]);
                         }
                     }
-                    for(var i= 0,len=team.length; i<len ; i++){
-                        if(team[i]['major_id'] == htmlData.student.major_id){
-                            myTeam.push(team[i]);
+                    for(var i= 0,len=$team.length; i<len ; i++){
+                        if($team[i]['major_id'] == htmlData.student.major_id){
+                            myTeam.push($team[i]);
                         }
                     }
-                   // $('a[data-name="student.team_id"]').text('6546546');
-
                 }
                 initEditForm(htmlData);
                 break;
@@ -514,7 +497,7 @@ $(function(){
     var  oldCondition = params;
     function userList(params){
         $.ajax({
-            url:"/api/user/list",
+            url:url.userList,
             data:params,
             dataType:'json',
             type:'POST',

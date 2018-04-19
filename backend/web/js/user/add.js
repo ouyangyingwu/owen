@@ -2,8 +2,6 @@
  * Created by admin on 2017/11/15.
  */
 $(function(){
-    var token = $('meta[name=csrf-token]').attr('content');
-
     function userClass(position){
         var position = position ? position : $(".form-control[name='type']").val();
         Numbering(position);
@@ -45,7 +43,7 @@ $(function(){
         if( type == 2 )  expand='teacher',last='T';
 
         $.ajax({
-            url:'api/user/number',
+            url: url.userNumber,
             data:{_csrf:token,
                 type:type,
                 expand:[expand],
@@ -72,7 +70,7 @@ $(function(){
     (function (){
         var postData = {_csrf:token};
         $.ajax({
-            url: 'api/department/list',
+            url: url.departmentList,
             data: postData,
             type: 'post',
             dataType:'json',
@@ -93,7 +91,7 @@ $(function(){
     function major(department_id){
         var postData = {_csrf:token,department_id:department_id};
         $.ajax({
-            url: 'api/major/list',
+            url: url.majorList,
             data: postData,
             type: 'post',
             dataType:'json',
@@ -114,7 +112,7 @@ $(function(){
     function team(major_id){
         var postData = {_csrf:token,major_id:major_id};
         $.ajax({
-            url: 'api/team/list',
+            url: url.teamList,
             data: postData,
             type: 'post',
             dataType:'json',
@@ -200,7 +198,7 @@ $(function(){
                 }
             });
             $.ajax({
-                url: "/api/user/add",
+                url: url.userAdd,
                 data: postData,
                 dataType: 'json',
                 type: 'POST',
