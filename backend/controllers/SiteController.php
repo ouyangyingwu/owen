@@ -62,7 +62,9 @@ class SiteController extends Controller
     {
         //var_dump($this->layout);die;
         $this->layout = 'home';
-        return $this->render('index');
+        return $this->render('index',[
+            'aa' => '123'
+        ]);
     }
 
     /**

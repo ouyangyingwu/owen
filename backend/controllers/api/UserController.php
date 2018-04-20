@@ -6,7 +6,7 @@ use common\models\Department;
 use common\models\Major;
 use common\models\Team;
 use Yii;
-use common\config\Dict;
+use common\models\Dict;
 use yii\web\Controller;
 use common\models\User;
 use common\models\UserStudent;
@@ -58,14 +58,14 @@ class UserController extends Controller
         list($total , $team) = $team->getList();
 
         return[
-            '$team' => $team,
-            '$major' => $major,
-            '$department' => $department,
-            '$sex' => Dict::$sex,
-            '$adminPurview' => Dict::$adminPurview,
-            '$active' => Dict::$active,
-            '$character' => Dict::$character,
-            '$studentStatus' => Dict::$studentStatus,
+            'team' => $team,
+            'major' => $major,
+            'department' => $department,
+            'sex' => Dict::$sex,
+            'adminPurview' => Dict::$adminPurview,
+            'active' => Dict::$active,
+            'character' => Dict::$character,
+            'studentStatus' => Dict::$studentStatus,
         ];
     }
     public function actionList()

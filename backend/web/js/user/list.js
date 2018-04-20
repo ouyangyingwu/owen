@@ -15,15 +15,17 @@ $(function(){
             data: postDate,
             type: 'post',
             dataType: 'json',
+            //设置同步请求（即当请求成功之后才继续走后面的代码），是的后面不回因为没有数据而报错
+            async: false,
             success:function(data){
-                $department = data.$department;
-                $major = data.$major;
-                $team = data.$team;
-                $sex = data.$sex;
-                $active = data.$active;
-                $adminPurview = data.$adminPurview;
-                $studentStatus = data.$studentStatus;
-                $character = data.$character;
+                $department = data.department;
+                $major = data.major;
+                $team = data.team;
+                $sex = data.sex;
+                $active = data.active;
+                $adminPurview = data.adminPurview;
+                $studentStatus = data.studentStatus;
+                $character = data.character;
             }
         })
     })();

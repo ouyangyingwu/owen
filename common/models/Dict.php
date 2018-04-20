@@ -1,5 +1,5 @@
 <?php
-namespace common\config;
+namespace common\models;
 
 class Dict
 {

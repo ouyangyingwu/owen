@@ -5,8 +5,8 @@
 $this->title = 'Owen Home';
 ?>
 <script type="text/javascript">
-    //console.log(location.href.split('#/')[1].split('.')[1]);
-    if(location.href.split('#/')[1].split('.')[1] != 'html'){
+    //console.log(location.href , location.href.indexOf('html'));
+    if(location.href.indexOf('html') < 0){
         location.href = "/#/dashboard_toDoList.html";
     }
 </script>
