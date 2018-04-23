@@ -3,6 +3,7 @@ namespace common\models;
 
 class Dict
 {
+
     //角色Character
     const CHARACTER_STUDENT = 1;
     const CHARACTER_TEACHER = 2;
@@ -28,14 +29,23 @@ class Dict
     ];
 
     //管理员权限
-    const ADMIN_INFORMATION_VIEW = 1;
-    const ADMIN_INFORMATION_MANAGEMENT = 2;
+    const STUDENT = 1;
+    const TEACHER = 2;
+    const ADMIN_INFORMATION_VIEW = 3;
+    const ADMIN_INFORMATION_MANAGEMENT = 4;
     const ADMIN = 10;
 
-    public static $adminPurview = [
+    public static $adminName = [
         self::ADMIN_INFORMATION_VIEW => "信息查看员",
         self::ADMIN_INFORMATION_MANAGEMENT => "信息管理员",
         self::ADMIN => "管理员",
+    ];
+    public static $adminPurview = [
+        self::STUDENT => [],
+        self::TEACHER => [],
+        self::ADMIN_INFORMATION_VIEW => [],
+        self::ADMIN_INFORMATION_MANAGEMENT => [],
+        self::ADMIN => "all",
     ];
 
     //角色状态

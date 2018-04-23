@@ -1,6 +1,7 @@
 <?php
 namespace backend\controllers\api;
 
+use common\models\AdminMenu;
 use common\models\Alumna;
 use common\models\Department;
 use common\models\Major;
@@ -62,7 +63,7 @@ class UserController extends Controller
             'major' => $major,
             'department' => $department,
             'sex' => Dict::$sex,
-            'adminPurview' => Dict::$adminPurview,
+            'adminName' => Dict::$adminName,
             'active' => Dict::$active,
             'character' => Dict::$character,
             'studentStatus' => Dict::$studentStatus,
@@ -248,5 +249,21 @@ class UserController extends Controller
             return $alumna->getAdd();
         }
         throw new \Exception('未知错误！！！');
+    }
+
+    public function actionMenuList()
+    {
+        $type = Yii::$app->user->identity->type;
+        if($type > 2){
+            $admin = UserAdmin::find()->asArray()->select('purview')->where(['user_id'=>Yii::$app->user->identity->id])->one();
+            $type = $admin['purview'];
+        }
+        $adminMenu = new AdminMenu();
+        $adminMenu->scenario = AdminMenu::SCENARIO_LIST;
+        $adminMenu->setAttributes(Yii::$app->request->post());
+        $adminMenu->id = Dict::$adminPurview[$type];
+        $adminMenu->order_by = ['sort'=>1];
+        var_dump($adminMenu->getList());die;;
+        return $adminMenu->getList();
     }
 }

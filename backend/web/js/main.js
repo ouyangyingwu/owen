@@ -17,6 +17,7 @@ var url={
     userResetPassword:'/api/user/reset-password',
     userAdd:'/api/user/add',
     userFinishSchool:'/api/user/finish-school',
+    menuList:'api/user/menu-list',
     // api/file
     fileUrl:'api/file/url',
     fileDelete:'api/file/delete',
@@ -41,6 +42,7 @@ var url={
     teamList:'api/team/list',
     teamEdit:'api/team/edit',
     teamAdd:'api/team/add',
+
 };
 
 /**
@@ -1340,10 +1342,11 @@ var SmsJs = {};
 
 //公共文件的一些特效
 $(function() {
+    var _csrf = $('meta[name="csrf-token"]').attr('content');
     //生成左边导航栏
     $.ajax({
-        url: url.userAdd,
-        data: {},
+        url: url.menuList,
+        data:{'_csrf':_csrf},
         type: 'post',
         dataType: 'json',
         success:function(data){
@@ -1351,7 +1354,6 @@ $(function() {
         }
     });
 
-    var _csrf = $('meta[name="csrf-token"]').attr('content');
     setInterval(function(){
         var date = new Date();
         var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());

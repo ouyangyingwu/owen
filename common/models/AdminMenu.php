@@ -124,16 +124,10 @@ class AdminMenu extends  BaseModel
         $this->scenario = self::SCENARIO_LIST;
         if($this->validate()){
             $this->createQuery();
-            $total = $this->_query->count();
-            if ($total == 0)
-            {
-                return [0, null];
-            }
             $this->addQueryExpand();
             $this->addOrderBy();
-            $this->addLimit();
             $result = $this->_query->all();
-            return [$total , $result];
+            return $result;
         }
     }
 }

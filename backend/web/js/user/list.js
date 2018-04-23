@@ -6,7 +6,7 @@ $(function(){
     var htmlData;
     var params = {_csrf:token , per_page:10};
 
-    var $department , $major , $team, $character, $studentStatus, $sex, $active, $adminPurview;
+    var $department , $major , $team, $character, $studentStatus, $sex, $active, $adminName;
     (function(){
         var postDate = {};
         postDate['_csrf'] = token;
@@ -23,7 +23,7 @@ $(function(){
                 $team = data.team;
                 $sex = data.sex;
                 $active = data.active;
-                $adminPurview = data.adminPurview;
+                $adminName = data.adminName;
                 $studentStatus = data.studentStatus;
                 $character = data.character;
             }
@@ -129,11 +129,11 @@ $(function(){
                 }
                 return studentStatus;break;
             case 'admin.purview':
-                var adminPurview = [];
-                for(var k in $adminPurview){
-                    adminPurview.push({value: k, text: $adminPurview[k]});
+                var adminName = [];
+                for(var k in $adminName){
+                    adminName.push({value: k, text: $adminName[k]});
                 }
-                return adminPurview;break;
+                return adminName;break;
             default:
                 return null;
         }
@@ -259,7 +259,7 @@ $(function(){
             return $studentStatus[value];
         }
         if(type == 'admin.purview'){
-            return $adminPurview[value];
+            return $adminName[value];
         }
         if(type == 'reward_type'){
             if(value == 0) return '奖助学金';
