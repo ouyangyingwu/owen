@@ -5,6 +5,61 @@ var token = $('meta[name=csrf-token]').attr('content');
 
 //定义所有ajax的路径
 var url={
+    // api/alumna
+    alumnaList: 'api/alumna/list',
+    alumnaEdit: 'api/alumna/edit',
+    alumnaAdd: 'api/alumna/add',
+    // api/classRoom
+    roomOne: 'api/class-room/oen',
+    roomData: 'api/class-room/data',
+    roomList: 'api/class-room/list',
+    roomEdit: 'api/class-room/edit',
+    roomUpdate: 'api/class-room/update',
+    roomAdd: 'api/class-room/add',
+    // api/course
+    courseData: 'api/course/data',
+    courseList: 'api/course/list',
+    courseListData: 'api/course/list-data',
+    courseEdit: 'api/course/edit',
+    courseAdd: 'api/course/add',
+    // api/Dashboard
+    dashboardTodo: 'api/dashboard/todo',
+    // api/Department
+    departmentOne:'api/department/one',
+    departmentData:'api/department/data',
+    departmentListData:'api/department/list-data',
+    departmentList:'api/department/list',
+    departmentEdit:'api/department/edit',
+    departmentAdd:'api/department/add',
+    // api/file
+    fileUrl:'api/file/url',
+    fileDelete:'api/file/delete',
+    fileAdd:'api/file/add',
+    // api/information
+    informationOne:'api/information/one',
+    informationList:'api/information/list',
+    informationEdit:'api/information/edit',
+    informationUpdate: 'api/information/update',
+    informationAdd:'api/information/add',
+    // api/major
+    majorOne:'api/major/one',
+    majorData:'api/major/data',
+    majorListData:'api/major/list-data',
+    majorList:'api/major/list',
+    majorEdit:'api/major/edit',
+    majorAdd:'api/major/add',
+    // api/Register
+    registerData: 'api/register/data',
+    registerList: 'api/register/list',
+    registerListData: 'api/register/list-data',
+    registerEdit: 'api/register/edit',
+    registerAdd: 'api/register/add',
+    // api/team
+    teamData:'api/team/data',
+    teamListData:'api/team/list-data',
+    teamList:'api/team/list',
+    teamEdit:'api/team/edit',
+    teamAdd:'api/team/add',
     // api/user
     userOne:'api/user/one',
     userNumber:'api/user/number',
@@ -18,30 +73,6 @@ var url={
     userAdd:'/api/user/add',
     userFinishSchool:'/api/user/finish-school',
     menuList:'api/user/menu-list',
-    // api/file
-    fileUrl:'api/file/url',
-    fileDelete:'api/file/delete',
-    fileAdd:'api/file/add',
-    // api/Department
-    departmentOne:'api/department/one',
-    departmentData:'api/department/data',
-    departmentListData:'api/department/list-data',
-    departmentList:'api/department/list',
-    departmentEdit:'api/department/edit',
-    departmentAdd:'api/department/add',
-    // api/major
-    majorOne:'api/major/one',
-    majorData:'api/major/data',
-    majorListData:'api/major/list-data',
-    majorList:'api/major/list',
-    majorEdit:'api/major/edit',
-    majorAdd:'api/major/add',
-    // api/team
-    teamData:'api/team/data',
-    teamListData:'api/team/list-data',
-    teamList:'api/team/list',
-    teamEdit:'api/team/edit',
-    teamAdd:'api/team/add',
 };
 
 /**
