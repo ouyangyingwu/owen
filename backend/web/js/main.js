@@ -42,7 +42,6 @@ var url={
     teamList:'api/team/list',
     teamEdit:'api/team/edit',
     teamAdd:'api/team/add',
-
 };
 
 /**
