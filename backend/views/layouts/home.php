@@ -26,8 +26,8 @@ AppAsset::register($this);
         <?php include ("template-head.php") ?>
     </nav>
     <!--/. NAV TOP  -->
-    <nav class="navbar-default navbar-side" role="navigation">
-        <?php include ("template-left.php") ?>
+    <nav class="navbar-default navbar-side" id="left" role="navigation">
+        <?php /*include ("template-left.php") */?>
     </nav>
     <!-- /. NAV SIDE  -->
     <div id="page-wrapper">

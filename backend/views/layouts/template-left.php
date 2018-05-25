@@ -110,5 +110,4 @@
             <a href="/#/empty.html"><i class="icon-file"></i> Empty Page</a>
         </li>
     </ul>
-
 </div>

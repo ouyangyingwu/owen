@@ -127,7 +127,20 @@ class AdminMenu extends  BaseModel
             $this->addQueryExpand();
             $this->addOrderBy();
             $result = $this->_query->all();
-            return $result;
+            $superior = [];
+            foreach($result as $value){
+                if($value['parent_id'] == 0){
+                    $subordinate = [];
+                    foreach($result as $item){
+                        if($value['id'] == $item['parent_id']){
+                            $subordinate[] = $item;
+                        }
+                    }
+                    $value['children'] = $subordinate;
+                    $superior[] = $value;
+                }
+            }
+            return $superior;
         }
     }
 }

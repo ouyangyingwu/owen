@@ -263,7 +263,8 @@ class UserController extends Controller
         $adminMenu->setAttributes(Yii::$app->request->post());
         $adminMenu->id = Dict::$adminPurview[$type];
         $adminMenu->order_by = ['sort'=>1];
-        var_dump($adminMenu->getList());die;;
-        return $adminMenu->getList();
+        $list = $adminMenu->getList();
+        $html = $this->renderPartial('left', ['list' => $list]);
+        return ['html' => $html];
     }
 }

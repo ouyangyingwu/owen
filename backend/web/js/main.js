@@ -1371,19 +1371,74 @@ var SmsJs = {};
 })();
 
 //公共文件的一些特效
+var OwenHttp = {
+    request: function(options){
+        if(!options || typeof(options) != "object"){
+            return;
+        }
+        if(!options["dataUrl"]){
+            return;
+        }
+        param = options["param"];
+        var requestParams =  {};
+        if(param && typeof(param) == "object"){
+            requestParams = param;
+        }
+        var requestType = options["type"] ? options["type"] : "post";
+        if(requestType == "post"){
+            requestParams["_csrf"] = $("meta[name=csrf-token]").attr("content");
+            if(!requestParams["_csrf"]){
+                return;
+            }
+        }
+        requestParams["random"] = Math.random();
+        var async = true;
+        if(typeof(options["async"]) == "boolean"){
+            async = options["async"];
+        }
+        var datatype = "json";
+        var successCode = "200";
+        var url = options["dataUrl"];
+        var timeout = options["timeout"] ? parseInt(options["timeout"]) * 1000 : 10 * 1000;
+        if(options["successCode"]){
+            successCode = options["successCode"];
+        }
+        $.ajax({
+            url:url,
+            data:requestParams,
+            dataType:datatype,
+            type:requestType,
+            timeout:timeout,
+            async:async,
+            success:function(result){
+                console.log(result);
+                if(options["success"]){
+                    options["success"](result["data"]);
+                }
+            },
+            error:function(){
+                if(options["failed"]){
+                    options["failed"]();
+                }
+            }
+        });
+    },
+    dealPostData: function(paramRelation, datableTableData){
+        var postData = {};
+        for(var idx = 0, len = datableTableData.length; idx < len; idx++)
+        {
+            var name = datableTableData[idx]["name"];
+            var value = datableTableData[idx]["value"];
+            if(paramRelation[name]){
+                postData[paramRelation[name]] = value;
+            }
+        }
+        return postData;
+    }
+}
+
 $(function() {
     var _csrf = $('meta[name="csrf-token"]').attr('content');
-    //生成左边导航栏
-    $.ajax({
-        url: url.menuList,
-        data:{'_csrf':_csrf},
-        type: 'post',
-        dataType: 'json',
-        success:function(data){
-
-        }
-    });
-
     setInterval(function(){
         var date = new Date();
         var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
@@ -1406,6 +1461,23 @@ $(function() {
         });
     };
 
+    //生成左边导航栏
+    OwenHttp.request({
+        dataUrl: url.menuList,
+        success:function(data){
+            console.log(data);
+            $('.navbar-default.navbar-side').html(data['html']);
+        }
+    });
+    /*$.ajax({
+        url: url.menuList,
+        data:{'_csrf':_csrf},
+        type: 'post',
+        dataType: 'json',
+        success:function(data){
+            $('.navbar-default.navbar-side').html(data['html'])
+        }
+    });*/
     var hrefList = [] , html = location.href.split('#/')[1];
     if(html) {
         //$('#page-inner').load('views/'+html);
@@ -1437,7 +1509,7 @@ $(function() {
         }
     }
     /*实现局部刷新（头部与导航不刷新）*/
-    $('a.location-file').click(function(){
+    $('#left').on('click' , 'a.location-file' , function(){
         var html = $(this).attr('href').split('#/')[1];
         if(html) {
             if($(this).parent().parent().hasClass('nav')){
@@ -1466,7 +1538,7 @@ $(function() {
      * 左边菜单
      */
     //左边菜单鼠标事件
-    $('#main-menu li a').on({
+    $('#left').on({
         mouseover:function(){$(this).addClass('active-over')},
         mouseout:function(){$(this).removeClass('active-over')},
         click:function(){
@@ -1493,18 +1565,18 @@ $(function() {
                     $(this).children('span').removeClass('icon-angle-down').addClass('icon-angle-right');
                 }
             } else {
-                $('#main-menu li a').removeClass('active-menu');
+                $('#left #main-menu li a').removeClass('active-menu');
                 $(this).addClass('active-menu');
             }
         }
-    });
+    }, '#main-menu li a');
+
     //导航栏的显示影藏
-    $("#sideNav").click(function(){
+    $('#left').on('click', '#sideNav', function(){
         if($(this).hasClass('closed')){
             $('.navbar-side').animate({left: '0px'});
             $(this).removeClass('closed');
             $('#page-wrapper').animate({'margin-left' : '260px'});
-
         }
         else{
             $(this).addClass('closed');
