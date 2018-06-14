@@ -41,8 +41,8 @@ class Dict
         self::ADMIN => "管理员",
     ];
     public static $adminPurview = [
-        self::STUDENT => [],
-        self::TEACHER => [],
+        self::STUDENT => [1,3,4,5,6,7,8,20,28,30,32,34,36,38],
+        self::TEACHER => [1,3,4,5,6,7,8,20,28,30,32,34,36,38],
         self::ADMIN_INFORMATION_VIEW => [],
         self::ADMIN_INFORMATION_MANAGEMENT => [],
         self::ADMIN => "all",

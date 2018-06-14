@@ -5,6 +5,8 @@ var token = $('meta[name=csrf-token]').attr('content');
 
 //定义所有ajax的路径
 var url={
+    //site Logout
+    logout: 'site/logout',
     // api/alumna
     alumnaList: 'api/alumna/list',
     alumnaEdit: 'api/alumna/edit',
@@ -579,6 +581,34 @@ var CommonTool = {
             }
         }
         return rtn + section;
+    },
+    //判断当前打开的浏览器
+    browser:function (){
+        var explorer =navigator.userAgent ;
+        //ie
+        if (explorer.indexOf("MSIE") >= 0) {
+            return "ie";
+        }
+        //firefox
+        else if (explorer.indexOf("Firefox") >= 0) {
+            return "Firefox";
+        }
+        //Chrome
+        else if(explorer.indexOf("Chrome") >= 0){
+            return "Chrome";
+        }
+        //Opera
+        else if(explorer.indexOf("Opera") >= 0){
+            return "Opera";
+        }
+        //Safari
+        else if(explorer.indexOf("Safari") >= 0){
+            return "Safari";
+        }
+        //Netscape
+        else if(explorer.indexOf("Netscape")>= 0) {
+            return 'Netscape';
+        }
     }
 };
 
@@ -1370,7 +1400,9 @@ var SmsJs = {};
     }
 })();
 
-//公共文件的一些特效
+/*  公共文件的一些特效  */
+
+//封装ajax
 var OwenHttp = {
     request: function(options){
         if(!options || typeof(options) != "object"){
@@ -1411,15 +1443,10 @@ var OwenHttp = {
             timeout:timeout,
             async:async,
             success:function(result){
-                console.log(result);
-                if(options["success"]){
-                    options["success"](result["data"]);
-                }
+                options["success"](result);
             },
             error:function(){
-                if(options["failed"]){
-                    options["failed"]();
-                }
+                options["failed"]();
             }
         });
     },
@@ -1435,14 +1462,18 @@ var OwenHttp = {
         }
         return postData;
     }
-}
-
+};
 $(function() {
+    console.log(CommonTool.browser());
+    //头部秒表
     var _csrf = $('meta[name="csrf-token"]').attr('content');
     setInterval(function(){
         var date = new Date();
         var time = date.getFullYear()+'-'+supplement(date.getMonth()+1)+'-'+ supplement(date.getDate()) +' ' +supplement(date.getHours())+':'+supplement(date.getMinutes())+':'+supplement(date.getSeconds());
-        $('#dateTime').text(time);
+        //$('#dateTime').text(time);
+        //innerText 不是W3C标准属性，因此我们无法在FireFox中使用它
+        document.getElementById('dateTime').innerHTML = time;
+        //document.getElementById('dateTime').textContent = time;
     },1000);
     function  supplement (x){
         //补0
@@ -1451,11 +1482,9 @@ $(function() {
     }
     //退出登录
     logout = function(){
-        $.ajax({
-            url:'site/logout',
-            data:{'_csrf':_csrf},
-            type:'POST',
-            success:function(){
+        OwenHttp.request({
+            dataUrl: url.logout,
+            success:function() {
                 location.reload();
             }
         });
@@ -1464,31 +1493,33 @@ $(function() {
     //生成左边导航栏
     OwenHttp.request({
         dataUrl: url.menuList,
+        async: false,
         success:function(data){
-            console.log(data);
-            $('.navbar-default.navbar-side').html(data['html']);
+            document.getElementById('left').innerHTML = data['html'];
+            //$('.navbar-default.navbar-side').html(data['html']);
+            //$('#left').load(data['html']);
         }
     });
-    /*$.ajax({
-        url: url.menuList,
-        data:{'_csrf':_csrf},
-        type: 'post',
-        dataType: 'json',
-        success:function(data){
-            $('.navbar-default.navbar-side').html(data['html'])
-        }
-    });*/
+
     var hrefList = [] , html = location.href.split('#/')[1];
+    var newHref = [
+         'user_one.html'
+    ];
+    console.log(html);;
     if(html) {
         //$('#page-inner').load('views/'+html);
         $('#main-menu li a').removeClass('active-menu');
         $('#main-menu a.location-file').each(function(){
-            hrefList.push($(this).attr('href').split('#/')[1]);
+            //hrefList.push($(this).attr('href').split('#/')[1]);
+            //代码优化
+            hrefList.push(this.href.split('#/')[1]);
         });
         if($.inArray(html , hrefList) >= 0){
-            $('#main-menu').find('a').each(function(){
-                 if($(this).attr('href').split('#/')[1] == html){
+            $('#main-menu').find('a.location-file').each(function(){
+                 if(this.href.split('#/')[1] == html){
+                     //this.classList.add('active-menu');
                      $(this).addClass('active-menu');
+                     //this.parentNode.parentNode.classList.remove('hidee');
                      $(this).parent('li').parent('ul').show();
                      var jsc = html.substring(0,html.indexOf('.')).split('_');
                      var script = document.createElement("script");
@@ -1498,14 +1529,15 @@ $(function() {
                      });
                  }
              });
-            //return;
-        } else {
+        } else if($.inArray(html , newHref) >= 0){
             var jsc = html.substring(0,html.indexOf('.')).split('_');
             var script = document.createElement("script");
             script.src = '/js/' + jsc[0] + '/' + jsc[1] + '.js?v='+Math.random();
             $('#page-inner').load('views/'+html,function(){
                 $('#addScript').html(script);
             });
+        } else {
+            window.location.href = "error";
         }
     }
     /*实现局部刷新（头部与导航不刷新）*/

@@ -254,13 +254,12 @@ class UserController extends Controller
     public function actionMenuList()
     {
         $type = Yii::$app->user->identity->type;
-        if($type > 2){
+        if($type == 3){
             $admin = UserAdmin::find()->asArray()->select('purview')->where(['user_id'=>Yii::$app->user->identity->id])->one();
             $type = $admin['purview'];
         }
         $adminMenu = new AdminMenu();
         $adminMenu->scenario = AdminMenu::SCENARIO_LIST;
-        $adminMenu->setAttributes(Yii::$app->request->post());
         $adminMenu->id = Dict::$adminPurview[$type];
         $adminMenu->order_by = ['sort'=>1];
         $list = $adminMenu->getList();
