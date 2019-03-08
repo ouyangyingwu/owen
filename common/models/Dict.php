@@ -7,7 +7,7 @@ class Dict
     //角色Character
     const CHARACTER_STUDENT = 1;
     const CHARACTER_TEACHER = 2;
-    const CHARACTER_ADMIN = 3;
+    const CHARACTER_ADMIN = 3; 
 
     public static $character = [
         self::CHARACTER_STUDENT => "学生",
